@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: #ebebeb;
+  color: var(--foreground);
+  /* font-family: Arial, Helvetica, sans-serif; */
+  font-family: "Inter", sans-serif;
+}
+
+.textBG {
+  position: relative;
+  padding: 10px;
+  display: inline-block;
+  z-index: 1;
+}
+
+.textBG:before {
+  width: 100%;
+  height: 100%;
+  background: url(https://quiz-live.s3.amazonaws.com/upload/cavis-limited/highlight-marker-1742546966318.svg) no-repeat center center;
+  background-size: 100%;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-3deg);
+  z-index: -1;
+}
+
+.button_cal label {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 17px;
+  color: #fff;
+  background-color: #00b779;
+  border: 2px solid #008f5f;
+  border-radius: 5px;
+  font-weight: 700;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button_cal label:hover {
+  background-color: #008f5f;
+  color: #fff;
+}
+
+.button_box .page_btn:hover {
+  background-color: #008f5f;
+}
+
+.background-green {
+  background: #00b779;
+  border: 2px solid #008f5f;
+}
+
+/* FAQ section start */
+.frequently_section {
+  margin: 40px 0;
+}
+
+@media only screen and (max-width: 1199px) {
+
+  .container_box,
+  .container_inner {
+    padding: 0 15px;
+  }
+
+}
+
+@media only screen and (max-width: 575px) {
+  h2 {
+    font-size: 25px !important;
+  }
+}
+
+.frequently_inner {
+  h2 {
+    font-size: 35px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    max-width: 700px;
+    margin: auto;
+    text-align: start;
+  }
+
+}
+
+@media only screen and (max-width: 575px) {
+  .faq-question {
+    padding: 14px 11px !important;
+    font-size: 15px !important;
+  }
+
+  .banner_section {
+    h2 {
+      word-spacing: -0.1px;
+      line-height: calc(100% + 4px);
+      letter-spacing: -1px;
+    }
+  }
+}
+
+.banner_section {
+  h2 {
+    word-spacing: -1px;
+    line-height: calc(100% + 4px);
+    letter-spacing: -1px;
+  }
+}
+.faq-container {
+  max-width: 700px;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+.faq-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.faq-item {
+  background: #ebebeb;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.faq-question {
+  font-weight: bold;
+  padding: 18px 20px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.faq-answer {
+  display: none;
+  padding: 0px 20px 10px;
+  font-size: 16px;
+  background: #ebebeb;
+}
+
+.faq-item.active .faq-answer {
+  display: block;
+}
+
+/* footer section design start */
+.footer_section {
+  width: 100%;
+  padding: 40px 0;
+  background-color: #f7f7f7;
+  margin-top: 50px;
+}
+
+.footer_logo img {
+  width: 300px;
+}
+
+.footer_inr p {
+  font-size: 13px;
+  line-height: 1.4;
+}
