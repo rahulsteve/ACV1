@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
 import './globals.css';
+import PersonalDetailsForm from './PersonalDetailsForm';
+import SignatureCanvas from 'react-signature-canvas';
 
 const initialDetails = {
   title: '',
@@ -11,7 +13,7 @@ const initialDetails = {
   year: '',
 };
 
-const TITLES = ["Mr", "Mrs", "Miss", "Ms", "Dr", "Prof"];
+
 
 function isOver18(day: string, month: string, year: string) {
   if (!day || !month || !year) return false;
@@ -38,6 +40,16 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   });
   const [details, setDetails] = React.useState(initialDetails);
   const [errors, setErrors] = React.useState({ firstName: '', lastName: '', dob: '' });
+  const [postcode, setPostcode] = React.useState("");
+  const [contact, setContact] = React.useState({ mobile: '', email: '' });
+  const [agreementAccepted, setAgreementAccepted] = React.useState("");
+  const [signature, setSignature] = React.useState("");
+  const [marketingConsent, setMarketingConsent] = React.useState("");
+  const [showSignatureError, setShowSignatureError] = React.useState(false);
+  const sigPadRef = React.useRef<SignatureCanvas>(null);
+  const [agreementError, setAgreementError] = React.useState("");
+  const [signatureError, setSignatureError] = React.useState("");
+  const [marketingError, setMarketingError] = React.useState("");
 
   // Handlers for each step
   const handleAnswer = (q: string, value: string) => {
@@ -47,16 +59,19 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     // Logic for navigation
     if (q === 'q2') {
       if (value === 'Yes') {
-        nextStep = 4; // Go to Q3
+        nextStep = 3; // Go to Scotland step
       } else {
-        nextStep = 3; // Go to Q2A
+        nextStep = 3; // Go to Scotland step
       }
+    }
+    if (q === 'qScotland') {
+      nextStep = 4; // Always go to next step (Q2A)
     }
     if (q === 'q2a' && value === 'No') {
       setExited(true); return;
     }
     if (q === 'q2a' && value === 'Yes') {
-      nextStep = 4; // Go to Q3
+      nextStep = 5; // Go to Q3
     }
     if (q === 'q3' && value === 'Yes') {
       setExited(true); return;
@@ -90,11 +105,9 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleNext = () => {
     if (validateDetails()) {
-      alert('Eligibility check complete!');
-      // Here you would handle the actual submission
+      setStep(7);
     }
   };
 
@@ -126,10 +139,10 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <span className="relative inline-block z-[1]">Breach Claim</span>
             </h1>
           )}
-            {step === 1 && (
-          <p className="mt-4 mb-4 text-left max-[575px]:text-[15px] leading-[16px]">
-            Join <strong><u>10,000+</u></strong> signed claimants who could be eligible for compensation following the Arnold Clark data breach. Use our free online tool to check your eligibility.
-          </p>)}
+          {step === 1 && (
+            <p className="mt-4 mb-4 text-left max-[575px]:text-[15px] leading-[16px]">
+              Join <strong><u>10,000+</u></strong> signed claimants who could be eligible for compensation following the Arnold Clark data breach. Use our free online tool to check your eligibility.
+            </p>)}
 
           {/* Step 1 */}
           {step === 1 && (
@@ -227,8 +240,43 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
             </div>
           )}
 
-          {/* Step 3 (Q2A) */}
+          {/* Step 3: Scotland Dealership Question */}
           {step === 3 && (
+            <div className="button_section mt-6">
+              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
+                Did you purchase, sell or rent the vehicle, or have any servicing/repairs carried out by a dealership in Scotland, or were you an employee in a Scottish dealership?
+              </h2>
+              <div className="flex flex-col gap-[15px] button_row">
+                <div className="button_cal w-full">
+                  <input
+                    className="hidden"
+                    type="radio"
+                    id="radioScotlandYes"
+                    name="scotland_dealership"
+                    value="Yes"
+                    onClick={() => handleAnswer('qScotland', 'Yes')}
+                    required
+                  />
+                  <label htmlFor="radioScotlandYes">Yes</label>
+                </div>
+                <div className="button_cal w-full">
+                  <input
+                    className="hidden"
+                    type="radio"
+                    id="radioScotlandNo"
+                    name="scotland_dealership"
+                    value="No"
+                    onClick={() => handleAnswer('qScotland', 'No')}
+                    required
+                  />
+                  <label htmlFor="radioScotlandNo">No</label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4 (Q2A) */}
+          {step === 4 && (
             <div className="button_section mt-6">
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Have you kept a copy of the email or notification?
@@ -262,8 +310,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
             </div>
           )}
 
-          {/* Step 4 (Q3) */}
-          {step === 4 && (
+          {/* Step 5 (Q3) */}
+          {step === 5 && (
             <div className="button_section mt-6">
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Did you live in Scotland when the purchase was made or when you were employed by Arnold Clark?
@@ -297,8 +345,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
             </div>
           )}
 
-          {/* Step 5 (Q4) */}
-          {step === 5 && (
+          {/* Step 6 (Q4) */}
+          {step === 6 && (
             <div className="button_section mt-6">
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Have you suffered distress and/or anxiety upon learning that your sensitive and confidential information may have been stolen?
@@ -332,103 +380,445 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
             </div>
           )}
 
-          {/* Step 6: Personal Details */}
-          {step === 6 && (
-            <form className="mt-8" onSubmit={handleSubmit} autoComplete="off">
-              <h2 className="text-[32px] font-bold mb-2">Your personal details</h2>
-              <p className="mb-4">Please tell us who is claiming</p>
-              <div className="mb-4">
-                <label className="block font-semibold mb-1">Title</label>
-                <select
-                  name="title"
-                  value={details.title}
-                  onChange={handleDetailsChange}
-                  className="w-full border rounded px-3 py-2"
-                  required
+          {/* Step 7: Personal Details */}
+          {step === 7 && (
+            <PersonalDetailsForm
+              details={details}
+              errors={errors}
+              onDetailsChange={handleDetailsChange}
+              onNext={handleNext}
+            />
+          )}
+          {/* Step 8: Address */}
+          {step === 8 && (
+            <div className="mt-8">
+              <h2 className="text-[32px] font-bold mb-2">Your current address</h2>
+              <p className="mb-4">Enter your postcode below and tap 'Next'</p>
+              <input
+                type="text"
+                placeholder="Postcode"
+                value={postcode}
+                onChange={e => setPostcode(e.target.value)}
+                className="w-full border rounded px-3 py-4 text-[20px]"
+              />
+              {postcode.trim() && (
+                <button
+                  type="button"
+                  className="pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] cursor-pointer bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none"
+                  onClick={() => setStep(9)}
                 >
-                  <option value="">------</option>
-                  {TITLES.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-              <div className="mb-4 flex gap-4">
-                <div className="w-1/2">
-                  <input
-                    type="text"
-                    name="firstName"
-                    placeholder="First Name"
-                    value={details.firstName}
-                    onChange={handleDetailsChange}
-                    className="w-full border rounded px-3 py-2"
-                    required
-                  />
-                  {errors.firstName && <div className="text-red-500 text-sm mt-1">{errors.firstName}</div>}
-                </div>
-                <div className="w-1/2">
-                  <input
-                    type="text"
-                    name="lastName"
-                    placeholder="Last Name"
-                    value={details.lastName}
-                    onChange={handleDetailsChange}
-                    className="w-full border rounded px-3 py-2"
-                    required
-                  />
-                  {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName}</div>}
-                </div>
-              </div>
-              <div className="mb-4">
-                <label className="block font-semibold mb-1">Date of birth</label>
-                <div className="flex gap-2">
-                  <select
-                    name="day"
-                    value={details.day}
-                    onChange={handleDetailsChange}
-                    className="border rounded px-2 py-2"
-                    required
-                  >
-                    <option value="">DD</option>
-                    {[...Array(31)].map((_, i) => (
-                      <option key={i + 1} value={i + 1}>{i + 1}</option>
-                    ))}
-                  </select>
-                  <select
-                    name="month"
-                    value={details.month}
-                    onChange={handleDetailsChange}
-                    className="border rounded px-2 py-2"
-                    required
-                  >
-                    <option value="">MM</option>
-                    {[...Array(12)].map((_, i) => (
-                      <option key={i + 1} value={i + 1}>{i + 1}</option>
-                    ))}
-                  </select>
-                  <select
-                    name="year"
-                    value={details.year}
-                    onChange={handleDetailsChange}
-                    className="border rounded px-2 py-2"
-                    required
-                  >
-                    <option value="">YYYY</option>
-                    {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i - 18).map(y => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
-                  </select>
-                </div>
-                {errors.dob && <div className="text-red-500 text-sm mt-1">{errors.dob}</div>}
-              </div>
-              <div className="mt-6">
+                  Next
+                </button>
+              )}
+            </div>
+          )}
+          {/* Step 9: Contact Information */}
+          {step === 9 && (
+            <div className="mt-8">
+              <h2 className="text-[32px] font-bold mb-2">Your contact information</h2>
+              <h3 className="text-[22px] font-bold mb-2 mt-6">Mobile number</h3>
+              <p className="mb-4">Enter your current mobile number</p>
+              <div className="flex items-center w-full border rounded px-3 py-4 text-[20px] mb-4 bg-white">
+                <span className="mr-2">
+                  <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg" alt="UK" style={{ width: 28, height: 20, display: 'inline-block', verticalAlign: 'middle' }} />
+                </span>
                 <input
-                  type="submit"
-                  value="Check Your Eligibility"
-                  className="pa w-full px-[50px] py-[25px] mt-[10px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] cursor-pointer bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none"
+                  type="tel"
+                  placeholder="Mobile number"
+                  value={contact.mobile}
+                  onChange={e => setContact({ ...contact, mobile: e.target.value })}
+                  className="flex-1 outline-none border-none bg-transparent text-[20px]"
+                  style={{ minWidth: 0 }}
                 />
               </div>
-              <div className="mt-4 text-left text-[16px]">
-                <span className="text-green-600 font-bold">✔</span> Join <strong>10,000+</strong> signed claimants.
+              <input
+                type="email"
+                placeholder="Email address"
+                value={contact.email}
+                onChange={e => setContact({ ...contact, email: e.target.value })}
+                className="w-full border rounded px-3 py-4 text-[20px] mb-4"
+              />
+              <div className="mt-2 text-left text-[16px] flex items-center">
+                <span className="text-green-600 font-bold mr-2" style={{ fontSize: '22px' }}>✔</span>
+                Join <strong>10,000+</strong> signed claimants.
               </div>
-            </form>
+              {(contact.mobile.trim() && contact.email.trim()) && (
+                <button
+                  type="button"
+                  className="pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] cursor-pointer bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none"
+                  onClick={() => setStep(10)}
+                >
+                  Next
+                </button>
+              )}
+            </div>
+          )}
+          {/* Step 10: Your Documents */}
+          {step === 10 && (
+            <div className="mt-8 max-w-3xl mx-auto">
+              <h2 className="text-[32px] font-bold mb-4">Your Documents</h2>
+              <p className="mb-4">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
+              <p className="mb-4 font-bold">
+                Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.
+              </p>
+              <p className="mb-4">
+                In order for them to process your claim please read the below agreement carefully and sign below.<br />
+                <br />
+                THIS FORM CONTAINS CONDITIONAL FEE AGREEMENT AND FORM OF AUTHORITY<br />
+                PLEASE READ THESE CAREFULLY AND ENSURE THAT YOU UNDERSTAND THEM.
+              </p>
+              <a href="#" className="text-blue-600 underline mb-6 inline-block">Guidance notes for this document are highlighted and in blue</a>
+
+              <h3 className="text-[22px] font-bold mt-8 mb-2 text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1">CONDITIONAL FEE AGREEMENT</h3>
+
+              <div className="scrollableBox mb-8 mt-4">
+                <h4 className="text-[22px] font-semibold mb-2 text-gray-700">The Agreement</h4>
+                <p className="mb-2">This agreement is governed by the law of England and Wales.</p>
+                <p className="mb-2">This agreement is a legal contract between you <b>(Mahesh Sharma)</b> and your Solicitor(s). Before agreeing to the terms of this contract, you must read the whole contract carefully.</p>
+                <p className="mb-2">The Agreement must be read in conjunction with your Solicitor's Client Care Letter, their Terms and Conditions, and the Notice of Right to Cancel. If you agree to be bound by the terms of this Agreement, you should sign where indicated at the end of this document. By signing, you also acknowledge receipt of the Notice of Right to Cancel and the Cancellation Notice.</p>
+                <p className="mb-2">The agreement is designed to avoid future disputes and, as such, the parties have agreed in advance on what will happen if the claim does not conclude in a 'Win'.</p>
+                <h5 className="font-bold mt-4 mb-2">THE SCOPE OF THIS AGREEMENT IS AS FOLLOWS</h5>
+                <div className="mb-2">
+                  <b>1. What is covered by this Agreement?</b>
+                  <ul className="list-disc pl-6">
+                    <li>1.1 Your claim for damages for Distress and Loss (including General Damages for Pain, Suffering, and Loss of Amenity, and Damages for Pecuniary Loss) suffered due to, but not exclusively, the misuse of private information by the defendant.</li>
+                    <li>1.2 All work already undertaken on your behalf, including the work required in setting up this agreement.</li>
+                    <li>1.3 Any application for pre-action or non-party disclosure.</li>
+                    <li>1.4 Any appeal you make against an interim order or an assessment of costs.</li>
+                    <li>1.5 ADR (including mediation) relating to the claim.</li>
+                    <li>1.6 Any appeal by the opponent.</li>
+                    <li>1.7 Any proceedings you take to enforce a court judgment, order, or agreement.</li>
+                    <li>1.8 Negotiations about and/or a court assessment of the costs of this claim.</li>
+                  </ul>
+                </div>
+                <div className="mb-2">
+                  <b>2. What is not covered by this Agreement (unless otherwise agreed)?</b>
+                  <ul className="list-disc pl-6">
+                    <li>2.1 Any appeal you make against the final judgment or order.</li>
+                    <li>2.2 Any Part 20 Counterclaim made against you, or a Counterclaim or Defence by way of set-off which still exists after your claim has either been 'Won', 'Lost', or otherwise concluded.</li>
+                    <li>2.3 Any appeal against an interim order made by your opponent.</li>
+                  </ul>
+                </div>
+                <div className="mb-2">
+                  <b>3. Paying Us If You 'Win'</b>
+                  <ul className="list-disc pl-6">
+                    <li>3.1 If your claim is successful, you are liable to pay all our basic charges, our expenses and disbursements, and a success fee, along with the premium for any After The Event (ATE) insurance you take out.</li>
+                    <li>3.2 If your claim is valued above the Small Claims Limit (£1,500 for damages for Pain, Suffering, and Loss of Amenity or £10,000 for other losses), you may be entitled to seek recovery of part or all of our basic charges and expenses from the opponent. The ATE Insurance premium may also be recoverable from the opponent, with any unrecovered amount being paid by you. you subject to clause 8.5 below</li>
+                  </ul>
+                  <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 3<br />We understand that this wording can be confusing and that you might be worried about how much you will have to pay if you win.<br />Legally, we must word our CFA in a specific way, but if your claim is successful, the only thing you will pay is our success fee. We will recover all the other costs, charges and expenses (including insurance premiums) that you are liable for from the Defendant or the insurance provider.<br />Any success fee deducted from your compensation will be capped at 25% and we guarantee that you will receive no less than 75% of any compensation awarded to you as long as you abide by our T&Cs.*</div>
+                </div>
+                <div className="mb-2">
+                  <b>4. Disbursements and Expenses</b>
+                  <ul className="list-disc pl-6">
+                    <li>4.1 If you receive interim damages before the end of your claim, we may require you to pay our disbursements and expenses to date at that point and an amount for future expenses and disbursements;</li>
+                    <li>4.2 If your claim is successful but you are ordered to pay the other side's charges following an Interlocutory Hearing, then such charges will usually only be up to the amount of damages awarded to you. Such charges may be covered by your ATE insurance policy subject to the terms of the policy and your compliance with such terms;</li>
+                    <li>4.3 If, prior to a final Judgment, you are awarded any costs, either by way of a Court Order or Agreement, then we are entitled to payment of those costs together with any success fee on those charges if your claim is successful.</li>
+                  </ul>
+                </div>
+                <div className="mb-2">
+                  <b>5. What Do I Pay If I Lose?</b>
+                  <ul className="list-disc pl-6">
+                    <li>5.1 If you lose you do not have to pay our basic charges provided that you have complied with our Terms and Conditions. However, you may be required to pay our disbursements and expenses, although these may be covered by any ATE insurance policy you have purchased, subject to compliance with the Terms and Conditions of that policy;</li>
+                    <li>5.2 If you lose your claim, you may be responsible for some, or all, of the Opponent's costs. If your claim includes a claim for General Damages for Pain, Suffering and Loss of Amenity, then you may benefit from Qualified One-Way Costs Shifting. In such circumstances, the Court will not usually enforce an Order for Costs against you unless:
+                      <ul className="list-disc pl-6">
+                        <li>5.2.1 The claim is fundamentally dishonest; or</li>
+                        <li>5.2.2 The proceedings have been struck out; or</li>
+                        <li>5.2.3 The claim includes a claim for the financial benefit of another party.</li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 5<br />We know this can be confusing as you are signing up to no-win, no-fee.<br />However, we take out insurance to protect you from these costs, and, as long as you agree to this insurance and abide by our T&Cs* you won't have to pay a penny.</div>
+                </div>
+                <div className="mb-2">
+                  <b>6. Basic Charges</b>
+                  <ul className="list-disc pl-6">
+                    <li>6.1 These are for work undertaken on your claim from your initial instructions until this Agreement ends. These charges are subject to an annual review;</li>
+                    <li>6.2 We calculate these charges based on each hour engaged on your case. Routine letters and telephone calls are charged as units of 1/10 of an hour. Any other type of letters and telephone calls will be charged on a time engaged basis. The hourly rate that we will charge is £400 per hour depending on the actual work being undertaken and the grade of fee earner undertaking the work. This section should be read alongside our Terms and Conditions and the section entitled 'Your Legal Costs and Disbursements'.</li>
+                    <li>6.3 The hourly rate set out in 6.2 assumes that the work being undertaken relates to negotiations and/or proceedings in the County Court that is commensurate with the type of work, in terms of value and complexity akin to that jurisdiction. Occasionally it may be necessary to commence proceedings in the High Court in relation to declaration proceedings or proceedings for Injunctive relief. In these circumstances, and to reflect the increase complexity of these types of proceedings our hourly rate will be charged at £550 per hour.</li>
+                  </ul>
+                </div>
+                <div className="mb-2">
+                  <b>Right to Cancel/Ending This Agreement</b>
+                  <ul className="list-disc pl-6">
+                    <li>7.1 If you have entered into this Agreement in the physical presence of our employees, servant and/or agent, away from our business premises (i.e. in your home), or the Contract was agreed on our business premises immediately after you were personally and individually addressed away from our business premises, in the presence of one of our employees, servants and/or agents, then you have a right to cancel this Agreement within 14 days;</li>
+                    <li>7.2 If you cancel within the 14-day time limit, you will pay nothing. However, if you end the Agreement before you 'Win' or 'Lose', you pay our basic charges and disbursements and expenses. If your case ultimately succeeds, you also pay a success fee. We reserve the right to end this Agreement at any time if either you have failed to comply with the terms of this Agreement, you reject our advice on any potential settlement or the prospects of success of a 'Win' are reduced to below 50%.</li>
+                  </ul>
+                  <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 7<br />From the day you sign, you have the right to cancel this agreement within 14 days. If you cancel within the 14-day time limit, you will pay nothing.<br />However, if you cancel the agreement after this period, you may have to pay our basic charges, disbursements, and expenses. Furthermore, if you eventually win your case, we may also be entitled to a success fee.<br />If we decide to end our agreement because there is a limited chance of success, you won't have to pay us anything provided you have adhered to our T&Cs.*</div>
+                </div>
+                <div className="mb-2">
+                  <b>8. The Success Fee</b>
+                  <ul className="list-disc pl-6">
+                    <li>8.1 The success fee is set at 75% of our basic charges, or 100%, if the claim concludes less than 45 days before Trial, including following a Judgment.</li>
+                    <li>8.2 The success fee percentage reflects the following: -
+                      <ul className="list-disc pl-6">
+                        <li>8.2.1 Our assessment of the risks of your case;</li>
+                        <li>8.2.2 The fact that if you lose, we will not earn anything;</li>
+                        <li>8.2.3 Any other appropriate factors;</li>
+                        <li>8.2.4 Our arrangements with you about paying expenses and disbursements;</li>
+                        <li>8.2.5 The risks of recovering damages from your opponent, which is less than their Part 36 Offer which you have rejected, on our advice;</li>
+                        <li>8.2.6 Unless it is expressly stated in writing, no part of the success fee relates to postponement of payment of fees and expenses.</li>
+                        <li>8.2.7 Additional case specific risks which are set out in any risk assessment.</li>
+                      </ul>
+                    </li>
+                    <li>8.3 The success fee cannot be more than 100% of the basic charges in total.</li>
+                    <li>8.4 As your claim may include a claim for Pain, Suffering and Loss of Amenity, for psychological or psychiatric injury, there is a maximum limit, in percentage terms, on the level of success fee which we can recover from you.</li>
+                    <li>8.5 That maximum limit is 25% of the total amount of any claim for General Damages for Pain, Suffering, Loss of Amenity and Damages for Pecuniary loss. Claims for future Pecuniary Loss are unaffected.</li>
+                    <li>8.6 The maximum limit in percentage terms that is applicable is net of any sums recoverable by the Compensation Recovery Unit of the Department of Work and Pensions. The maximum limit (25%) is inclusive of any VAT charges at the prevailing rate.</li>
+                    <li>8.7 The maximum limit, in percentage terms, only applies to a success fee for proceedings at first instance. The maximum limit would not apply, for example, to any Appeal by your opponent.</li>
+                    <li>8.8 In the event of a dispute regarding the calculation of the success fee, the parties agree for the dispute to be determined by an independent barrister of at least 10 years call, to be appointed by agreement between us. In default of agreement, the barrister be appointed by the President of the Law Society of England and Wales, such barrister to act as expert, not arbitrator and his/her decision shall be binding. The barrister's fees are to be met by the losing party to the dispute.</li>
+                  </ul>
+                  <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 8<br />We calculate our success fee by taking the costs we have incurred and multiplying them by either 75% (if the case concludes before litigation) or 100% after litigation.<br />If we win, you will be liable for our success fee (if we cannot recover this from the other side). However, we guarantee that you will never have to pay more than 25% of any compensation you receive.<br />We will waive any amount that takes your success fee payment above this 25%. So, you will always receive 75% of any compensation awarded as long as you abide by our T&Cs.*</div>
+                </div>
+                <div className="mb-2">
+                  <b>9. Additional Information and Terms</b>
+                  <ul className="list-disc pl-6">
+                    <li>9.1 We add VAT at the prevailing rate that applies to the work when it has been carried out. VAT is added to the total of the basic charges and the success fee (however, the maximum success fee of 25% is inclusive of VAT). Our VAT registration number is 329824182 The parties acknowledge and agree that this Agreement is not a contentious Business Agreement within the meaning of the Solicitors Act 1974;</li>
+                    <li>9.2 It may be that your opponent makes a Part 36 offer, or other formal offer to settle your claim, which you reject on our advice, and your claim for damages goes ahead to Trial where you recover damages that are less than that Offer. If this happens, we will not claim our basic charges and success fee for any work done after the expiry of the Part 36 Offer. However, in these circumstances, you may be ordered to pay your opponent's costs from the expiry of the Part 36 Offer. If your claim includes a claim for General Damages for Pain Suffering and Loss of Amenity, then any payment to your Opponent in costs, will be limited to the amount of damages and interest awarded to you, under the Qualified One-Way Costs Shifting Provisions;</li>
+                    <li>9.3 The description of the Claim, as set out above and within the definitions, is for recognition purposes and does not in any way limit the ambit of this Agreement; the ambit of the retainer shall be taken to include all issues that the parties understood to be the subject of the Claim. The ambit may change from time to time, as the Claim progresses. For example, if an opponent is incorrectly described or if there are additional opponents added, after this Agreement was first made, the ambit of the Agreement will not be in any way limited by the fact that the description of the Claim as set out above, may not be wholly accurate and complete;</li>
+                    <li>9.4 You have the right to apply to the Court for an assessment of our costs, including the success fee.</li>
+                  </ul>
+                </div>
+              </div>
+              {/* FORM OF AUTHORITY SECTION */}
+              <h3 className="text-[22px] font-bold mt-8 mb-2 text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1">FORM OF AUTHORITY</h3>
+              <div className="scrollableBox mb-8 mt-4">
+                <h4 className="text-[20px] font-semibold mb-2 text-gray-700">Instructions to act</h4>
+                <p className="mb-2">I, <b>Mahesh Sharma</b>, instruct KP Law Ltd to act on my behalf in relation to my claim for damages. I can confirm that I have not instructed any other firm of Solicitors to act on my behalf in relation to this incident and I will not do so.</p>
+                <p className="mb-2">I can confirm that I have received and accept KP Law Ltd Terms and Conditions.</p>
+                <p className="mb-2">I confirm that I agree to KP Law Ltd contacting me by post / email and sms for my claim communication and consent to my data being provided as part of my claim to those types of organisation listed on the "GDPR Consent Potential Third Parties document" attached.</p>
+                <h5 className="font-bold mt-4 mb-2">Fees</h5>
+                <p className="mb-2">I understand that a success fee will be deducted from my compensation. This is called a success fee and is limited to 25% of my awarded/agreed damages and will be paid to KP Law Ltd Solicitors only if my claim reaches a successful conclusion.</p>
+                <h5 className="font-bold mt-4 mb-2">Commencing the claim</h5>
+                <p className="mb-2">I hereby authorise KP Law Ltd to commence the claim for damages by either submitting a Disclosure Request or a Letter of Claim to the Defendant.</p>
+                <h5 className="font-bold mt-4 mb-2">Cheque Authority</h5>
+                <p className="mb-2">I hereby consent to any cheques in respect of the damages claim to be made payable to KP Law Ltd and for KP Law Ltd to make any deductions that form part of the agreement with them from my damages.</p>
+                <h5 className="font-bold mt-4 mb-2">Authority to issue Court proceedings/sign statement of truth</h5>
+                <p className="mb-2">I hereby authorise KP Law Ltd to commence Court Proceedings on my behalf in such circumstances and in such a manner as they deem appropriate and, for this purpose, to sign on my behalf any Statement of Truth contained within those Proceedings.</p>
+                <h5 className="font-bold mt-4 mb-2">Authority to perform an Anti-Money Laundering Check</h5>
+                <p className="mb-2">I authorise KP Law Ltd to perform a check on me alongside my provision of sufficient photographic identification and proof of address dated within the last three months. The check is completed via a credit checking service and will leave a soft footprint on my credit history but will not affect my credit rating.</p>
+                <p className="mb-2">I understand that KP Law Ltd are unable to proceed further with my claim without performing Anti-Money Laundering checks.</p>
+                <h5 className="font-bold mt-4 mb-2">PLEASE NOTE:</h5>
+                <p className="mb-2">When a data breach claim gets to Court, any information and evidence must be accessible and provided on request to be scrutinised. This means that claimants must keep all documentation and information that relates to their data breach claim in case it is needed.</p>
+                <p className="mb-2">For this reason, as the action progresses, we may ask you to send us copies of any such relevant documentation so that we can securely hold this on your behalf in case it is required.</p>
+                <h5 className="font-bold mt-4 mb-2">What documents might we need?</h5>
+                <ul className="list-disc pl-6 mb-2">
+                  <li>Evidence that you made a purchase with the Defendant or used the Defendant's services during the data breach period. This could be in a confirmation email, or accessible by logging into your online account (if you have one). You might even be able to trace this on a bank statement</li>
+                  <li>Evidence that you were a customer/client of the Defendant's during the data breach period (e.g. where you didn't make a purchase, but your details were kept on file)</li>
+                  <li>Evidence that your details have been affected (e.g. correspondence from the Defendant confirming that your data was breached)</li>
+                  <li>A booking reference</li>
+                  <li>Evidence of any financial losses, distress, and/or inconvenience you have suffered as a result of the data breach. For example:</li>
+                  <ul className="list-disc pl-10">
+                    <li>Bank statements</li>
+                    <li>Correspondence (letters, emails, etc.) with banks, credit card providers, credit reference agencies, etc.</li>
+                    <li>Credit score reports (with dates of any dips)</li>
+                    <li>Details about medical appointments/prescriptions that relate to this data breach</li>
+                    <li>Evidence of any fraudulent transactions, fraud attempts, alerts, cancelled cards that relate specifically to this data breach</li>
+                    <li>Anything else that may be relevant to support your claim.</li>
+                  </ul>
+                </ul>
+                <p className="mb-2">What if you can't provide this information to KP Law Ltd for safekeeping</p>
+                <p className="mb-2">Where you are unable to send relevant documents to us, please ensure that you preserve them and do not dispose of the originals. This is important as, if you are requested to produce documents, but cannot as they have been disposed of, this could negatively impact your claim.</p>
+                <p>If you have any queries, please contact us</p>
+              </div>
+              <div className="mt-6 mb-8">
+                <div className="font-bold text-[16px] mb-2">By signing your agreement(s) with KP Law Limited, you are confirming that you are happy to engage us in accordance with our terms and conditions.</div>
+                <div className="font-bold text-[16px] mb-2">You also accept and agree to the above assessment of the risk on your case and the success fee that is then calculated from it.</div>
+                <div className="flex items-center gap-6 mt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <span
+                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${
+                        agreementAccepted === "yes"
+                          ? "bg-[#00b779] border-[#00b779]"
+                          : "bg-white border-[#00b779]"
+                      } cursor-pointer`}
+                      onClick={() => {
+                        setAgreementAccepted("yes");
+                        setAgreementError("");
+                      }}
+                      tabIndex={0}
+                      role="checkbox"
+                      aria-checked={agreementAccepted === "yes"}
+                      style={{ marginRight: "6px" }}
+                    >
+                      {agreementAccepted === "yes" && (
+                        <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="18" height="18" fill="none"/>
+                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </span>
+                    <span className="text-[18px]">Yes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <span
+                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${
+                        agreementAccepted === "no"
+                          ? "bg-[#00b779] border-[#00b779]"
+                          : "bg-white border-[#00b779]"
+                      } cursor-pointer`}
+                      onClick={() => {
+                        setAgreementAccepted("no");
+                        setAgreementError("Sorry, we can not process your claim without the signed documents.");
+                      }}
+                      tabIndex={0}
+                      role="checkbox"
+                      aria-checked={agreementAccepted === "no"}
+                      style={{ marginRight: "6px" }}
+                    >
+                      {agreementAccepted === "no" && (
+                        <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="18" height="18" fill="none"/>
+                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </span>
+                    <span className="text-[18px]">No</span>
+                  </label>
+                </div>
+                {agreementError && (
+                  <div className="border border-red-500 bg-white text-red-600 p-2 mb-2 text-[16px] rounded">
+                    {agreementError}
+                  </div>
+                )}
+              </div>
+              {/* SIGNATURE & CONSENT SECTION */}
+              <h3 className="text-[22px] font-bold mt-8 mb-2 text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1">PLEASE SIGN HERE*</h3>
+              <div className="mb-4">
+                <div className="relative w-fit">
+                  <SignatureCanvas
+                    ref={sigPadRef}
+                    penColor="#222"
+                    backgroundColor="#fff"
+                    canvasProps={{ width: 400, height: 200, className: "border rounded bg-white" }}
+                    onEnd={() => {
+                     
+                      if (sigPadRef.current) {
+                        setSignature(sigPadRef.current.getTrimmedCanvas().toDataURL('image/png'));
+                        setSignatureError("");
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-2 right-2 bg-gray-200 px-3 py-1 rounded text-[15px]"
+                    onClick={() => {
+                      if (sigPadRef.current) {
+                        sigPadRef.current.clear();
+                        setSignatureError("Sorry, we can not process your claim without the signed documents.");
+                      }
+              
+                    }}
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+              {signatureError && (
+                <div className="border border-red-500 bg-white text-red-600 p-2 mb-2 text-[16px] rounded">
+                  {signatureError}
+                </div>
+              )}
+              <a href="#" className="text-blue-700 underline mb-4 inline-block">TERMS AND CONDITIONS</a>
+              <div className="font-bold text-[15px] mb-2 mt-6">
+                From time to time KP Law Limited become aware of legal claims and other services being provided by different law firms or other similar types of businesses that may be relevant to you. Please tick the box below if you would like more information about these.
+              </div>
+              <div className="font-bold text-[15px] mb-2 mt-2">
+                I would like you to let me know about legal services provided by other law firms or similar types of business that may be relevant to me. I understand that I can withdraw this consent at any time.
+              </div>
+              <div className="font-bold text-[15px]">
+                For more information on what we do with your data and your rights in relation to your data, please see our <a href="#" className="text-blue-700 underline">Privacy Policy</a>
+              </div>
+              <div className="flex items-center gap-6 mt-2 mb-8">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <span
+                    className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${
+                      marketingConsent === "yes"
+                        ? "bg-[#00b779] border-[#00b779]"
+                        : "bg-white border-[#00b779]"
+                    } cursor-pointer`}
+                    onClick={() => setMarketingConsent("yes")}
+                    tabIndex={0}
+                    role="checkbox"
+                    aria-checked={marketingConsent === "yes"}
+                    style={{ marginRight: "6px" }}
+                  >
+                    {marketingConsent === "yes" && (
+                      <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="18" height="18" fill="none"/>
+                        <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </span>
+                  <span className="text-[18px]">Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <span
+                    className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${
+                      marketingConsent === "no"
+                        ? "bg-[#00b779] border-[#00b779]"
+                        : "bg-white border-[#00b779]"
+                    } cursor-pointer`}
+                    onClick={() => setMarketingConsent("no")}
+                    tabIndex={0}
+                    role="checkbox"
+                    aria-checked={marketingConsent === "no"}
+                    style={{ marginRight: "6px" }}
+                  >
+                    {marketingConsent === "no" && (
+                      <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="18" height="18" fill="none"/>
+                        <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </span>
+                  <span className="text-[18px]">No</span>
+                </label>
+              </div>
+              {marketingError && (
+                <div className="border border-red-500 bg-white text-red-600 p-2 mb-2 text-[16px] rounded">
+                  {marketingError}
+                </div>
+              )}
+              <div className="flex justify-end mt-8">
+                {agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") && (
+                  <button
+                    type="button"
+                    className="bg-[#00b779] hover:bg-[#009e6d] text-white text-[22px] font-bold px-12 py-4 rounded shadow min-w-[180px] transition-all"
+                    onClick={() => {
+                      // Log all answers
+                      console.log({
+                        answers,
+                        details,
+                        postcode,
+                        contact,
+                        agreementAccepted,
+                        marketingConsent,
+                        signature
+                      });
+                      setStep(11);
+                    }}
+                  >
+                    Submit &rarr;
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+          {/* Step 11: Thank You Page */}
+          {step === 11 && (
+            <div className="flex flex-col items-center justify-center min-h-[70vh] text-center py-4">
+              <div className="bg-[#00b779] rounded-full w-14 h-14 flex items-center justify-center mb-6 mt-8">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+              </div>
+              <h2 className="text-[35px] font-bold mb-S">Thank You! We Are Reviewing Your Details.</h2>
+              <p className="mb-4 mt-4 text-[16px]">One of our claim experts will be in touch shortly to discuss your
+                <br />
+                potential claim and how much you could be owed.</p>
+              <h2 className="text-[35px] font-bold mb-2">Have You Joined The PCP Claim?</h2>
+              <p className="mb-2 mt-4 text-[16px]">If you've had a car on finance since 2007, you could be eligible to <br />
+                claim £1,000s in compensation. <a href="https://www.pcpadvisors.co.uk/" className="text-blue-700 underline">Click here to get started.</a></p>
+              <p className="mb-4 mt-4 text-[16px]">You will be directed to the website of The PCP Advisors, a trading style of The Claims Guys Legal. You are able to claim directly yourself for free to your lender, and then the Financial Ombudsman.</p>
+            </div>
           )}
         </div>
       </div>
