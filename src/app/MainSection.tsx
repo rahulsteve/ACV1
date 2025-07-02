@@ -52,30 +52,33 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
   // Handlers for each step
   const handleAnswer = (q: string, value: string) => {
+    debugger;
     let nextStep = step + 1;
     const newAnswers = { ...answers, [q]: value };
 
     // Logic for navigation
     if (q === 'q2') {
       if (value === 'Yes') {
+        console.log('q2', value);
         nextStep = 3; // Go to Scotland step
       } else {
-        nextStep = 3; // Go to Scotland step
+        nextStep = 4;
       }
     }
     if (q === 'qScotland') {
-      nextStep = 4; // Always go to next step (Q2A)
+      nextStep = 5; // Always go to next step (Q2A)
     }
     if (q === 'q2a' && value === 'No') {
       setExited(true); return;
     }
     if (q === 'q2a' && value === 'Yes') {
-      nextStep = 5; // Go to Q3
+      nextStep = 3; // Go to Q3
     }
     if (q === 'q3' && value === 'Yes') {
       setExited(true); return;
     }
     setAnswers(newAnswers);
+    console.log('nextStep', nextStep);
     setStep(nextStep);
   };
 
