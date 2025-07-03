@@ -47,7 +47,7 @@ const PersonalDetailsForm = ({
           name="title"
           value={details.title}
           onChange={onDetailsChange}
-          className="w-full border rounded px-3 py-2"
+          className="w-1/2 border rounded px-3 py-2"
           required
         >
           <option value="">------</option>
@@ -83,12 +83,12 @@ const PersonalDetailsForm = ({
       </div>
       
       <div className="mb-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-row gap-2">
           <select
             name="day"
             value={details.day}
             onChange={onDetailsChange}
-            className="border rounded px-2 py-2"
+            className="border rounded px-2 py-2 w-1/3"
             required
           >
             <option value="">DD</option>
@@ -100,7 +100,7 @@ const PersonalDetailsForm = ({
             name="month"
             value={details.month}
             onChange={onDetailsChange}
-            className="border rounded px-2 py-2"
+            className="border rounded px-2 py-2 w-1/3"
             required
           >
             <option value="">MM</option>
@@ -112,7 +112,7 @@ const PersonalDetailsForm = ({
             name="year"
             value={details.year}
             onChange={onDetailsChange}
-            className="border rounded px-2 py-2"
+            className="border rounded px-2 py-2 w-1/3"
             required
           >
             <option value="">YYYY</option>

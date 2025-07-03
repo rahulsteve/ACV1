@@ -49,6 +49,30 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const [agreementError, setAgreementError] = React.useState("");
   const [signatureError, setSignatureError] = React.useState("");
   const [marketingError] = React.useState("");
+  const [canvasWidth, setCanvasWidth] = React.useState(400);
+  const [canvasHeight, setCanvasHeight] = React.useState(200);
+
+  // Handle responsive canvas sizing
+  React.useEffect(() => {
+    const updateCanvasSize = () => {
+      if (typeof window !== 'undefined') {
+        if (window.innerWidth < 768) {
+          // Mobile: full width minus padding
+          setCanvasWidth(window.innerWidth - 40);
+          setCanvasHeight(200);
+        } else {
+          // Desktop: fixed width
+          setCanvasWidth(400);
+          setCanvasHeight(200);
+        }
+      }
+    };
+
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+    
+    return () => window.removeEventListener('resize', updateCanvasSize);
+  }, []);
 
   // Handlers for each step
   const handleAnswer = (q: string, value: string) => {
@@ -79,6 +103,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     }
     setAnswers(newAnswers);
     console.log('nextStep', nextStep);
+    console.log('initialDetails', details);
     setStep(nextStep);
   };
 
@@ -478,7 +503,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <div className="scrollableBox mb-8 mt-4">
                 <h4 className="text-[22px] font-semibold mb-2 text-gray-700">The Agreement</h4>
                 <p className="mb-2">This agreement is governed by the law of England and Wales.</p>
-                <p className="mb-2">This agreement is a legal contract between you <b>(Mahesh Sharma)</b> and your Solicitor(s). Before agreeing to the terms of this contract, you must read the whole contract carefully.</p>
+                <p className="mb-2">This agreement is a legal contract between you <b>({details.firstName} {details.lastName})</b> and your Solicitor(s). Before agreeing to the terms of this contract, you must read the whole contract carefully.</p>
                 <p className="mb-2">The Agreement must be read in conjunction with your Solicitor&apos;s Client Care Letter, their Terms and Conditions, and the Notice of Right to Cancel. If you agree to be bound by the terms of this Agreement, you should sign where indicated at the end of this document. By signing, you also acknowledge receipt of the Notice of Right to Cancel and the Cancellation Notice.</p>
                 <p className="mb-2">The agreement is designed to avoid future disputes and, as such, the parties have agreed in advance on what will happen if the claim does not conclude in a &apos;Win&apos;.</p>
                 <h5 className="font-bold mt-4 mb-2">THE SCOPE OF THIS AGREEMENT IS AS FOLLOWS</h5>
@@ -587,7 +612,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <h3 className="text-[22px] font-bold mt-8 mb-2 text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1">FORM OF AUTHORITY</h3>
               <div className="scrollableBox mb-8 mt-4">
                 <h4 className="text-[20px] font-semibold mb-2 text-gray-700">Instructions to act</h4>
-                <p className="mb-2">I, <b>Mahesh Sharma</b>, instruct KP Law Ltd to act on my behalf in relation to my claim for damages. I can confirm that I have not instructed any other firm of Solicitors to act on my behalf in relation to this incident and I will not do so.</p>
+                <p className="mb-2">I, <b>{details.firstName} {details.lastName}</b>, instruct KP Law Ltd to act on my behalf in relation to my claim for damages. I can confirm that I have not instructed any other firm of Solicitors to act on my behalf in relation to this incident and I will not do so.</p>
                 <p className="mb-2">I can confirm that I have received and accept KP Law Ltd Terms and Conditions.</p>
                 <p className="mb-2">I confirm that I agree to KP Law Ltd contacting me by post / email and sms for my claim communication and consent to my data being provided as part of my claim to those types of organisation listed on the quot; GDPR Consent Potential Third Parties document &quot; attached.</p>
                 <h5 className="font-bold mt-4 mb-2">Fees</h5>
@@ -693,7 +718,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     ref={sigPadRef}
                     penColor="#222"
                     backgroundColor="#fff"
-                    canvasProps={{ width: 400, height: 200, className: "border rounded bg-white" }}
+                    canvasProps={{ 
+                      width: canvasWidth, 
+                      height: canvasHeight, 
+                      className: "border rounded bg-white w-full max-w-[400px]" 
+                    }}
                     onEnd={() => {
                      
                       if (sigPadRef.current) {
