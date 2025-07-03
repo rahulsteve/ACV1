@@ -57,8 +57,9 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     const updateCanvasSize = () => {
       if (typeof window !== 'undefined') {
         if (window.innerWidth < 768) {
-          // Mobile: full width minus padding
-          setCanvasWidth(window.innerWidth - 40);
+          // Mobile: full width minus padding, but ensure minimum width
+          const mobileWidth = Math.max(window.innerWidth - 40, 300);
+          setCanvasWidth(mobileWidth);
           setCanvasHeight(200);
         } else {
           // Desktop: fixed width
@@ -68,10 +69,22 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
       }
     };
 
+    // Set initial size
     updateCanvasSize();
-    window.addEventListener('resize', updateCanvasSize);
     
-    return () => window.removeEventListener('resize', updateCanvasSize);
+    // Add resize listener with debounce
+    let timeoutId: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateCanvasSize, 100);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   // Handlers for each step
@@ -721,13 +734,28 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     canvasProps={{ 
                       width: canvasWidth, 
                       height: canvasHeight, 
-                      className: "border rounded bg-white w-full max-w-[400px]" 
+                      className: "border rounded bg-white w-full max-w-[400px]",
+                      style: { touchAction: 'none' }
                     }}
                     onEnd={() => {
-                     
-                      if (sigPadRef.current) {
-                        setSignature(sigPadRef.current.getTrimmedCanvas().toDataURL('image/png'));
-                        setSignatureError("");
+                      try {
+                        if (sigPadRef.current && sigPadRef.current.getTrimmedCanvas) {
+                          const canvas = sigPadRef.current.getTrimmedCanvas();
+                          if (canvas && canvas.toDataURL) {
+                            setSignature(canvas.toDataURL('image/png'));
+                            setSignatureError("");
+                          }
+                        }
+                      } catch (error) {
+                        console.error('Error getting signature:', error);
+                        // Fallback: try to get the regular canvas
+                        if (sigPadRef.current && sigPadRef.current.getCanvas) {
+                          const canvas = sigPadRef.current.getCanvas();
+                          if (canvas && canvas.toDataURL) {
+                            setSignature(canvas.toDataURL('image/png'));
+                            setSignatureError("");
+                          }
+                        }
                       }
                     }}
                   />
@@ -735,11 +763,15 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     type="button"
                     className="absolute top-2 right-2 bg-gray-200 px-3 py-1 rounded text-[15px]"
                     onClick={() => {
-                      if (sigPadRef.current) {
-                        sigPadRef.current.clear();
-                        setSignatureError("Sorry, we can not process your claim without the signed documents.");
+                      try {
+                        if (sigPadRef.current && sigPadRef.current.clear) {
+                          sigPadRef.current.clear();
+                          setSignature("");
+                          setSignatureError("Sorry, we can not process your claim without the signed documents.");
+                        }
+                      } catch (error) {
+                        console.error('Error clearing signature:', error);
                       }
-              
                     }}
                   >
                     Clear
