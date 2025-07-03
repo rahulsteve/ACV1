@@ -109,7 +109,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
   const handleNext = () => {
     if (validateDetails()) {
-      setStep(7);
+      setStep(8);
     }
   };
 
