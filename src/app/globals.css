@@ -4,6 +4,7 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+
 Main {
   color: #000
 }
@@ -111,6 +112,22 @@ body {
 
 }
 
+@media only screen and (min-width: 575px) {
+
+  div.eligibility input[type="text"],
+  div.eligibility select {
+    color: #0a0a0a;
+    background: #fff;
+    height: 60px !important;
+    box-shadow: none !important;
+    border: 3px solid #adadad !important;
+    border-radius: 5px !important;
+    outline: none !important;
+    font-size: 17px !important;
+  }
+}
+
+
 @media only screen and (max-width: 575px) {
   .faq-question {
     padding: 14px 11px !important;
@@ -124,6 +141,18 @@ body {
       letter-spacing: -1px;
     }
   }
+
+  div.eligibility input[type="text"],
+  div.eligibility select {
+    color: #0a0a0a;
+    background: #fff;
+    height: 60px !important;
+    box-shadow: none !important;
+    border: 3px solid #adadad !important;
+    border-radius: 5px !important;
+    outline: none !important;
+    font-size: 15px !important;
+  }
 }
 
 .banner_section {
@@ -133,6 +162,7 @@ body {
     letter-spacing: -1px;
   }
 }
+
 .faq-container {
   max-width: 700px;
   margin: 0 auto;
@@ -189,27 +219,17 @@ body {
 }
 
 
-div.eligibility input[type="text"], div.eligibility select {
-  color: #0a0a0a;
-  background: #fff;
-  height: 60px !important;
-  box-shadow: none !important;
-  border: 3px solid #adadad !important;
-  border-radius: 5px !important;
-  outline: none !important;
-  font-size: 17px !important;
-}
 
 .scrollableBox {
-    height: 400px;
-    overflow-y: scroll;
-    padding: 20px 30px;
-    margin: 0 auto;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    border-radius: 10px;
-    border: 2px solid #ddd9d9;
-    scrollbar-width: thin;
-    scrollbar-color: #008f5f #f0f0f0;
+  height: 400px;
+  overflow-y: scroll;
+  padding: 20px 30px;
+  margin: 0 auto;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border-radius: 10px;
+  border: 2px solid #ddd9d9;
+  scrollbar-width: thin;
+  scrollbar-color: #008f5f #f0f0f0;
 }
 
 .node-panel p {
