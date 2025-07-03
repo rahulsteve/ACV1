@@ -433,6 +433,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   style={{ minWidth: 0 }}
                 />
               </div>
+              <h3 className="text-[22px] font-bold mb-2 mt-6">Email adderss</h3>
+              <p className="mb-4">Enter your current email address</p>
               <input
                 type="email"
                 placeholder="Email address"
