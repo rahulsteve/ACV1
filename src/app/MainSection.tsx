@@ -848,7 +848,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 {agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") && (
                   <button
                     type="button"
-                    className="bg-[#00b779] hover:bg-[#009e6d] text-white text-[22px] font-bold px-12 py-4 rounded shadow min-w-[180px] transition-all"
+                    className="bg-[#00b779] hover:bg-[#009e6d] text-white text-[22px] font-bold px-12 py-4 rounded shadow min-w-[180px] transition-all w-full"
                     onClick={() => {
                       // Log all answers
                       console.log({
