@@ -51,6 +51,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const [marketingError] = React.useState("");
   const [canvasWidth, setCanvasWidth] = React.useState(400);
   const [canvasHeight, setCanvasHeight] = React.useState(200);
+  const [numberCheckError, setNumberCheckError] = React.useState('');
+  const [q1Highlight, setQ1Highlight] = React.useState(false);
+
+  // Add highlight class for q1 buttons
+  const highlightClass = q1Highlight ? 'q1-highlight' : '';
 
   // Handle responsive canvas sizing
   React.useEffect(() => {
@@ -71,16 +76,16 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
     // Set initial size
     updateCanvasSize();
-    
+
     // Add resize listener with debounce
     let timeoutId: NodeJS.Timeout;
     const handleResize = () => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(updateCanvasSize, 100);
     };
-    
+
     window.addEventListener('resize', handleResize);
-    
+
     return () => {
       window.removeEventListener('resize', handleResize);
       clearTimeout(timeoutId);
@@ -122,8 +127,20 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
   // Personal details validation
   const handleDetailsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setDetails({ ...details, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' });
+    const newDetails = { ...details, [e.target.name]: e.target.value };
+    setDetails(newDetails);
+    // Re-validate on every change
+    const newErrors = { ...errors };
+    if (e.target.name === 'firstName') {
+      newErrors.firstName = newDetails.firstName.trim().length < 3 ? 'First name must be more than 2 characters.' : '';
+    }
+    if (e.target.name === 'lastName') {
+      newErrors.lastName = newDetails.lastName.trim().length < 3 ? 'Last name must be more than 2 characters.' : '';
+    }
+    if (['day', 'month', 'year'].includes(e.target.name)) {
+      newErrors.dob = !isOver18(newDetails.day, newDetails.month, newDetails.year) ? 'You must be over 18 years old.' : '';
+    }
+    setErrors(newErrors);
   };
 
   const validateDetails = () => {
@@ -154,7 +171,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   // Step content
   if (exited) {
     return (
-      <section>
+      <section className="not-eligible">
         <div className="mx-auto max-w-[700px] container_inner text-center  mt-6">
           <br />
           <br />
@@ -175,7 +192,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
         <div className="mx-auto max-w-[700px] max-[480px]:px-[15px] px-[10px] max-[1199px]:px-[30px] container_inner">
           {step === 1 && (
             <h1 className="pt-12 text-[43px] leading-[0.9] tracking-[-0.03em] md:tracking-[-0.01em] text-[#0a0a0a] pt-[35px] max-[480px]:pt-[30px] max-[480px]:text-[28px] max-[575px]:text-[35px] font-bold text-left">
-              Join The <span className="textBG">Arnold Clark</span> Data<br />
+              Join The <span className="bg-[#fff41f]">Arnold Clark</span> Data<br />
               <span className="relative inline-block z-[1]">Breach Claim</span>
             </h1>
           )}
@@ -200,10 +217,14 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio1"
                     name="have_you_been_notified"
                     value="Yes"
-                    onClick={() => handleAnswer('q1', 'Yes')}
+                    autoComplete="off"
+                    onClick={() => { handleAnswer('q1', 'No'); setQ1Highlight(false); }}
                     required
                   />
-                  <label htmlFor="radio1">Yes</label>
+                  <label
+                    htmlFor="radio1"
+                    className={highlightClass}
+                  >Yes</label>
                 </div>
                 <div className="button_cal w-1/2">
                   <input
@@ -212,17 +233,20 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio2"
                     name="have_you_been_notified"
                     value="No"
-                    onClick={() => handleAnswer('q1', 'No')}
+                    autoComplete="off"
+                    onClick={() => { handleAnswer('q1', 'No'); setQ1Highlight(false); }}
                     required
                   />
-                  <label htmlFor="radio2">No</label>
+                  <label
+                    htmlFor="radio2"
+                    className={highlightClass}
+                  >No</label>
                 </div>
               </div>
 
               <div className="button_box w-full">
-                <input
-                  type="submit"
-                  value="Check Your Eligibility"
+                <button
+                  type="button"
                   className="pa w-full
                              px-[50px] py-[21.5px] mt-[10px]
                              text-white text-[20px] font-bold
@@ -236,20 +260,30 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                              max-[767px]:bg-[right_30%_center]
                              max-[698px]:bg-[right_25%_center]
                              max-[575px]:bg-none"
-                />
-
+                  onClick={() => {
+                    setQ1Highlight(true);
+                  }}
+                >
+                  Check Your Eligibility
+                </button>
                 <button className="next-btn hidden" id="next-btn"></button>
               </div>
             </div>
-
-
           )}
 
           {/* Step 2 */}
           {step === 2 && (
             <div className="button_section mt-6">
+              <button
+                type="button"
+                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(1)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] py-12">
-                Have you purchased, sold, rented, hired, or leased a vehicle, or had any servicing or repairs carried out by Arnold Clark, or been an employee of Arnold Clark between 2012 and 2022?
+                Have you purchased, sold, rented, hired, or leased a vehicle, or<br /> had any servicing or repairs carried out by Arnold Clark, or<br /> been an employee of Arnold Clark between 2012 and 2022?
               </h2>
               <div className="flex flex-col gap-[15px] button_row">
                 <div className="button_cal w-full">
@@ -259,6 +293,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio3"
                     name="have_you_purchased_vehicle"
                     value="Yes"
+                    autoComplete="off"
                     onClick={() => handleAnswer('q2', 'Yes')}
                     required
                   />
@@ -271,6 +306,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio4"
                     name="have_you_purchased_vehicle"
                     value="No"
+                    autoComplete="off"
                     onClick={() => handleAnswer('q2', 'No')}
                     required
                   />
@@ -283,6 +319,14 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 3: Scotland Dealership Question */}
           {step === 3 && (
             <div className="button_section mt-6">
+              <button
+                type="button"
+                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(2)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Did you purchase, sell or rent the vehicle, or have any servicing/repairs carried out by a dealership in Scotland, or were you an employee in a Scottish dealership?
               </h2>
@@ -294,6 +338,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radioScotlandYes"
                     name="scotland_dealership"
                     value="Yes"
+                    autoComplete="off"
                     onClick={() => handleAnswer('qScotland', 'Yes')}
                     required
                   />
@@ -306,6 +351,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radioScotlandNo"
                     name="scotland_dealership"
                     value="No"
+                    autoComplete="off"
                     onClick={() => handleAnswer('qScotland', 'No')}
                     required
                   />
@@ -318,6 +364,14 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 4 (Q2A) */}
           {step === 4 && (
             <div className="button_section mt-6">
+              <button
+                type="button"
+                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(2)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Have you kept a copy of the email or notification?
               </h2>
@@ -329,6 +383,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio5"
                     name="kept_copy_notification"
                     value="Yes"
+                    autoComplete="off"
                     onClick={() => handleAnswer('q2a', 'Yes')}
                     required
                   />
@@ -341,6 +396,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio6"
                     name="kept_copy_notification"
                     value="No"
+                    autoComplete="off"
                     onClick={() => handleAnswer('q2a', 'No')}
                     required
                   />
@@ -353,6 +409,14 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 5 (Q3) */}
           {step === 5 && (
             <div className="button_section mt-6">
+              <button
+                type="button"
+                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(3)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Did you live in Scotland when the purchase was made or when you were employed by Arnold Clark?
               </h2>
@@ -364,6 +428,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio7"
                     name="lived_in_scotland"
                     value="Yes"
+                    autoComplete="off"
                     onClick={() => handleAnswer('q3', 'Yes')}
                     required
                   />
@@ -376,6 +441,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio8"
                     name="lived_in_scotland"
                     value="No"
+                    autoComplete="off"
                     onClick={() => handleAnswer('q3', 'No')}
                     required
                   />
@@ -388,6 +454,14 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 6 (Q4) */}
           {step === 6 && (
             <div className="button_section mt-6">
+              <button
+                type="button"
+                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(5)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Have you suffered distress and/or anxiety upon learning that your sensitive and confidential information may have been stolen?
               </h2>
@@ -399,6 +473,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio9"
                     name="suffered_distress"
                     value="Yes"
+                    autoComplete="off"
                     onClick={() => handleAnswer('q4', 'Yes')}
                     required
                   />
@@ -411,6 +486,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     id="radio10"
                     name="suffered_distress"
                     value="No"
+                    autoComplete="off"
                     onClick={() => handleAnswer('q4', 'No')}
                     required
                   />
@@ -422,16 +498,34 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
           {/* Step 7: Personal Details */}
           {step === 7 && (
-            <PersonalDetailsForm
-              details={details}
-              errors={errors}
-              onDetailsChange={handleDetailsChange}
-              onNext={handleNext}
-            />
+            <div>
+              <button
+                type="button"
+                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(6)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
+              <PersonalDetailsForm
+                details={details}
+                errors={errors}
+                onDetailsChange={handleDetailsChange}
+                onNext={handleNext}
+              />
+            </div>
           )}
           {/* Step 8: Address */}
           {step === 8 && (
             <div className="mt-8">
+              <button
+                type="button"
+                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(7)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
               <h2 className="text-[32px] font-bold mb-2">Your current address</h2>
               <p className="mb-4">Enter your postcode below and tap &apos;Next&apos;</p>
               <input
@@ -440,21 +534,29 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 value={postcode}
                 onChange={e => setPostcode(e.target.value)}
                 className="w-full border rounded px-3 py-4 text-[20px]"
+                autoComplete="off"
               />
-              {postcode.trim() && (
-                <button
-                  type="button"
-                  className="pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] cursor-pointer bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none"
-                  onClick={() => setStep(9)}
-                >
-                  Next
-                </button>
-              )}
+              <button
+                type="button"
+                className={`pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${!postcode.trim() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                onClick={postcode.trim() ? () => setStep(9) : undefined}
+                disabled={!postcode.trim()}
+              >
+                Next
+              </button>
             </div>
           )}
           {/* Step 9: Contact Information */}
           {step === 9 && (
             <div className="mt-8">
+              <button
+                type="button"
+                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(8)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
               <h2 className="text-[32px] font-bold mb-2">Your contact information</h2>
               <h3 className="text-[22px] font-bold mb-2 mt-6">Mobile number</h3>
               <p className="mb-4">Enter your current mobile number</p>
@@ -467,10 +569,34 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   placeholder="Mobile number"
                   value={contact.mobile}
                   onChange={e => setContact({ ...contact, mobile: e.target.value })}
+                  onBlur={async (e) => {
+                    const number = e.target.value;
+                    if (number.trim()) {
+                      try {
+                        const res = await fetch('/api/validate', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ phone: number }),
+                        });
+                        const data = await res.json();
+                        if (data.error) {
+                          setNumberCheckError(data.error);
+                        } else {
+                          setNumberCheckError('');
+                        }
+                      } catch (err) {
+                        setNumberCheckError('Failed to validate number.');
+                      }
+                    }
+                  }}
                   className="flex-1 outline-none border-none bg-transparent text-[20px]"
                   style={{ minWidth: 0 }}
+                  autoComplete="off"
                 />
               </div>
+              {numberCheckError && (
+                <div className="text-red-600 text-sm mt-2">{numberCheckError}</div>
+              )}
               <h3 className="text-[22px] font-bold mb-2 mt-6">Email adderss</h3>
               <p className="mb-4">Enter your current email address</p>
               <input
@@ -479,25 +605,38 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 value={contact.email}
                 onChange={e => setContact({ ...contact, email: e.target.value })}
                 className="w-full border rounded px-3 py-4 text-[20px] mb-4"
+                autoComplete="off"
               />
-              <div className="mt-2 text-left text-[16px] flex items-center">
-                <span className="text-green-600 font-bold mr-2" style={{ fontSize: '22px' }}>✔</span>
-                Join <strong>10,000+</strong> signed claimants.
+              <div className="mt-4 text-left text-[16px]">
+                <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24  " fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="10" stroke="#00b779" strokeWidth="2" fill="#00b779" />
+                    <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              <strong>  Join 10,000+ signed claimants.</strong>
               </div>
-              {(contact.mobile.trim() && contact.email.trim()) && (
-                <button
-                  type="button"
-                  className="pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] cursor-pointer bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none"
-                  onClick={() => setStep(10)}
-                >
-                  Next
-                </button>
-              )}
+              <button
+                type="button"
+                className={`pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim()) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                onClick={(contact.mobile.trim() && contact.email.trim()) ? () => setStep(10) : undefined}
+                disabled={!(contact.mobile.trim() && contact.email.trim())}
+              >
+                Next
+              </button>
             </div>
           )}
           {/* Step 10: Your Documents */}
           {step === 10 && (
             <div className="mt-8 max-w-3xl mx-auto">
+              <button
+                type="button"
+                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(9)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
               <h2 className="text-[32px] font-bold mb-4">Your Documents</h2>
               <p className="mb-4">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
               <p className="mb-4 font-bold">
@@ -585,7 +724,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     <li>7.1 If you have entered into this Agreement in the physical presence of our employees, servant and/or agent, away from our business premises (i.e. in your home), or the Contract was agreed on our business premises immediately after you were personally and individually addressed away from our business premises, in the presence of one of our employees, servants and/or agents, then you have a right to cancel this Agreement within 14 days;</li>
                     <li>7.2 If you cancel within the 14-day time limit, you will pay nothing. However, if you end the Agreement before you &apos;Win&apos; or &apos;Lose&apos;, you pay our basic charges and disbursements and expenses. If your case ultimately succeeds, you also pay a success fee. We reserve the right to end this Agreement at any time if either you have failed to comply with the terms of this Agreement, you reject our advice on any potential settlement or the prospects of success of a &apos;Win&apos; are reduced to below 50%.</li>
                   </ul>
-                    <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 7<br />From the day you sign, you have the right to cancel this agreement within 14 days. If you cancel within the 14-day time limit, you will pay nothing.<br />However, if you cancel the agreement after this period, you may have to pay our basic charges, disbursements, and expenses. Furthermore, if you eventually win your case, we may also be entitled to a success fee.<br />If we decide to end our agreement because there is a limited chance of success, you won&apos;t have to pay us anything provided you have adhered to our T&Cs.*</div>
+                  <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 7<br />From the day you sign, you have the right to cancel this agreement within 14 days. If you cancel within the 14-day time limit, you will pay nothing.<br />However, if you cancel the agreement after this period, you may have to pay our basic charges, disbursements, and expenses. Furthermore, if you eventually win your case, we may also be entitled to a success fee.<br />If we decide to end our agreement because there is a limited chance of success, you won&apos;t have to pay us anything provided you have adhered to our T&Cs.*</div>
                 </div>
                 <div className="mb-2">
                   <b>8. The Success Fee</b>
@@ -668,11 +807,10 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 <div className="flex items-center gap-6 mt-2">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <span
-                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${
-                        agreementAccepted === "yes"
+                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${agreementAccepted === "yes"
                           ? "bg-[#00b779] border-[#00b779]"
                           : "bg-white border-[#00b779]"
-                      } cursor-pointer`}
+                        } cursor-pointer`}
                       onClick={() => {
                         setAgreementAccepted("yes");
                         setAgreementError("");
@@ -684,8 +822,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     >
                       {agreementAccepted === "yes" && (
                         <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect width="18" height="18" fill="none"/>
-                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <rect width="18" height="18" fill="none" />
+                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       )}
                     </span>
@@ -693,11 +831,10 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <span
-                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${
-                        agreementAccepted === "no"
+                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${agreementAccepted === "no"
                           ? "bg-[#00b779] border-[#00b779]"
                           : "bg-white border-[#00b779]"
-                      } cursor-pointer`}
+                        } cursor-pointer`}
                       onClick={() => {
                         setAgreementAccepted("no");
                         setAgreementError("Sorry, we can not process your claim without the signed documents.");
@@ -709,8 +846,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     >
                       {agreementAccepted === "no" && (
                         <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect width="18" height="18" fill="none"/>
-                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <rect width="18" height="18" fill="none" />
+                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       )}
                     </span>
@@ -731,9 +868,9 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     ref={sigPadRef}
                     penColor="#222"
                     backgroundColor="#fff"
-                    canvasProps={{ 
-                      width: canvasWidth, 
-                      height: canvasHeight, 
+                    canvasProps={{
+                      width: canvasWidth,
+                      height: canvasHeight,
                       className: "border rounded bg-white w-full max-w-[400px]",
                       style: { touchAction: 'none' }
                     }}
@@ -796,11 +933,10 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <div className="flex items-center gap-6 mt-2 mb-8">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <span
-                    className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${
-                      marketingConsent === "yes"
+                    className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${marketingConsent === "yes"
                         ? "bg-[#00b779] border-[#00b779]"
                         : "bg-white border-[#00b779]"
-                    } cursor-pointer`}
+                      } cursor-pointer`}
                     onClick={() => setMarketingConsent("yes")}
                     tabIndex={0}
                     role="checkbox"
@@ -809,8 +945,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   >
                     {marketingConsent === "yes" && (
                       <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="18" height="18" fill="none"/>
-                        <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <rect width="18" height="18" fill="none" />
+                        <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     )}
                   </span>
@@ -818,11 +954,10 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <span
-                    className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${
-                      marketingConsent === "no"
+                    className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${marketingConsent === "no"
                         ? "bg-[#00b779] border-[#00b779]"
                         : "bg-white border-[#00b779]"
-                    } cursor-pointer`}
+                      } cursor-pointer`}
                     onClick={() => setMarketingConsent("no")}
                     tabIndex={0}
                     role="checkbox"
@@ -831,8 +966,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   >
                     {marketingConsent === "no" && (
                       <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="18" height="18" fill="none"/>
-                        <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <rect width="18" height="18" fill="none" />
+                        <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     )}
                   </span>
@@ -845,27 +980,26 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 </div>
               )}
               <div className="flex justify-end mt-8">
-                {agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") && (
-                  <button
-                    type="button"
-                    className="bg-[#00b779] hover:bg-[#009e6d] text-white text-[22px] font-bold px-12 py-4 rounded shadow min-w-[180px] transition-all w-full"
-                    onClick={() => {
-                      // Log all answers
-                      console.log({
-                        answers,
-                        details,
-                        postcode,
-                        contact,
-                        agreementAccepted,
-                        marketingConsent,
-                        signature
-                      });
-                      setStep(11);
-                    }}
-                  >
-                    Submit &rarr;
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className={`bg-[#00b779] hover:bg-[#009e6d] text-white text-[22px] font-bold px-12 py-4 rounded shadow min-w-[180px] transition-all w-full ${agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") ? '' : 'opacity-50 cursor-not-allowed'}`}
+                  onClick={agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") ? () => {
+                    // Log all answers
+                    console.log({
+                      answers,
+                      details,
+                      postcode,
+                      contact,
+                      agreementAccepted,
+                      marketingConsent,
+                      signature
+                    });
+                    setStep(11);
+                  } : undefined}
+                  disabled={!(agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no"))}
+                >
+                  Submit &rarr;
+                </button>
               </div>
             </div>
           )}
@@ -876,11 +1010,9 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
               </div>
               <h2 className="text-[35px] font-bold mb-S">Thank You! We Are Reviewing Your Details.</h2>
-              <p className="mb-4 mt-4 text-[16px]">One of our claim experts will be in touch shortly to discuss your
-                <br />
-                potential claim and how much you could be owed.</p>
+              <p className="mb-4 mt-4 text-[16px]">One of our claim experts will be in touch shortly to discuss your potential claim and how much you could be owed.</p>
               <h2 className="text-[35px] font-bold mb-2">Have You Joined The PCP Claim?</h2>
-              <p className="mb-2 mt-4 text-[16px]">If you&apos;ve had a car on finance since 2007, you could be eligible to <br />
+              <p className="mb-2 mt-4 text-[16px]">If you&apos;ve had a car on finance since 2007, you could be eligible to 
                 claim £1,000s in compensation. <a href="https://www.pcpadvisors.co.uk/" className="text-blue-700 underline">Click here to get started.</a></p>
               <p className="mb-4 mt-4 text-[16px]">You will be directed to the website of The PCP Advisors, a trading style of The Claims Guys Legal. You are able to claim directly yourself for free to your lender, and then the Financial Ombudsman.</p>
             </div>

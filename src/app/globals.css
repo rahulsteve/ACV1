@@ -94,9 +94,12 @@ body {
 }
 
 @media only screen and (max-width: 575px) {
-  h2 {
+  h2 :not(.not-eligible) {
     font-size: 25px !important;
   }
+  .not-eligible h2 {
+    font-size: 21px ;
+}
 }
 
 .frequently_inner {
@@ -235,4 +238,9 @@ body {
 .node-panel p {
   margin-top: 15px;
   line-height: 1.5rem;
+}
+
+.q1-highlight {
+  background-color: #ff000069 !important;
+  border: 3px solid #ff0000 !important;
 }

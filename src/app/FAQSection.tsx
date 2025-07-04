@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 const faqs = [
   {
-    question: "How do I know if I&apos;m eligible for compensation?",
+    question: "How do I know if I'm eligible for compensation?",
     answer: (
       <>If you have bought, sold or had a car serviced by Arnold Clark in the last 10 years or worked for Arnold Clark during this period, you could be eligible to make a no win, no fee compensation claim.</>
     ),

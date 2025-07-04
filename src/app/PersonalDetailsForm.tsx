@@ -83,6 +83,7 @@ const PersonalDetailsForm = ({
       </div>
       
       <div className="mb-4">
+      <label className="block font-semibold mb-1">Date of birth</label>
         <div className="flex flex-row gap-2">
           <select
             name="day"
@@ -125,19 +126,24 @@ const PersonalDetailsForm = ({
       </div>
       
       <div className="mt-6">
-        {isFormValid() && (
-          <button
-            type="button"
-            onClick={onNext}
-            className="pa w-full px-[50px] py-[25px] mt-[10px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] cursor-pointer bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none"
-          >
-            Next
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={isFormValid() ? onNext : undefined}
+          disabled={!isFormValid()}
+          className={`pa w-full px-[50px] py-[25px] mt-[10px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${!isFormValid() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+        >
+          Next
+        </button>
       </div>
       
       <div className="mt-4 text-left text-[16px]">
-        <span className="text-green-600 font-bold">✔</span> Join <strong>10,000+</strong> signed claimants.
+        <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
+          <svg width="24" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="10" stroke="#00b779" strokeWidth="2" fill="#00b779"/>
+            <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </span>
+        <strong>  Join 10,000+ signed claimants.</strong>
       </div>
     </div>
   );
