@@ -51,7 +51,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const [marketingError] = React.useState("");
   const [canvasWidth, setCanvasWidth] = React.useState(400);
   const [canvasHeight, setCanvasHeight] = React.useState(200);
-  const [numberCheckError, setNumberCheckError] = React.useState('');
+  const [numberCheckError] = React.useState('');
   const [q1Highlight, setQ1Highlight] = React.useState(false);
 
   // Add highlight class for q1 buttons
@@ -569,26 +569,27 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   placeholder="Mobile number"
                   value={contact.mobile}
                   onChange={e => setContact({ ...contact, mobile: e.target.value })}
-                  onBlur={async (e) => {
-                    const number = e.target.value;
-                    if (number.trim()) {
-                      try {
-                        const res = await fetch('/api/validate', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ phone: number }),
-                        });
-                        const data = await res.json();
-                        if (data.error) {
-                          setNumberCheckError(data.error);
-                        } else {
-                          setNumberCheckError('');
-                        }
-                      } catch (err) {
-                        setNumberCheckError('Failed to validate number.');
-                      }
-                    }
-                  }}
+                  // onBlur={async (e) => {
+                  //   const number = e.target.value;
+                  //   if (number.trim()) {
+                  //     try {
+                  //       const res = await fetch('/api/validate', {
+                  //         method: 'POST',
+                  //         headers: { 'Content-Type': 'application/json' },
+                  //         body: JSON.stringify({ phone: number }),
+                  //       });
+                  //       const data = await res.json();
+                  //       if (data.error) {
+                  //         setNumberCheckError(data.error);
+                  //       } else {
+                  //         setNumberCheckError('');
+                  //       }
+                  //     } catch (err) {
+                  //       setNumberCheckError('Failed to validate number.');
+                  //       console.log(err)
+                  //     }
+                  //   }
+                  // }}
                   className="flex-1 outline-none border-none bg-transparent text-[20px]"
                   style={{ minWidth: 0 }}
                   autoComplete="off"
