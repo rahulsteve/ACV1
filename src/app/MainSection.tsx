@@ -274,16 +274,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 2 */}
           {step === 2 && (
             <div className="button_section mt-6">
-              <button
-                type="button"
-                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(1)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
-              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] py-12">
-                Have you purchased, sold, rented, hired, or leased a vehicle, or<br /> had any servicing or repairs carried out by Arnold Clark, or<br /> been an employee of Arnold Clark between 2012 and 2022?
+              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
+                Have you purchased, sold, rented, hired, or<br /> had any servicing or repairs carried out by Arnold Clark, or<br /> been an employee of Arnold Clark between 2012 and 2022?
               </h2>
               <div className="flex flex-col gap-[15px] button_row">
                 <div className="button_cal w-full">
@@ -313,20 +305,20 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   <label htmlFor="radio4">No</label>
                 </div>
               </div>
+              <button
+                type="button"
+                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(1)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
             </div>
           )}
 
           {/* Step 3: Scotland Dealership Question */}
           {step === 3 && (
             <div className="button_section mt-6">
-              <button
-                type="button"
-                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(2)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Did you purchase, sell or rent the vehicle, or have any servicing/repairs carried out by a dealership in Scotland, or were you an employee in a Scottish dealership?
               </h2>
@@ -358,20 +350,20 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   <label htmlFor="radioScotlandNo">No</label>
                 </div>
               </div>
+              <button
+                type="button"
+                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(2)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
             </div>
           )}
 
           {/* Step 4 (Q2A) */}
           {step === 4 && (
             <div className="button_section mt-6">
-              <button
-                type="button"
-                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(2)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Have you kept a copy of the email or notification?
               </h2>
@@ -403,20 +395,20 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   <label htmlFor="radio6">No</label>
                 </div>
               </div>
+              <button
+                type="button"
+                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(2)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
             </div>
           )}
 
           {/* Step 5 (Q3) */}
           {step === 5 && (
             <div className="button_section mt-6">
-              <button
-                type="button"
-                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(3)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Did you live in Scotland when the purchase was made or when you were employed by Arnold Clark?
               </h2>
@@ -448,20 +440,20 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   <label htmlFor="radio8">No</label>
                 </div>
               </div>
+              <button
+                type="button"
+                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(3)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
             </div>
           )}
 
           {/* Step 6 (Q4) */}
           {step === 6 && (
             <div className="button_section mt-6">
-              <button
-                type="button"
-                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(5)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Have you suffered distress and/or anxiety upon learning that your sensitive and confidential information may have been stolen?
               </h2>
@@ -493,39 +485,39 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   <label htmlFor="radio10">No</label>
                 </div>
               </div>
+              <button
+                type="button"
+                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(5)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
             </div>
           )}
 
           {/* Step 7: Personal Details */}
           {step === 7 && (
             <div>
-              <button
-                type="button"
-                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(6)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
               <PersonalDetailsForm
                 details={details}
                 errors={errors}
                 onDetailsChange={handleDetailsChange}
                 onNext={handleNext}
               />
+              <button
+                type="button"
+                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(6)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
             </div>
           )}
           {/* Step 8: Address */}
           {step === 8 && (
             <div className="mt-8">
-              <button
-                type="button"
-                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(7)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
               <h2 className="text-[32px] font-bold mb-2">Your current address</h2>
               <p className="mb-4">Enter your postcode below and tap &apos;Next&apos;</p>
               <input
@@ -544,19 +536,19 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               >
                 Next
               </button>
+              <button
+                type="button"
+                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(7)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
             </div>
           )}
           {/* Step 9: Contact Information */}
           {step === 9 && (
             <div className="mt-8">
-              <button
-                type="button"
-                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(8)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
               <h2 className="text-[32px] font-bold mb-2">Your contact information</h2>
               <h3 className="text-[22px] font-bold mb-2 mt-6">Mobile number</h3>
               <p className="mb-4">Enter your current mobile number</p>
@@ -610,12 +602,12 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               />
               <div className="mt-4 text-left text-[16px]">
                 <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24  " fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="11" cy="11" r="10" stroke="#00b779" strokeWidth="2" fill="#00b779" />
                     <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-              <strong>  Join 10,000+ signed claimants.</strong>
+                <strong>Join 10,000+ signed claimants.</strong>
               </div>
               <button
                 type="button"
@@ -625,19 +617,19 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               >
                 Next
               </button>
+              <button
+                type="button"
+                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                onClick={() => setStep(8)}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Back
+              </button>
             </div>
           )}
           {/* Step 10: Your Documents */}
           {step === 10 && (
             <div className="mt-8 max-w-3xl mx-auto">
-              <button
-                type="button"
-                className="mb-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(9)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
               <h2 className="text-[32px] font-bold mb-4">Your Documents</h2>
               <p className="mb-4">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
               <p className="mb-4 font-bold">
