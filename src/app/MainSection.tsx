@@ -51,11 +51,32 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const [marketingError] = React.useState("");
   const [canvasWidth, setCanvasWidth] = React.useState(400);
   const [canvasHeight, setCanvasHeight] = React.useState(200);
-  const [numberCheckError] = React.useState('');
+  //const [numberCheckError] = React.useState('');
   const [q1Highlight, setQ1Highlight] = React.useState(false);
 
   // Add highlight class for q1 buttons
   const highlightClass = q1Highlight ? 'q1-highlight' : '';
+
+  const [numberCheckError, setNumberCheckError] = React.useState<string>(''); 
+  const [numberSuccess, setNumberSuccess ]  = React.useState<string>('');  
+const [mobileValidating, setMobileValidating] = React.useState<boolean>(false); 
+
+
+
+const validatePhoneNumber = async (phone: string) => {
+  const res = await fetch('/api/validate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lookup: phone }),   // << lookup param expected by your route
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to validate');
+  /** Adjust this condition to match DataSoap’s actual response shape */
+  if (!data.valid) throw new Error('Number is not a valid UK mobile');
+  return data;
+};
+
 
   // Handle responsive canvas sizing
   React.useEffect(() => {
@@ -546,60 +567,73 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               </button>
             </div>
           )}
-          {/* Step 9: Contact Information */}
-          {step === 9 && (
-            <div className="mt-8">
-              <h2 className="text-[32px] font-bold mb-2">Your contact information</h2>
-              <h3 className="text-[22px] font-bold mb-2 mt-6">Mobile number</h3>
-              <p className="mb-4">Enter your current mobile number</p>
-              <div className="flex items-center w-full border rounded px-3 py-4 text-[20px] mb-4 bg-white">
-                <span className="mr-2">
-                  <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg" alt="UK" style={{ width: 28, height: 20, display: 'inline-block', verticalAlign: 'middle' }} />
-                </span>
-                <input
-                  type="tel"
-                  placeholder="Mobile number"
-                  value={contact.mobile}
-                  onChange={e => setContact({ ...contact, mobile: e.target.value })}
-                  // onBlur={async (e) => {
-                  //   const number = e.target.value;
-                  //   if (number.trim()) {
-                  //     try {
-                  //       const res = await fetch('/api/validate', {
-                  //         method: 'POST',
-                  //         headers: { 'Content-Type': 'application/json' },
-                  //         body: JSON.stringify({ phone: number }),
-                  //       });
-                  //       const data = await res.json();
-                  //       if (data.error) {
-                  //         setNumberCheckError(data.error);
-                  //       } else {
-                  //         setNumberCheckError('');
-                  //       }
-                  //     } catch (err) {
-                  //       setNumberCheckError('Failed to validate number.');
-                  //       console.log(err)
-                  //     }
-                  //   }
-                  // }}
-                  className="flex-1 outline-none border-none bg-transparent text-[20px]"
-                  style={{ minWidth: 0 }}
-                  autoComplete="off"
-                />
-              </div>
-              {numberCheckError && (
-                <div className="text-red-600 text-sm mt-2">{numberCheckError}</div>
-              )}
-              <h3 className="text-[22px] font-bold mb-2 mt-6">Email adderss</h3>
-              <p className="mb-4">Enter your current email address</p>
-              <input
-                type="email"
-                placeholder="Email address"
-                value={contact.email}
-                onChange={e => setContact({ ...contact, email: e.target.value })}
-                className="w-full border rounded px-3 py-4 text-[20px] mb-4"
-                autoComplete="off"
-              />
+         {step === 9 && (
+  <div className="mt-8">
+    <h2 className="text-[32px] font-bold mb-2">Your contact information</h2>
+
+    {/* --‑‑ Mobile -------------------------------------------------- */}
+    <h3 className="text-[22px] font-bold mb-2 mt-6">Mobile number</h3>
+    <p className="mb-4">Enter your current mobile number</p>
+
+    <div className={`flex items-center w-full border rounded px-3 py-4 text-[20px] mb-2 bg-white
+                     ${numberCheckError ? 'border-red-500' : ''}`}>
+      <span className="mr-2">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg"
+          alt="UK"
+          style={{ width: 28, height: 20 }}
+        />
+      </span>
+
+      <input
+        type="tel"
+        placeholder="Mobile number"
+        value={contact.mobile}
+        onChange={(e) => {
+          setContact({ ...contact, mobile: e.target.value });
+          setNumberCheckError(''); 
+          setNumberSuccess('');
+        }}
+        onBlur={async (e) => {
+          const phone = e.target.value.trim();
+          if (!phone) return;
+          try {
+            setMobileValidating(true);
+            await validatePhoneNumber(phone);
+            setNumberSuccess('Valid Number');
+          } catch (err: any) {
+            setNumberCheckError(err.message);
+          } finally {
+            setMobileValidating(false);
+          }
+        }}
+        className="flex-1 outline-none border-none bg-transparent text-[20px]"
+        style={{ minWidth: 0 }}
+        autoComplete="tel"
+      />
+    </div>
+
+    {mobileValidating && (
+      <div className="text-gray-500 text-sm mb-2">Validating…</div>
+    )}
+    {numberCheckError && (
+      <div className="text-red-600 text-sm mb-2">{numberCheckError}</div>
+    )}
+    {numberSuccess  && (
+      <div className="text-green-600 text-sm mb-2">{numberSuccess}</div>
+    )}
+
+    {/* --‑‑ Email --------------------------------------------------- */}
+    <h3 className="text-[22px] font-bold mb-2 mt-6">Email address</h3>
+    <p className="mb-4">Enter your current email address</p>
+    <input
+      type="email"
+      placeholder="Email address"
+      value={contact.email}
+      onChange={(e) => setContact({ ...contact, email: e.target.value })}
+      className="w-full border rounded px-3 py-4 text-[20px] mb-4"
+      autoComplete="email"
+    />
               <div className="mt-4 text-left text-[16px]">
                 <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
