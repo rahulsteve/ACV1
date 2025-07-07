@@ -73,6 +73,16 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   // Add highlight class for q1 buttons
   const highlightClass = q1Highlight ? 'q1-highlight' : '';
 
+  // Ref for Next button in address step
+  const nextButtonRef = React.useRef<HTMLButtonElement>(null);
+  // State to track if address has been retrieved
+  const [addressRetrieved, setAddressRetrieved] = React.useState(false);
+  // Ref for contact info header
+  const contactHeaderRef = React.useRef<HTMLHeadingElement>(null);
+  // Refs for contact info fields
+  const mobileRef = React.useRef<HTMLInputElement>(null);
+  const emailRef = React.useRef<HTMLInputElement>(null);
+
   const [numberCheckError, setNumberCheckError] = React.useState<string>(''); 
   const [numberSuccess, setNumberSuccess ]  = React.useState<string>('');  
   const [mobileValidating, setMobileValidating] = React.useState<boolean>(false);
@@ -156,6 +166,10 @@ const retrieveAddress = async (id: string) => {
       setPostcode(data[0].summaryline || '');
       setPostcodeSuggestions([]);
       setShowSuggestions(false);
+      setAddressRetrieved(true); // Enable the button
+      setTimeout(() => {
+        nextButtonRef.current?.focus();
+      }, 0);
     }
   } catch (error) {
     console.error('Error retrieving address:', error);
@@ -217,19 +231,13 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     if (q === 'q2') {
       if (value === 'Yes') {
         console.log('q2', value);
-        nextStep = 3; // Go to Scotland step
+        nextStep = 5; // Go to Q2A
       } else {
         nextStep = 4;
       }
     }
-    if (q === 'qScotland') {
-      nextStep = 5; // Always go to next step (Q2A)
-    }
     if (q === 'q2a' && value === 'No') {
       setExited(true); return;
-    }
-    if (q === 'q2a' && value === 'Yes') {
-      nextStep = 3; // Go to Q3
     }
     if (q === 'q3' && value === 'Yes') {
       setExited(true); return;
@@ -293,13 +301,21 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           <p>
             <img height={78} width={78} src="https://static.leadshook.io/upload/cavis-limited/close%20(2)-1742908286780.png" alt="" className="mx-auto mb-4" />
           </p>
-          <h2 className="text-[35px] font-bold leading-[1.2] tracking-[-0.7px] pt-[10px] mb-4">Sorry! Based on the answers provided <br />
+          <h2 className="text-[35px] font-bold leading-[1.2] tracking-[-0.7px] pt-[10px] mb-4">Sorry! Based on the answers provided 
             you do not qualify for this claim.
           </h2>
         </div>
       </section>
     );
   }
+
+  React.useEffect(() => {
+    if (step === 9) {
+      setTimeout(() => {
+        contactHeaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  }, [step]);
 
   return (
     <section>
@@ -431,51 +447,6 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
             </div>
           )}
 
-          {/* Step 3: Scotland Dealership Question */}
-          {step === 3 && (
-            <div className="button_section mt-6">
-              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
-                Did you purchase, sell or rent the vehicle, or have any servicing/repairs carried out by a dealership in Scotland, or were you an employee in a Scottish dealership?
-              </h2>
-              <div className="flex flex-col gap-[15px] button_row">
-                <div className="button_cal w-full">
-                  <input
-                    className="hidden"
-                    type="radio"
-                    id="radioScotlandYes"
-                    name="scotland_dealership"
-                    value="Yes"
-                    autoComplete="off"
-                    onClick={() => handleAnswer('qScotland', 'Yes')}
-                    required
-                  />
-                  <label htmlFor="radioScotlandYes">Yes</label>
-                </div>
-                <div className="button_cal w-full">
-                  <input
-                    className="hidden"
-                    type="radio"
-                    id="radioScotlandNo"
-                    name="scotland_dealership"
-                    value="No"
-                    autoComplete="off"
-                    onClick={() => handleAnswer('qScotland', 'No')}
-                    required
-                  />
-                  <label htmlFor="radioScotlandNo">No</label>
-                </div>
-              </div>
-              <button
-                type="button"
-                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(2)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
-            </div>
-          )}
-
           {/* Step 4 (Q2A) */}
           {step === 4 && (
             <div className="button_section mt-6">
@@ -558,7 +529,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
               <button
                 type="button"
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(3)}
+                onClick={() => setStep(4)}
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 Back
@@ -633,21 +604,22 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           {/* Step 8: Address */}
           {step === 8 && (
             <div className="mt-8">
-              <h2 className="text-[32px] font-bold mb-2">Your current address</h2>
-              <p className="mb-4">Enter your postcode or address below and tap &apos;Next&apos;</p>
+              <h2 className="text-[32px] max-[575px]:text-[21px] font-bold mb-4">Your current address</h2>
+              <p className="mb-4">Enter your postcode below and tap 'Submit'</p>
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Postcode or address"
+                  placeholder="Postcode"
                   value={postcode}
                   onChange={e => {
                     setPostcode(e.target.value);
+                    setAddressRetrieved(false); // Disable the button until a new address is retrieved
                     debouncedSearch(e.target.value);
                   }}
                   onFocus={() => {
                     if (postcode.length >= 3 && postcodeSuggestions.length > 0) setShowSuggestions(true);
                   }}
-                  className="w-full border rounded px-3 py-4 text-[20px]"
+                  className="w-full border rounded px-3 py-4 text-[20px]  max-[575px]:text-[15px]"
                   autoComplete="off"
                 />
                 {isLoadingPostcodes && (
@@ -669,10 +641,11 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
               </div>
             
               <button
+                ref={nextButtonRef}
                 type="button"
-                className={`pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${!postcode.trim() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                onClick={postcode.trim() ? () => setStep(9) : undefined}
-                disabled={!postcode.trim()}
+                className={`pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${addressRetrieved ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                onClick={addressRetrieved ? () => setStep(9) : undefined}
+                disabled={!addressRetrieved}
               >
                 Next
               </button>
@@ -687,11 +660,11 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
             </div>
           )}
          {step === 9 && (
-  <div className="mt-8">
-    <h2 className="text-[32px] font-bold mb-2">Your contact information</h2>
+  <div className="mt-8 contact-info">
+    <h1 ref={contactHeaderRef} className="text-[32px] max-[575px]:text-[28px] font-bold mb-2">Your contact information</h1>
 
     {/* --‑‑ Mobile -------------------------------------------------- */}
-    <h3 className="text-[22px] font-bold mb-2 mt-6">Mobile number</h3>
+    <h3 className="text-[22px] max-[575px]:text-[1.125rem] font-bold mb-2 mt-6 max-[575px]:mt-2">Mobile number</h3>
     <p className="mb-4">Enter your current mobile number</p>
 
     <div className={`flex items-center w-full border rounded px-3 py-4 text-[20px] mb-2 bg-white
@@ -705,6 +678,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
       </span>
 
       <input
+        ref={mobileRef}
         type="tel"
         placeholder="Mobile number"
         value={contact.mobile}
@@ -712,6 +686,9 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           setContact({ ...contact, mobile: e.target.value });
           setNumberCheckError(''); 
           setNumberSuccess('');
+        }}
+        onFocus={() => {
+          mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }}
         onBlur={async (e) => {
           const phone = e.target.value.trim();
@@ -730,7 +707,17 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
             setMobileValidating(false);
           }
         }}
-        className="flex-1 outline-none border-none bg-transparent text-[20px]"
+          onKeyDown={(e) => {
+        if (
+          e.key === 'Enter' &&
+          contact.mobile.trim() &&
+          contact.email.trim() &&
+          validateEmail(contact.email.trim())
+        ) {
+          setStep(10);
+        }
+      }}
+        className="flex-1 outline-none border-none bg-transparent text-[20px] max-[575px]:text[14px]"
         style={{ minWidth: 0 }}
         autoComplete="tel"
       />
@@ -747,9 +734,10 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     )}
 
     {/* --‑‑ Email --------------------------------------------------- */}
-    <h3 className="text-[22px] font-bold mb-2 mt-6">Email address</h3>
-    <p className="mb-4">Enter your current email address</p>
+    <h3 className="text-[32px] max-[575px]:text-[1.125rem] font-bold mb-2 mt-6">Email address</h3>
+    <p className="mb-4 ">Enter your current email address</p>
     <input
+      ref={emailRef}
       type="email"
       placeholder="Email address"
       value={contact.email}
@@ -757,6 +745,9 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
         setContact({ ...contact, email: e.target.value });
         setEmailError('');
         setEmailSuccess('');
+      }}
+      onFocus={() => {
+        emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }}
       onBlur={(e) => {
         const email = e.target.value.trim();
@@ -767,6 +758,16 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
         } else {
           setEmailError('Please enter a valid email address');
           setEmailSuccess('');
+        }
+      }}
+      onKeyDown={(e) => {
+        if (
+          e.key === 'Enter' &&
+          contact.mobile.trim() &&
+          contact.email.trim() &&
+          validateEmail(contact.email.trim())
+        ) {
+          setStep(10);
         }
       }}
       className={`w-full border rounded px-3 py-4 text-[20px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
@@ -1091,7 +1092,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                   {signatureError}
                 </div>
               )}
-              <a href="#" className="text-blue-700 underline mb-4 inline-block">TERMS AND CONDITIONS</a>
+              <a href="https://www.kpl-databreach.co.uk/terms-conditions-old/" className="text-blue-700 underline mb-4 inline-block">TERMS AND CONDITIONS</a>
               <div className="font-bold text-[15px] mb-2 mt-6">
                 From time to time KP Law Limited become aware of legal claims and other services being provided by different law firms or other similar types of businesses that may be relevant to you. Please tick the box below if you would like more information about these.
               </div>
@@ -1099,7 +1100,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 I would like you to let me know about legal services provided by other law firms or similar types of business that may be relevant to me. I understand that I can withdraw this consent at any time.
               </div>
               <div className="font-bold text-[15px]">
-                For more information on what we do with your data and your rights in relation to your data, please see our <a href="#" className="text-blue-700 underline">Privacy Policy</a>
+                For more information on what we do with your data and your rights in relation to your data, please see our <a href="https://www.kpl-databreach.co.uk/privacy-policy/" className="text-blue-700 underline">Privacy Policy</a>
               </div>
               <div className="flex items-center gap-6 mt-2 mb-8">
                 <label className="flex items-center gap-2 cursor-pointer">

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 const TITLES = ["Mr", "Mrs", "Miss", "Ms", "Dr", "Prof"];
 
@@ -25,6 +25,16 @@ const PersonalDetailsForm = ({
   onDetailsChange, 
   onNext 
 }: PersonalDetailsFormProps) => {
+  const headerRef = useRef<HTMLHeadingElement>(null);
+  const firstNameRef = useRef<HTMLInputElement>(null);
+  const surnameRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      headerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }, []);
+
   // Check if form is valid
   const isFormValid = () => {
     return details.title && 
@@ -37,12 +47,12 @@ const PersonalDetailsForm = ({
   };
 
   return (
-    <div className="mt-8 eligibility">
-      <h2 className="text-[32px] font-bold mb-2">Your personal details</h2>
+    <div className="mt-8 personal-Details eligibility">
+      <h1 ref={headerRef} className="text-[45px] max-[575px]:text-[28px] font-bold mb-2">Your personal details</h1>
       <p className="mb-4">Please tell us who is claiming</p>
       
       <div className="mb-4">
-        <label className="block font-semibold mb-1">Title</label>
+        <h3 className="block font-semibold mb-1">Title</h3>
         <select
           name="title"
           value={details.title}
@@ -56,34 +66,43 @@ const PersonalDetailsForm = ({
       </div>
       
       <div className="mb-4 flex flex-col gap-4">
-        <div className="w-full">
+        <div className="form-group mb-4">
+          <label htmlFor="firstName" className="block mb-1 font-semibold">First Name</label>
           <input
+            ref={firstNameRef}
             type="text"
+            id="firstName"
             name="firstName"
             placeholder="First Name"
             value={details.firstName}
             onChange={onDetailsChange}
-            className="w-full border rounded px-3 py-2"
-            required
+            className={`w-full border rounded px-3 py-4 text-[20px] max-[575px]:text-[15px] ${errors.firstName ? 'border-red-500' : ''}`}
+            autoComplete="given-name"
           />
-          {errors.firstName && <div className="text-red-500 text-sm mt-1">{errors.firstName}</div>}
+          {errors.firstName && <div className="text-red-600 text-sm mt-1">{errors.firstName}</div>}
         </div>
-        <div className="w-full">
+        <div className="form-group mb-4">
+          <label htmlFor="lastName" className="block mb-1 font-semibold">Surname</label>
           <input
+            ref={surnameRef}
             type="text"
+            id="lastName"
             name="lastName"
             placeholder="Last Name"
             value={details.lastName}
             onChange={onDetailsChange}
-            className="w-full border rounded px-3 py-2"
-            required
+            onFocus={() => {
+              firstNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            className={`w-full border rounded px-3 py-4 text-[20px] max-[575px]:text-[15px] ${errors.lastName ? 'border-red-500' : ''}`}
+            autoComplete="family-name"
           />
-          {errors.lastName && <div className="text-red-500 text-sm mt-1">{errors.lastName}</div>}
+          {errors.lastName && <div className="text-red-600 text-sm mt-1">{errors.lastName}</div>}
         </div>
       </div>
       
       <div className="mb-4">
-      <label className="block font-semibold mb-1">Date of birth</label>
+      <h3 className="block font-semibold mb-1">Date of birth</h3>
         <div className="flex flex-row gap-2">
           <select
             name="day"
@@ -105,8 +124,21 @@ const PersonalDetailsForm = ({
             required
           >
             <option value="">MM</option>
-            {[...Array(12)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>{i + 1}</option>
+            {[
+              { value: '1', label: 'Jan' },
+              { value: '2', label: 'Feb' },
+              { value: '3', label: 'Mar' },
+              { value: '4', label: 'Apr' },
+              { value: '5', label: 'May' },
+              { value: '6', label: 'Jun' },
+              { value: '7', label: 'Jul' },
+              { value: '8', label: 'Aug' },
+              { value: '9', label: 'Sept' },
+              { value: '10', label: 'Oct' },
+              { value: '11', label: 'Nov' },
+              { value: '12', label: 'Dec' },
+            ].map(m => (
+              <option key={m.value} value={m.value}>{m.label}</option>
             ))}
           </select>
           <select
