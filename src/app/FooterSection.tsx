@@ -1,5 +1,4 @@
 import React from "react";
-import Image from 'next/image';
  
 const FooterSection = () => (
     <div id="footer-editor-preview" className="w-full mt-[50px] md:mt-[50px]  bg-[#f7f7f7]" >
@@ -7,11 +6,9 @@ const FooterSection = () => (
       <div className="max-w-[700px] mx-auto px-4 max-[1199px]:px-[30px]">
         <div>
           <div className="mb-4">
-            <Image
+            <img
               src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/tdba-logo-3-1743052888228.png"
               alt="Logo"
-              width={300}
-              height={80}
               className="w-[300px] max-[767px]:w-[200px]"
             />
           </div>

@@ -3,7 +3,6 @@ import React from "react";
 import './globals.css';
 import PersonalDetailsForm from './PersonalDetailsForm';
 import SignatureCanvas from 'react-signature-canvas';
-import Image from 'next/image';
 
 const initialDetails = {
   title: '',
@@ -270,13 +269,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           <br />
           <br />
           <p>
-            <Image
-              src="https://static.leadshook.io/upload/cavis-limited/close%20(2)-1742908286780.png"
-              alt=""
-              width={78}
-              height={78}
-              className="mx-auto mb-4"
-            />
+            <img height={78} width={78} src="https://static.leadshook.io/upload/cavis-limited/close%20(2)-1742908286780.png" alt="" className="mx-auto mb-4" />
           </p>
           <h2 className="text-[35px] font-bold leading-[1.2] tracking-[-0.7px] pt-[10px] mb-4">Sorry! Based on the answers provided <br />
             you do not qualify for this claim.
@@ -705,12 +698,8 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
             setMobileValidating(true);
             await validatePhoneNumber(phone);
             setNumberSuccess('Valid Number');
-          } catch (err: unknown) {
-            if (err instanceof Error) {
-              setNumberCheckError(err.message);
-            } else {
-              setNumberCheckError('An unknown error occurred');
-            }
+          } catch (err: any) {
+            setNumberCheckError(err.message);
           } finally {
             setMobileValidating(false);
           }

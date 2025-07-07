@@ -1,5 +1,4 @@
 import React from "react";
-import Image from 'next/image';
  
 const InfoBarSection = () => (
   <section className="w-full
@@ -20,7 +19,7 @@ const InfoBarSection = () => (
                   max-[575px]:px-[10px]
                   max-[575px]:pt-[10px]
                   max-[575px]:pb-[20px]">
-            <Image src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/checked-1742549138187.png" alt="" width={20} height={20} className="w-[20px] lg:max-w-full lg:h-auto" />
+            <img src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/checked-1742549138187.png" alt="" className="w-[20px] lg:max-w-full lg:h-auto" />
             <div className="text-black text-[16px] max-[575px]:text-[15px] leading-[1.3] text-center font-normal mt-[5px]">
             <strong>  Eligibility check, takes just a <span className="font-bold underline">few minutes!</span></strong>
             </div>
@@ -34,7 +33,7 @@ const InfoBarSection = () => (
                   max-[575px]:px-[10px]
                   max-[575px]:pt-[10px]
                   max-[575px]:pb-[20px]">
-            <Image src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/checked-1742549138187.png" alt="" width={20} height={20} className="w-[20px] lg:max-w-full lg:h-auto" />
+            <img src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/checked-1742549138187.png" alt="" className="w-[20px] lg:max-w-full lg:h-auto" />
             <div className="text-black text-[16px] max-[575px]:text-[15px] leading-[1.3] text-center font-normal mt-[5px]">
              <strong>
                <span className="font-bold">Free</span> online check
@@ -50,7 +49,7 @@ const InfoBarSection = () => (
                   max-[575px]:px-[10px]
                   max-[575px]:pt-[10px]
                   max-[575px]:pb-[20px]">
-            <Image src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/checked-1742549138187.png" alt="" className="w-[20px] lg:max-w-full lg:h-auto" />
+            <img src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/checked-1742549138187.png" alt=""className="w-[20px] lg:max-w-full lg:h-auto" />
             <div className="text-black text-[16px] max-[575px]:text-[15px] leading-[1.3] text-center font-normal mt-[5px]">
           <strong><span className="font-bold underline">10,000+</span> signed claimants</strong>
             </div>
