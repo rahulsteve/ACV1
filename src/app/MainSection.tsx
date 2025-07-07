@@ -690,6 +690,27 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
         onFocus={() => {
           mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }}
+        onKeyDown={async (e) => {
+          if (e.key === 'Enter') {
+            const phone = contact.mobile.trim();
+            if (!phone) return;
+            try {
+              setMobileValidating(true);
+              await validatePhoneNumber(phone);
+              setNumberSuccess('Valid Number');
+              setTimeout(() => {
+                emailRef.current?.focus();
+              }, 0);
+            } catch (err) {
+              setNumberCheckError(err instanceof Error ? err.message : 'An unknown error occurred');
+              setTimeout(() => {
+                mobileRef.current?.focus();
+              }, 0);
+            } finally {
+              setMobileValidating(false);
+            }
+          }
+        }}
         onBlur={async (e) => {
           const phone = e.target.value.trim();
           if (!phone) return;
@@ -697,6 +718,10 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
             setMobileValidating(true);
             await validatePhoneNumber(phone);
             setNumberSuccess('Valid Number');
+            // Move focus to email if valid
+            setTimeout(() => {
+              emailRef.current?.focus();
+            }, 0);
           } catch (err: unknown) {
             if (err instanceof Error) {
               setNumberCheckError(err.message);
@@ -707,16 +732,6 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
             setMobileValidating(false);
           }
         }}
-          onKeyDown={(e) => {
-        if (
-          e.key === 'Enter' &&
-          contact.mobile.trim() &&
-          contact.email.trim() &&
-          validateEmail(contact.email.trim())
-        ) {
-          setStep(10);
-        }
-      }}
         className="flex-1 outline-none border-none bg-transparent text-[20px] max-[575px]:text[14px]"
         style={{ minWidth: 0 }}
         autoComplete="tel"
@@ -734,7 +749,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     )}
 
     {/* --‑‑ Email --------------------------------------------------- */}
-    <h3 className="text-[32px] max-[575px]:text-[1.125rem] font-bold mb-2 mt-6">Email address</h3>
+    <h3 className="text-[22px] max-[575px]:text-[1.125rem] font-bold mb-2 mt-6">Email address</h3>
     <p className="mb-4 ">Enter your current email address</p>
     <input
       ref={emailRef}
@@ -761,13 +776,22 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
         }
       }}
       onKeyDown={(e) => {
-        if (
-          e.key === 'Enter' &&
-          contact.mobile.trim() &&
-          contact.email.trim() &&
-          validateEmail(contact.email.trim())
-        ) {
-          setStep(10);
+        if (e.key === 'Enter') {
+          const email = contact.email.trim();
+          if (!validateEmail(email)) {
+            setEmailError('Please enter a valid email address');
+            setEmailSuccess('');
+            setTimeout(() => {
+              emailRef.current?.focus();
+            }, 0);
+          } else if (contact.mobile.trim() && email) {
+            setEmailSuccess('Valid email address');
+            setEmailError('');
+            setTimeout(() => {
+              const nextBtn = document.querySelector('.next-btn') as HTMLElement | null;
+              nextBtn?.focus();
+            }, 0);
+          }
         }
       }}
       className={`w-full border rounded px-3 py-4 text-[20px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
