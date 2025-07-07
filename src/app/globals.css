@@ -132,12 +132,17 @@ body {
     font-size: 17px !important;
   }
 }
-
+.next-btn{
+  margin-left: 67%;
+}
 
 @media only screen and (max-width: 575px) {
   .faq-question {
     padding: 14px 11px !important;
     font-size: 15px !important;
+  }
+  .next-btn{
+    margin-left: 0;
   }
 
   .banner_section {
@@ -259,7 +264,4 @@ body {
 .location{
   font-size: 0.9em;
   color: #999999;
-}
-.next-btn{
-  margin-left: 67%;
 }
