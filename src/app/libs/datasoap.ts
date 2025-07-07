@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Content } from "next/font/google";
 
 interface DataSoapOptions {
   lookup: string;
@@ -8,9 +7,7 @@ interface DataSoapOptions {
 export async function validateWithDataSoap({ lookup }: DataSoapOptions) {
 try {
     const token = process.env.DATASOAP_TOKEN;
-    const url =process.env.DATASOAP_URL;
-
-    
+    const url =process.env.DATASOAP_URL??"";
     const response = await axios.post(
     url,
     {

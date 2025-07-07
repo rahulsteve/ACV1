@@ -3,6 +3,7 @@ import React from "react";
 import './globals.css';
 import PersonalDetailsForm from './PersonalDetailsForm';
 import SignatureCanvas from 'react-signature-canvas';
+import Image from 'next/image';
 
 const initialDetails = {
   title: '',
@@ -34,6 +35,22 @@ interface MainSectionProps {
   setExited: (exited: boolean) => void;
 }
 
+interface PostcodeSuggestion {
+  id: string;
+  summaryline: string;
+  locationsummary?: string;
+  type?: string;
+  count?: number;
+  addressline1?: string;
+  addressline2?: string;
+  posttown?: string;
+  county?: string;
+  postcode?: string;
+  label?: string;
+  location?: string;
+  value?: string;
+}
+
 const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => {
   const [answers, setAnswers] = React.useState({
     q1: '', q2: '', q2a: '', q3: '', q4: ''
@@ -59,7 +76,14 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
   const [numberCheckError, setNumberCheckError] = React.useState<string>(''); 
   const [numberSuccess, setNumberSuccess ]  = React.useState<string>('');  
-const [mobileValidating, setMobileValidating] = React.useState<boolean>(false); 
+  const [mobileValidating, setMobileValidating] = React.useState<boolean>(false);
+  const [emailError, setEmailError] = React.useState<string>('');
+  const [emailSuccess, setEmailSuccess] = React.useState<string>('');
+
+  // Postcode autocomplete states
+  const [postcodeSuggestions, setPostcodeSuggestions] = React.useState<PostcodeSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = React.useState(false);
+  const [isLoadingPostcodes, setIsLoadingPostcodes] = React.useState(false); 
 
 
 
@@ -72,11 +96,60 @@ const validatePhoneNumber = async (phone: string) => {
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Failed to validate');
-  /** Adjust this condition to match DataSoap’s actual response shape */
+  /** Adjust this condition to match DataSoap's actual response shape */
   if (!data.valid) throw new Error('Number is not a valid UK mobile');
   return data;
 };
 
+// Email validation function
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// Postcode autocomplete function
+const searchPostcodes = async (query: string,PathFilter:string="") => {
+  if (query.length < 3) {
+    setPostcodeSuggestions([]);
+    setShowSuggestions(false);
+    return;
+  }
+
+  setIsLoadingPostcodes(true);
+  try {
+    const response = await fetch(`/api/postcode-autocomplete?q=${encodeURIComponent(query)}&PF=${encodeURIComponent(PathFilter)}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch postcode suggestions');
+    }
+    const data = await response.json();
+    setPostcodeSuggestions(data);
+    setShowSuggestions(data.length > 0);
+  } catch (error) {
+    console.error('Error fetching postcode suggestions:', error);
+    setPostcodeSuggestions([]);
+    setShowSuggestions(false);
+  } finally {
+    setIsLoadingPostcodes(false);
+  }
+};
+
+// Debounced postcode search
+const debouncedSearch = React.useCallback(
+  React.useMemo(() => {
+    let timeoutId: NodeJS.Timeout;
+    return (query: string) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => searchPostcodes(query), 300);
+    };
+  }, []),
+  []
+);
+
+// Handle postcode selection
+const handlePostcodeSelect = (address: PostcodeSuggestion) => {
+  setPostcode(address.summaryline);
+  searchPostcodes(address.summaryline, address.id);
+};
 
   // Handle responsive canvas sizing
   React.useEffect(() => {
@@ -197,7 +270,13 @@ const validatePhoneNumber = async (phone: string) => {
           <br />
           <br />
           <p>
-            <img height={78} width={78} src="https://static.leadshook.io/upload/cavis-limited/close%20(2)-1742908286780.png" alt="" className="mx-auto mb-4" />
+            <Image
+              src="https://static.leadshook.io/upload/cavis-limited/close%20(2)-1742908286780.png"
+              alt=""
+              width={78}
+              height={78}
+              className="mx-auto mb-4"
+            />
           </p>
           <h2 className="text-[35px] font-bold leading-[1.2] tracking-[-0.7px] pt-[10px] mb-4">Sorry! Based on the answers provided <br />
             you do not qualify for this claim.
@@ -540,15 +619,40 @@ const validatePhoneNumber = async (phone: string) => {
           {step === 8 && (
             <div className="mt-8">
               <h2 className="text-[32px] font-bold mb-2">Your current address</h2>
-              <p className="mb-4">Enter your postcode below and tap &apos;Next&apos;</p>
-              <input
-                type="text"
-                placeholder="Postcode"
-                value={postcode}
-                onChange={e => setPostcode(e.target.value)}
-                className="w-full border rounded px-3 py-4 text-[20px]"
-                autoComplete="off"
-              />
+              <p className="mb-4">Enter your postcode or address below and tap &apos;Next&apos;</p>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Postcode or address"
+                  value={postcode}
+                  onChange={e => {
+                    setPostcode(e.target.value);
+                    debouncedSearch(e.target.value);
+                  }}
+                  onFocus={() => {
+                    if (postcode.length >= 3 && postcodeSuggestions.length > 0) setShowSuggestions(true);
+                  }}
+                  className="w-full border rounded px-3 py-4 text-[20px]"
+                  autoComplete="off"
+                />
+                {isLoadingPostcodes && (
+                  <div className="absolute left-0 right-0 bg-white border border-t-0 rounded-b shadow z-10 px-4 py-2 text-gray-500 text-sm">Loading...</div>
+                )}
+                {showSuggestions && postcodeSuggestions.length > 0 && (
+                  <ul className="absolute left-0 right-0 bg-white border border-t-0 rounded-b shadow z-10 max-h-60 overflow-y-auto">
+                    {postcodeSuggestions.map((suggestion, idx) => (
+                      <li
+                        key={suggestion.id || idx}
+                        className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-[17px]"
+                        onClick={() => handlePostcodeSelect(suggestion)}
+                      >
+                        {suggestion.summaryline || suggestion.postcode}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            
               <button
                 type="button"
                 className={`pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${!postcode.trim() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
@@ -601,8 +705,12 @@ const validatePhoneNumber = async (phone: string) => {
             setMobileValidating(true);
             await validatePhoneNumber(phone);
             setNumberSuccess('Valid Number');
-          } catch (err: any) {
-            setNumberCheckError(err.message);
+          } catch (err: unknown) {
+            if (err instanceof Error) {
+              setNumberCheckError(err.message);
+            } else {
+              setNumberCheckError('An unknown error occurred');
+            }
           } finally {
             setMobileValidating(false);
           }
@@ -630,10 +738,31 @@ const validatePhoneNumber = async (phone: string) => {
       type="email"
       placeholder="Email address"
       value={contact.email}
-      onChange={(e) => setContact({ ...contact, email: e.target.value })}
-      className="w-full border rounded px-3 py-4 text-[20px] mb-4"
+      onChange={(e) => {
+        setContact({ ...contact, email: e.target.value });
+        setEmailError('');
+        setEmailSuccess('');
+      }}
+      onBlur={(e) => {
+        const email = e.target.value.trim();
+        if (!email) return;
+        if (validateEmail(email)) {
+          setEmailSuccess('Valid email address');
+          setEmailError('');
+        } else {
+          setEmailError('Please enter a valid email address');
+          setEmailSuccess('');
+        }
+      }}
+      className={`w-full border rounded px-3 py-4 text-[20px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
       autoComplete="email"
     />
+    {emailError && (
+      <div className="text-red-600 text-sm mb-2">{emailError}</div>
+    )}
+    {emailSuccess && (
+      <div className="text-green-600 text-sm mb-2">{emailSuccess}</div>
+    )}
               <div className="mt-4 text-left text-[16px]">
                 <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -645,9 +774,9 @@ const validatePhoneNumber = async (phone: string) => {
               </div>
               <button
                 type="button"
-                className={`pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim()) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
-                onClick={(contact.mobile.trim() && contact.email.trim()) ? () => setStep(10) : undefined}
-                disabled={!(contact.mobile.trim() && contact.email.trim())}
+                className={`pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                onClick={(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? () => setStep(10) : undefined}
+                disabled={!(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim()))}
               >
                 Next
               </button>
