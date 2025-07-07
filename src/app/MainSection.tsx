@@ -292,6 +292,14 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
   };
 
   // Step content
+  React.useEffect(() => {
+    if (step === 9) {
+      setTimeout(() => {
+        contactHeaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  }, [step]);
+
   if (exited) {
     return (
       <section className="not-eligible">
@@ -308,14 +316,6 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
       </section>
     );
   }
-
-  React.useEffect(() => {
-    if (step === 9) {
-      setTimeout(() => {
-        contactHeaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 50);
-    }
-  }, [step]);
 
   return (
     <section>
@@ -605,7 +605,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           {step === 8 && (
             <div className="mt-8">
               <h2 className="text-[32px] max-[575px]:text-[21px] font-bold mb-4">Your current address</h2>
-              <p className="mb-4">Enter your postcode below and tap 'Submit'</p>
+              <p className="mb-4">Enter your postcode below and tap &apos;Submit&apos;</p>
               <div className="relative">
                 <input
                   type="text"
