@@ -698,8 +698,12 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
             setMobileValidating(true);
             await validatePhoneNumber(phone);
             setNumberSuccess('Valid Number');
-          } catch (err: any) {
-            setNumberCheckError(err.message);
+          } catch (err: unknown) {
+            if (err instanceof Error) {
+              setNumberCheckError(err.message);
+            } else {
+              setNumberCheckError('An unknown error occurred');
+            }
           } finally {
             setMobileValidating(false);
           }
