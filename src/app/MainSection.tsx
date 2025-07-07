@@ -144,10 +144,32 @@ const debouncedSearch = React.useCallback(
   []
 );
 
+// Retrieve address function (moved above handlePostcodeSelect)
+const retrieveAddress = async (id: string) => {
+  try {
+    const response = await fetch(`/api/postcode-retrieve?id=${encodeURIComponent(id)}&query=${encodeURIComponent(postcode)}`);
+    if (!response.ok) {
+      throw new Error('Failed to retrieve address');
+    }
+    const data = await response.json();
+    if (Array.isArray(data) && data.length > 0) {
+      setPostcode(data[0].summaryline || '');
+      setPostcodeSuggestions([]);
+      setShowSuggestions(false);
+    }
+  } catch (error) {
+    console.error('Error retrieving address:', error);
+  }
+};
+
 // Handle postcode selection
 const handlePostcodeSelect = (address: PostcodeSuggestion) => {
-  setPostcode(address.summaryline);
-  searchPostcodes(address.summaryline, address.id);
+  // setPostcode(address.summaryline);
+  if((address?.count??0)>1){
+    searchPostcodes(postcode, address.id); 
+  }else{
+    retrieveAddress(address.id)
+  }
 };
 
   // Handle responsive canvas sizing
