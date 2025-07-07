@@ -633,7 +633,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                         className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-[17px]"
                         onClick={() => handlePostcodeSelect(suggestion)}
                       >
-                        {suggestion.summaryline || suggestion.postcode}
+                        {suggestion.summaryline || suggestion.postcode} <span className="location">{suggestion.locationsummary} ({suggestion.count} address)</span>
                       </li>
                     ))}
                   </ul>
@@ -643,7 +643,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
               <button
                 ref={nextButtonRef}
                 type="button"
-                className={`pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${addressRetrieved ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                className={`next-btn pa max-[575px]:w-full w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${addressRetrieved ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
                 onClick={addressRetrieved ? () => setStep(9) : undefined}
                 disabled={!addressRetrieved}
               >
@@ -790,7 +790,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
               </div>
               <button
                 type="button"
-                className={`pa w-full px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                className={`next-btn pa max-[575px]:w-full ms-auto w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
                 onClick={(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? () => setStep(10) : undefined}
                 disabled={!(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim()))}
               >

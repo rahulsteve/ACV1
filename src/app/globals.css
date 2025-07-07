@@ -256,3 +256,10 @@ body {
 .contact-info input{
   font-size: 20px;
 }
+.location{
+  font-size: 0.9em;
+  color: #999999;
+}
+.next-btn{
+  margin-left: 67%;
+}
