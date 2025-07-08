@@ -156,7 +156,9 @@ body {
   }
 
   div input[type="text"],
-  div select {
+  div input[type="email"],
+  div select ,
+  div.mobile-div {
     color: #0a0a0a;
     background: #fff;
     height: 60px !important;
