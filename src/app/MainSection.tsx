@@ -1105,23 +1105,18 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                     }}
                     onEnd={() => {
                       try {
-                        if (sigPadRef.current && sigPadRef.current.getTrimmedCanvas) {
-                          const canvas = sigPadRef.current.getTrimmedCanvas();
-                          if (canvas && canvas.toDataURL) {
-                            setSignature(canvas.toDataURL('image/png'));
-                            setSignatureError("");
-                          }
-                        }
-                      } catch (error) {
-                        console.error('Error getting signature:', error);
-                        // Fallback: try to get the regular canvas
-                        if (sigPadRef.current && sigPadRef.current.getCanvas) {
+                        if (sigPadRef.current && typeof sigPadRef.current.getCanvas === 'function') {
                           const canvas = sigPadRef.current.getCanvas();
                           if (canvas && canvas.toDataURL) {
                             setSignature(canvas.toDataURL('image/png'));
                             setSignatureError("");
                           }
+                        } else {
+                          setSignatureError("Signature pad is not available.");
                         }
+                      } catch (error) {
+                        console.error('Error getting signature:', error);
+                        setSignatureError("Error capturing signature. Please try again.");
                       }
                     }}
                   />
