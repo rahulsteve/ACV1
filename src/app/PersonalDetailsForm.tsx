@@ -67,7 +67,6 @@ const PersonalDetailsForm = ({
       
       <div className="mb-4 flex flex-col gap-4">
         <div className="form-group mb-4">
-          <label htmlFor="firstName" className="block mb-1 font-semibold">First Name</label>
           <input
             ref={firstNameRef}
             type="text"
@@ -82,7 +81,6 @@ const PersonalDetailsForm = ({
           {errors.firstName && <div className="text-red-600 text-sm mt-1">{errors.firstName}</div>}
         </div>
         <div className="form-group mb-4">
-          <label htmlFor="lastName" className="block mb-1 font-semibold">Surname</label>
           <input
             ref={surnameRef}
             type="text"

@@ -82,6 +82,9 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   // Refs for contact info fields
   const mobileRef = React.useRef<HTMLInputElement>(null);
   const emailRef = React.useRef<HTMLInputElement>(null);
+  // Refs for other step headers
+  const addressHeaderRef = React.useRef<HTMLHeadingElement>(null);
+  const documentsHeaderRef = React.useRef<HTMLHeadingElement>(null);
 
   const [numberCheckError, setNumberCheckError] = React.useState<string>(''); 
   const [numberSuccess, setNumberSuccess ]  = React.useState<string>('');  
@@ -296,6 +299,16 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     if (step === 9) {
       setTimeout(() => {
         contactHeaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+    if (step === 8) {
+      setTimeout(() => {
+        addressHeaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+    if (step === 10) {
+      setTimeout(() => {
+        documentsHeaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
     }
   }, [step]);
@@ -604,8 +617,8 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           {/* Step 8: Address */}
           {step === 8 && (
             <div className="mt-8">
-              <h2 className="text-[32px] max-[575px]:text-[21px] font-bold mb-4">Your current address</h2>
-              <p className="mb-4">Enter your postcode below and tap &apos;Submit&apos;</p>
+              <h2 ref={addressHeaderRef} className="text-[32px] max-[575px]:text-[21px] font-bold mb-4">Your current address</h2>
+              <p className="mb-4">Enter your postcode below and tap &apos;Next&apos;</p>
               <div className="relative">
                 <input
                   type="text"
@@ -803,6 +816,15 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     {emailSuccess && (
       <div className="text-green-600 text-sm mb-2">{emailSuccess}</div>
     )}
+          
+              <button
+                type="button"
+                className={`next-btn pa max-[575px]:w-full ms-auto w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                onClick={(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? () => setStep(10) : undefined}
+                disabled={!(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim()))}
+              >
+                Next
+              </button>
               <div className="mt-4 text-left text-[16px]">
                 <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -812,14 +834,6 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 </span>
                 <strong>Join 10,000+ signed claimants.</strong>
               </div>
-              <button
-                type="button"
-                className={`next-btn pa max-[575px]:w-full ms-auto w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
-                onClick={(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? () => setStep(10) : undefined}
-                disabled={!(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim()))}
-              >
-                Next
-              </button>
               <button
                 type="button"
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
@@ -833,7 +847,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           {/* Step 10: Your Documents */}
           {step === 10 && (
             <div className="mt-8 max-w-3xl mx-auto">
-              <h2 className="text-[32px] font-bold mb-4">Your Documents</h2>
+              <h2 ref={documentsHeaderRef} className="text-[32px] font-bold mb-4">Your Documents</h2>
               <p className="mb-4">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
               <p className="mb-4 font-bold">
                 Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.
@@ -844,7 +858,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 THIS FORM CONTAINS CONDITIONAL FEE AGREEMENT AND FORM OF AUTHORITY<br />
                 PLEASE READ THESE CAREFULLY AND ENSURE THAT YOU UNDERSTAND THEM.
               </p>
-              <a href="#" className="text-blue-600 underline mb-6 inline-block">Guidance notes for this document are highlighted and in blue</a>
+              <a href="#" className="text-blue-600 mb-6 inline-block">Guidance notes for this document are highlighted and in blue</a>
 
               <h3 className="text-[22px] font-bold mt-8 mb-2 text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1">CONDITIONAL FEE AGREEMENT</h3>
 
@@ -1116,7 +1130,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                   {signatureError}
                 </div>
               )}
-              <a href="https://www.kpl-databreach.co.uk/terms-conditions-old/" className="text-blue-700 underline mb-4 inline-block">TERMS AND CONDITIONS</a>
+              <a href="https://www.kpl-databreach.co.uk/terms-conditions-old/" target="_blank" className="text-blue-700 underline mb-4 inline-block">TERMS AND CONDITIONS</a>
               <div className="font-bold text-[15px] mb-2 mt-6">
                 From time to time KP Law Limited become aware of legal claims and other services being provided by different law firms or other similar types of businesses that may be relevant to you. Please tick the box below if you would like more information about these.
               </div>
@@ -1124,7 +1138,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 I would like you to let me know about legal services provided by other law firms or similar types of business that may be relevant to me. I understand that I can withdraw this consent at any time.
               </div>
               <div className="font-bold text-[15px]">
-                For more information on what we do with your data and your rights in relation to your data, please see our <a href="https://www.kpl-databreach.co.uk/privacy-policy/" className="text-blue-700 underline">Privacy Policy</a>
+                For more information on what we do with your data and your rights in relation to your data, please see our <a href="https://www.kpl-databreach.co.uk/privacy-policy/" className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
               </div>
               <div className="flex items-center gap-6 mt-2 mb-8">
                 <label className="flex items-center gap-2 cursor-pointer">
