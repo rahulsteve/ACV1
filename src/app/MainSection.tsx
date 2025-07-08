@@ -389,10 +389,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                              text-white text-[20px] font-bold
                              border-2 border-[#008f5f]
                              rounded-[5px] cursor-pointer
-                             bg-[#00b779] bg-no-repeat
-                             bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')]
-                             bg-[right_32%_center]
-                             bg-[length:20px]
+                             bg-[#00b779]
                              max-[1199px]:bg-[right_30%_center]
                              max-[767px]:bg-[right_30%_center]
                              max-[698px]:bg-[right_25%_center]
@@ -638,7 +635,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
    
                   <button
                     type="button"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#00b779] text-white px-3 py-2 rounded flex items-center justify-center"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#000] text-[20px] font-bold px-[50px] py-[25px] text-white px-3 py-2 rounded flex items-center justify-center"
                     onClick={async () => {
                       await searchPostcodes(postcode);
                       // After search, show suggestions if any
@@ -647,11 +644,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                     tabIndex={0}
                     aria-label="Search Postcode"
                   >
-                    {/* Search icon (magnifying glass) SVG */}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
-                      <circle cx="11" cy="11" r="8" stroke="white" strokeWidth="2" />
-                      <path d="M21 21l-4.35-4.35" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
+                 Search
                   </button>
             
                 {isLoadingPostcodes && (
@@ -1218,7 +1211,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
               <div className="flex justify-end mt-8">
                 <button
                   type="button"
-                  className={`bg-[#00b779] hover:bg-[#009e6d] text-white text-[22px] font-bold px-12 py-4 rounded shadow min-w-[180px] transition-all w-full ${agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") ? '' : 'opacity-50 cursor-not-allowed'}`}
+                  className={`bg-[#00b779] hover:bg-[#009e6d] text-white text-[20px] font-bold px-[50px] py-[25px] rounded shadow min-w-[180px] transition-all w-full ${agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") ? '' : 'opacity-50 cursor-not-allowed'}`}
                   onClick={agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") ? () => {
                     // Log all answers
                     console.log({
