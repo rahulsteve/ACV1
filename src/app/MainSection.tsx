@@ -635,7 +635,9 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
    
                   <button
                     type="button"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#000] text-[14px] text-white px-3 py-2 rounded flex items-center justify-center"
+                    className="absolute right-0
+                     top-1/2
+                     transform -translate-y-1/2 bg-[#000] text-[14px] text-white px-6 py-4  flex items-center justify-center"
                     onClick={async () => {
                       await searchPostcodes(postcode);
                       // After search, show suggestions if any
@@ -826,7 +828,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           }
         }
       }}
-      className={`w-full border rounded px-3 py-4 text-[20px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
+      className={`w-full border rounded px-3 py-4 text-[20px] max-[575px]:text[14px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
       autoComplete="email"
     />
     {emailError && (
