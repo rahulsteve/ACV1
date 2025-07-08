@@ -683,7 +683,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                       }
                     }}
                   >
-                    <option value="">{address?.summaryline??"Select your address..."}</option>
+                    <option disabled value="">{address?.summaryline??"Select your address..."}</option>
                     {postcodeSuggestions.map((suggestion, idx) => (
                       <option key={suggestion.id || idx} value={idx}>
                         {suggestion.summaryline || suggestion.postcode} {suggestion.locationsummary ? `(${suggestion.locationsummary})` : ''}
