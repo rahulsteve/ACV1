@@ -57,6 +57,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const [details, setDetails] = React.useState(initialDetails);
   const [errors, setErrors] = React.useState({ firstName: '', lastName: '', dob: '' });
   const [postcode, setPostcode] = React.useState("");
+  const [address, setAddress] = React.useState<PostcodeSuggestion | null>(null);
   const [contact, setContact] = React.useState({ mobile: '', email: '' });
   const [agreementAccepted, setAgreementAccepted] = React.useState("");
   const [signature, setSignature] = React.useState("");
@@ -97,7 +98,14 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const [showSuggestions, setShowSuggestions] = React.useState(false);
   const [isLoadingPostcodes, setIsLoadingPostcodes] = React.useState(false); 
 
+  const [isMobile, setIsMobile] = React.useState(false);
 
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
 const validatePhoneNumber = async (phone: string) => {
   const res = await fetch('/api/validate', {
@@ -166,9 +174,7 @@ const retrieveAddress = async (id: string) => {
     }
     const data = await response.json();
     if (Array.isArray(data) && data.length > 0) {
-      setPostcode(data[0].summaryline || '');
-      setPostcodeSuggestions([]);
-      setShowSuggestions(false);
+      setAddress(data[0])
       setAddressRetrieved(true); // Enable the button
       setTimeout(() => {
         nextButtonRef.current?.focus();
@@ -181,6 +187,7 @@ const retrieveAddress = async (id: string) => {
 
 // Handle postcode selection
 const handlePostcodeSelect = (address: PostcodeSuggestion) => {
+  debugger
   // setPostcode(address.summaryline);
   if((address?.count??0)>1){
     searchPostcodes(postcode, address.id); 
@@ -627,36 +634,68 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                   onChange={e => {
                     setPostcode(e.target.value);
                     setAddressRetrieved(false); // Disable the button until a new address is retrieved
-                    debouncedSearch(e.target.value);
+                    setShowSuggestions(false); // Always hide suggestions on change
                   }}
                   onFocus={() => {
                     if (postcode.length >= 3 && postcodeSuggestions.length > 0) setShowSuggestions(true);
                   }}
-                  className="w-full border rounded px-3 py-4 text-[20px]  max-[575px]:text-[15px]"
+                  onKeyDown={e => {
+                    if (isMobile && e.key === 'Enter') {
+                      searchPostcodes(postcode);
+                    }
+                  }}
+                  className="w-full border rounded px-3 py-4 text-[20px]  max-[575px]:text-[15px] pr-20"
                   autoComplete="off"
                 />
+                {/* Desktop search button */}
+                {!isMobile && (
+                  <button
+                    type="button"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#00b779] text-white px-3 py-2 rounded flex items-center justify-center"
+                    onClick={async () => {
+                      await searchPostcodes(postcode);
+                      // After search, show suggestions if any
+                      if (postcodeSuggestions.length > 0) setShowSuggestions(true);
+                    }}
+                    tabIndex={0}
+                    aria-label="Search Postcode"
+                  >
+                    {/* Search icon (magnifying glass) SVG */}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+                      <circle cx="11" cy="11" r="8" stroke="white" strokeWidth="2" />
+                      <path d="M21 21l-4.35-4.35" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
                 {isLoadingPostcodes && (
                   <div className="absolute left-0 right-0 bg-white border border-t-0 rounded-b shadow z-10 px-4 py-2 text-gray-500 text-sm">Loading...</div>
                 )}
+                </div>
+                {/* Show select dropdown if suggestions exist */}
                 {showSuggestions && postcodeSuggestions.length > 0 && (
-                  <ul className="absolute left-0 right-0 bg-white border border-t-0 rounded-b shadow z-10 max-h-60 overflow-y-auto">
+                  <select
+                    className="w-full border rounded px-3 py-3 mt-2 text-[17px] bg-white shadow z-10"
+                    value={address?.summaryline}
+                    onChange={e => {
+                      const idx = e.target.value;
+                      if (idx !== "") {
+                        handlePostcodeSelect(postcodeSuggestions[Number(idx)]);
+                      }
+                    }}
+                  >
+                    <option value="">{address?.summaryline??"Select your address..."}</option>
                     {postcodeSuggestions.map((suggestion, idx) => (
-                      <li
-                        key={suggestion.id || idx}
-                        className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-[17px]"
-                        onClick={() => handlePostcodeSelect(suggestion)}
-                      >
-                        {suggestion.summaryline || suggestion.postcode} <span className="location">{suggestion.locationsummary} ({suggestion.count} address)</span>
-                      </li>
+                      <option key={suggestion.id || idx} value={idx}>
+                        {suggestion.summaryline || suggestion.postcode} {suggestion.locationsummary ? `(${suggestion.locationsummary})` : ''}
+                      </option>
                     ))}
-                  </ul>
+                  </select>
                 )}
-              </div>
             
               <button
                 ref={nextButtonRef}
                 type="button"
-                className={`next-btn pa max-[575px]:w-full w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${addressRetrieved ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                className={`next-btn pa max-[575px]:w-full w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] max-[575px]:bg-none transition-opacity ${addressRetrieved ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
                 onClick={addressRetrieved ? () => setStep(9) : undefined}
                 disabled={!addressRetrieved}
               >
@@ -819,7 +858,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           
               <button
                 type="button"
-                className={`next-btn pa max-[575px]:w-full ms-auto w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] bg-no-repeat bg-[url('https://quiz-live.s3.amazonaws.com/upload/cavis-limited/right-arrow-1742548055036.png')] bg-[right_32%_center] bg-[length:20px] max-[1199px]:bg-[right_30%_center] max-[767px]:bg-[right_30%_center] max-[698px]:bg-[right_25%_center] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                className={`next-btn pa max-[575px]:w-full ms-auto w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
                 onClick={(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? () => setStep(10) : undefined}
                 disabled={!(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim()))}
               >
@@ -1199,6 +1238,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                       answers,
                       details,
                       postcode,
+                      address,
                       contact,
                       agreementAccepted,
                       marketingConsent,

@@ -17,10 +17,10 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('q');
     const country = searchParams.get('country') || 'GB';
-    let pathFilter = searchParams.get('PF');
+    let postCode = searchParams.get('PF');
 
-    if (!pathFilter) {
-        pathFilter = ""
+    if (!postCode) {
+        postCode = ""
     }
     if (!query) {
         return NextResponse.json({ error: "Query parameter 'q' is required" }, { status: 400 });
@@ -34,8 +34,7 @@ export async function GET(req: NextRequest) {
     try {
         console.log('API Key length:', apiKey?.length);
         console.log('Query:', query.trim());
-        console.log("pathFilter", pathFilter);
-        const apiurl = `https://ws.postcoder.com/pcw/autocomplete/find?apikey=${apiKey}&Country=${country}&identifier=Autocomplete%20Address%20Finder&query=${encodeURIComponent(query.trim())}&PathFilter=${pathFilter}`
+        const apiurl = `https://ws.postcoder.com/pcw/autocomplete/find?apikey=${apiKey}&Country=${country}&identifier=Autocomplete%20Address%20Finder&query=${encodeURIComponent(query.trim())}&postcode=${encodeURIComponent(query.trim())}`
         const response = await fetch(
             `${apiurl}`,
             {
