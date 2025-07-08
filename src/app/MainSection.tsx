@@ -299,6 +299,13 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     }
   }, [step]);
 
+  // Scroll to top on step 11
+  React.useEffect(() => {
+    if (step === 11) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [step]);
+
   if (exited) {
     return (
       <section className="not-eligible">
