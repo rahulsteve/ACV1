@@ -153,18 +153,6 @@ const searchPostcodes = async (query: string,PathFilter:string="") => {
   }
 };
 
-// Debounced postcode search
-const debouncedSearch = React.useCallback(
-  React.useMemo(() => {
-    let timeoutId: NodeJS.Timeout;
-    return (query: string) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => searchPostcodes(query), 300);
-    };
-  }, []),
-  []
-);
-
 // Retrieve address function (moved above handlePostcodeSelect)
 const retrieveAddress = async (id: string) => {
   try {
