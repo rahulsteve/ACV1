@@ -635,7 +635,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
    
                   <button
                     type="button"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#000] text-[20px] font-bold px-[50px] py-[25px] text-white px-3 py-2 rounded flex items-center justify-center"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#000] text-[14px] text-white px-3 py-2 rounded flex items-center justify-center"
                     onClick={async () => {
                       await searchPostcodes(postcode);
                       // After search, show suggestions if any
