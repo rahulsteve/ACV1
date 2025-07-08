@@ -98,15 +98,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const [showSuggestions, setShowSuggestions] = React.useState(false);
   const [isLoadingPostcodes, setIsLoadingPostcodes] = React.useState(false); 
 
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
 const validatePhoneNumber = async (phone: string) => {
   const res = await fetch('/api/validate', {
     method: 'POST',
@@ -629,7 +620,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                     if (postcode.length >= 3 && postcodeSuggestions.length > 0) setShowSuggestions(true);
                   }}
                   onKeyDown={e => {
-                    if (isMobile && e.key === 'Enter') {
+                    if (e.key === 'Enter') {
                       searchPostcodes(postcode);
                     }
                   }}
@@ -637,7 +628,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                   autoComplete="off"
                 />
                 {/* Desktop search button */}
-                {!isMobile && (
+   
                   <button
                     type="button"
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#00b779] text-white px-3 py-2 rounded flex items-center justify-center"
@@ -655,7 +646,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                       <path d="M21 21l-4.35-4.35" stroke="white" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   </button>
-                )}
+            
                 {isLoadingPostcodes && (
                   <div className="absolute left-0 right-0 bg-white border border-t-0 rounded-b shadow z-10 px-4 py-2 text-gray-500 text-sm">Loading...</div>
                 )}
@@ -1237,7 +1228,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                   } : undefined}
                   disabled={!(agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no"))}
                 >
-                  Submit &rarr;
+                  Submit
                 </button>
               </div>
             </div>
