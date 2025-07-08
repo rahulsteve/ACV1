@@ -120,8 +120,10 @@ body {
 
 @media only screen and (min-width: 575px) {
 
-  div.eligibility input[type="text"],
-  div.eligibility select {
+  div input[type="text"],
+  div input[type="email"],
+  div select ,
+  div.mobile-div{
     color: #0a0a0a;
     background: #fff;
     height: 60px !important;
@@ -153,8 +155,8 @@ body {
     }
   }
 
-  div.eligibility input[type="text"],
-  div.eligibility select {
+  div input[type="text"],
+  div select {
     color: #0a0a0a;
     background: #fff;
     height: 60px !important;

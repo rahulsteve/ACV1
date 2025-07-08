@@ -680,7 +680,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     <h3 className="text-[22px] max-[575px]:text-[1.125rem] font-bold mb-2 mt-6 max-[575px]:mt-2">Mobile number</h3>
     <p className="mb-4">Enter your current mobile number</p>
 
-    <div className={`flex items-center w-full border rounded px-3 py-4 text-[20px] mb-2 bg-white
+    <div className={`flex items-center w-full border rounded mobile-div px-3 py-4 text-[20px] mb-2 bg-white
                      ${numberCheckError ? 'border-red-500' : ''}`}>
       <span className="mr-2">
         <img
@@ -701,7 +701,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           setNumberSuccess('');
         }}
         onFocus={() => {
-          mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          contactHeaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }}
         onKeyDown={async (e) => {
           if (e.key === 'Enter') {
