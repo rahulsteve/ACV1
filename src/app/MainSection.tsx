@@ -621,6 +621,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                   value={postcode}
                   onChange={e => {
                     setPostcode(e.target.value);
+                    setAddress(null);
                     setAddressRetrieved(false); // Disable the button until a new address is retrieved
                     setShowSuggestions(false); // Always hide suggestions on change
                   }}
