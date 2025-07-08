@@ -269,3 +269,7 @@ body {
   font-size: 0.9em;
   color: #999999;
 }
+
+.disabled{
+  background-color: #adadad;
+}
