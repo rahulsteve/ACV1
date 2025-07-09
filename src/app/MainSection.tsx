@@ -698,7 +698,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     <h1 ref={contactHeaderRef} className="text-[45px] max-[575px]:text-[28px] font-bold mb-2">Your contact information</h1>
 
     {/* --‑‑ Mobile -------------------------------------------------- */}
-    <h3 ref={mobileRef} className="text-[22px] max-[575px]:text-[1.125rem] font-bold mb-2 mt-6 max-[575px]:mt-2">Mobile number</h3>
+    <h3 ref={mobileRef} className="text-[23px] font-[700] mb-2 mt-6 max-[575px]:mt-2">Mobile number</h3>
     <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your current mobile number</p>
 
     <div className={`flex items-center w-full border rounded mobile-div px-3 py-4 text-[20px] mb-2 bg-white
@@ -783,7 +783,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     )}
 
     {/* --‑‑ Email --------------------------------------------------- */}
-    <h3 className="text-[22px] max-[575px]:text-[1.125rem] font-bold mb-2 mt-6">Email address</h3>
+    <h3 className="text-[23px] font-[700] mb-2 mt-6">Email address</h3>
     <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your current email address</p>
     <input
       ref={emailRef}

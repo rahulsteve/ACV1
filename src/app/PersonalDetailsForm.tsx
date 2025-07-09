@@ -52,7 +52,7 @@ const PersonalDetailsForm = ({
       <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Please tell us who is claiming</p>
       
       <div className="mb-4">
-        <h3 className="block font-semibold mb-1">Title</h3>
+        <h3 className="text-[23px] font-[700] mb-2">Title</h3>
         <select
           name="title"
           value={details.title}
@@ -104,7 +104,7 @@ const PersonalDetailsForm = ({
       </div>
       
       <div className="mb-4">
-      <h3 className="block font-semibold mb-1">Date of birth</h3>
+      <h3 className="text-[23px] font-[700] mb-2">Date of birth</h3>
         <div className="flex flex-row gap-2">
           <select
             name="day"
