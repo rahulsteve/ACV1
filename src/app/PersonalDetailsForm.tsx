@@ -67,8 +67,6 @@ const PersonalDetailsForm = ({
       
       <div className="mb-4 flex flex-col">
         <div className="form-group mb-4">
-        <label htmlFor="firstName" className="block mb-1 font-semibold">First Name</label>
-
           <input
             ref={firstNameRef}
             type="text"
@@ -77,14 +75,12 @@ const PersonalDetailsForm = ({
             placeholder="First Name"
             value={details.firstName}
             onChange={onDetailsChange}
-            className={`w-full border rounded px-3 py-4 text-[20px] max-[575px]:text-[15px] ${errors.firstName ? 'border-red-500' : ''}`}
+            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.firstName ? 'border-red-500' : ''}`}
             autoComplete="given-name"
           />
           {errors.firstName && <div className="text-red-600 text-sm mt-1">{errors.firstName}</div>}
         </div>
         <div className="form-group mb-4">
-        <label htmlFor="lastName" className="block mb-1 font-semibold">Last Name</label>
-
           <input
             ref={surnameRef}
             type="text"
@@ -96,7 +92,7 @@ const PersonalDetailsForm = ({
             onFocus={() => {
               firstNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }}
-            className={`w-full border rounded px-3 py-4 text-[20px] max-[575px]:text-[15px] ${errors.lastName ? 'border-red-500' : ''}`}
+            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.lastName ? 'border-red-500' : ''}`}
             autoComplete="family-name"
           />
           {errors.lastName && <div className="text-red-600 text-sm mt-1">{errors.lastName}</div>}
@@ -110,7 +106,7 @@ const PersonalDetailsForm = ({
             name="day"
             value={details.day}
             onChange={onDetailsChange}
-            className="border rounded px-2 py-2 w-1/3"
+            className="border rounded px-2 py-2 w-1/3 text-[17px] max-[575px]:text-[14px]"
             required
           >
             <option value="">DD</option>
@@ -122,7 +118,7 @@ const PersonalDetailsForm = ({
             name="month"
             value={details.month}
             onChange={onDetailsChange}
-            className="border rounded px-2 py-2 w-1/3"
+            className="border rounded px-2 py-2 w-1/3 text-[17px] max-[575px]:text-[14px]"
             required
           >
             <option value="">MM</option>
@@ -147,7 +143,7 @@ const PersonalDetailsForm = ({
             name="year"
             value={details.year}
             onChange={onDetailsChange}
-            className="border rounded px-2 py-2 w-1/3"
+            className="border rounded px-2 py-2 w-1/3 text-[17px] max-[575px]:text-[14px]"
             required
           >
             <option value="">YYYY</option>

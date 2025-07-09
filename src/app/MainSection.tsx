@@ -628,7 +628,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                       searchPostcodes(postcode);
                     }
                   }}
-                  className="w-full border rounded px-3 py-4 text-[20px]  max-[575px]:text-[15px] pr-20"
+                  className="w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] pr-20"
                   autoComplete="off"
                 />
                 {/* Desktop search button */}
@@ -766,7 +766,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
             setMobileValidating(false);
           }
         }}
-        className="flex-1 outline-none border-none bg-transparent text-[20px] max-[575px]:text[14px]"
+        className="flex-1 outline-none border-none bg-transparent text-[17px] max-[575px]:text-[14px]"
         style={{ minWidth: 0 }}
         autoComplete="tel"
       />
@@ -828,7 +828,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           }
         }
       }}
-      className={`w-full border rounded px-3 py-4 text-[20px] max-[575px]:text[14px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
+      className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
       autoComplete="email"
     />
     {emailError && (
