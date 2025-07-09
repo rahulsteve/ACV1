@@ -607,7 +607,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           {/* Step 8: Address */}
           {step === 8 && (
             <div className="mt-8">
-              <h2 ref={addressHeaderRef} className="text-[32px] max-[575px]:text-[21px] font-bold mb-4">Your current address</h2>
+              <h2 ref={addressHeaderRef} className="text-[32px] max-[575px]:text-[28px] font-bold mb-4">Your current address</h2>
               <p className="mb-4">Enter your postcode below and tap &apos;Next&apos;</p>
               <div className="relative">
                 <input

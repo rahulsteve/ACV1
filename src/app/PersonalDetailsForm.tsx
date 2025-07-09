@@ -48,7 +48,7 @@ const PersonalDetailsForm = ({
 
   return (
     <div className="mt-8 personal-Details eligibility">
-      <h1 ref={headerRef} className="text-[45px] max-[575px]:text-[28px] font-bold mb-2">Your personal details</h1>
+      <h1 ref={headerRef} className="text-[32px] max-[575px]:text-[28px] font-bold mb-2">Your personal details</h1>
       <p className="mb-4">Please tell us who is claiming</p>
       
       <div className="mb-4">
