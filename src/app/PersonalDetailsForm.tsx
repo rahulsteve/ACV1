@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 
-const TITLES = ["Mr", "Mrs", "Miss", "Ms", "Dr", "Prof"];
+const TITLES = ["Mr", "Mrs", "Ms", "Miss", "Dr", "Rev", "Dame", "Lady", "Sir", "Lord", "Mx"];
 
 interface PersonalDetails {
   title: string;
