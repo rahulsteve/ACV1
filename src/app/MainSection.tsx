@@ -607,8 +607,8 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           {/* Step 8: Address */}
           {step === 8 && (
             <div className="mt-8">
-              <h2 ref={addressHeaderRef} className="text-[32px] max-[575px]:text-[28px] font-bold mb-4">Your current address</h2>
-              <p className="mb-4">Enter your postcode below and tap &apos;Next&apos;</p>
+              <h1 ref={addressHeaderRef} className="text-[45px] max-[575px]:text-[28px] font-bold mb-4">Your current address</h1>
+              <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your postcode below and tap &apos;Next&apos;</p>
               <div className="relative">
                 <input
                   type="text"
@@ -695,11 +695,11 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           )}
          {step === 9 && (
   <div className="mt-8 contact-info">
-    <h1 ref={contactHeaderRef} className="text-[32px] max-[575px]:text-[28px] font-bold mb-2">Your contact information</h1>
+    <h1 ref={contactHeaderRef} className="text-[45px] max-[575px]:text-[28px] font-bold mb-2">Your contact information</h1>
 
     {/* --‑‑ Mobile -------------------------------------------------- */}
     <h3 ref={mobileRef} className="text-[22px] max-[575px]:text-[1.125rem] font-bold mb-2 mt-6 max-[575px]:mt-2">Mobile number</h3>
-    <p className="mb-4">Enter your current mobile number</p>
+    <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your current mobile number</p>
 
     <div className={`flex items-center w-full border rounded mobile-div px-3 py-4 text-[20px] mb-2 bg-white
                      ${numberCheckError ? 'border-red-500' : ''}`}>
@@ -784,7 +784,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
 
     {/* --‑‑ Email --------------------------------------------------- */}
     <h3 className="text-[22px] max-[575px]:text-[1.125rem] font-bold mb-2 mt-6">Email address</h3>
-    <p className="mb-4 ">Enter your current email address</p>
+    <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your current email address</p>
     <input
       ref={emailRef}
       type="email"
@@ -868,7 +868,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           {/* Step 10: Your Documents */}
           {step === 10 && (
             <div className="mt-8 max-w-3xl mx-auto">
-              <h2 ref={documentsHeaderRef} className="text-[32px] font-bold mb-4">Your Documents</h2>
+              <h1 ref={documentsHeaderRef} className="text-[45px] font-bold mb-4">Your Documents</h1>
               <p className="mb-4">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
               <p className="mb-4 font-bold">
                 Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.
