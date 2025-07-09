@@ -125,7 +125,6 @@ body {
   div select ,
   div.mobile-div{
     color: #0a0a0a;
-    background: #fff;
     height: 60px !important;
     box-shadow: none !important;
     border: 3px solid #adadad !important;
@@ -160,7 +159,6 @@ body {
   div select ,
   div.mobile-div {
     color: #0a0a0a;
-    background: #fff;
     height: 60px !important;
     box-shadow: none !important;
     border: 3px solid #adadad !important;
@@ -262,9 +260,6 @@ body {
   font-size: 23px !important;
   margin:15px 0
 }
-.contact-info input{
-  font-size: 20px;
-}
 .location{
   font-size: 0.9em;
   color: #999999;
@@ -272,4 +267,25 @@ body {
 
 .disabled{
   background-color: #adadad;
+}
+
+.first-last-input {
+  background: url(https://quiz-live.s3.amazonaws.com/upload/cavis-limited/user-1742968455011.png) no-repeat;
+  background-position: left 14px center;
+  background-size: 16px;
+  padding-left: 44px !important;
+}
+
+@media (max-width: 575px) {
+  .first-last-input {
+    background-position: left 10px center;
+    background-size: 15px;
+    padding-left: 38px !important;
+  }
+}
+
+.mobile-input-bg {
+    background: url(https://quiz-live.s3.amazonaws.com/upload/cavis-limited/tel-1742974190456.png) 45px 50% / 16px no-repeat;
+    padding-left: 25px !important;
+    background-position: left 0px center;
 }

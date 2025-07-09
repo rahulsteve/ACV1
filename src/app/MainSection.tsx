@@ -607,7 +607,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           {/* Step 8: Address */}
           {step === 8 && (
             <div className="mt-8">
-              <h1 ref={addressHeaderRef} className="text-[45px] max-[575px]:text-[28px] font-bold mb-4">Your current address</h1>
+              <h1 ref={addressHeaderRef} className="text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-4">Your current address</h1>
               <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your postcode below and tap &apos;Next&apos;</p>
               <div className="relative">
                 <input
@@ -637,7 +637,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                     type="button"
                     className="absolute right-0
                      top-1/2
-                     transform -translate-y-1/2 bg-[#000] font-bold text-[20px] h-full rounded max-[575px]:text-[15px] text-white px-6 py-4  flex items-center justify-center"
+                     transform -translate-y-1/2 bg-[#000] font-bold text-[20px] h-full rounded max-[575px]:text-[15px] text-white px-20 py-4  flex items-center justify-center"
                     onClick={async () => {
                       await searchPostcodes(postcode);
                       // After search, show suggestions if any
@@ -695,7 +695,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           )}
          {step === 9 && (
   <div className="mt-8 contact-info">
-    <h1 ref={contactHeaderRef} className="text-[45px] max-[575px]:text-[28px] font-bold mb-2">Your contact information</h1>
+    <h1 ref={contactHeaderRef} className="text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-2">Your contact information</h1>
 
     {/* --‑‑ Mobile -------------------------------------------------- */}
     <h3 ref={mobileRef} className="text-[23px] font-[700] mb-2 mt-6 max-[575px]:mt-2">Mobile number</h3>
@@ -766,7 +766,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
             setMobileValidating(false);
           }
         }}
-        className="flex-1 outline-none border-none bg-transparent text-[17px] max-[575px]:text-[14px]"
+        className="flex-1 outline-none border-none bg-transparent text-[17px] max-[575px]:text-[14px] mobile-input-bg"
         style={{ minWidth: 0 }}
         autoComplete="tel"
       />
@@ -868,7 +868,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
           {/* Step 10: Your Documents */}
           {step === 10 && (
             <div className="mt-8 max-w-3xl mx-auto">
-              <h1 ref={documentsHeaderRef} className="text-[45px] font-bold mb-4">Your Documents</h1>
+              <h1 ref={documentsHeaderRef} className="text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-4">Your Documents</h1>
               <p className="mb-4">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
               <p className="mb-4 font-bold">
                 Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.

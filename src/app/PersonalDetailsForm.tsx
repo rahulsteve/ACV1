@@ -48,7 +48,7 @@ const PersonalDetailsForm = ({
 
   return (
     <div className="mt-8 personal-Details eligibility">
-      <h1 ref={headerRef} className="text-[45px] max-[575px]:text-[28px] font-bold mb-2">Your personal details</h1>
+      <h1 ref={headerRef} className="text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-2">Your personal details</h1>
       <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Please tell us who is claiming</p>
       
       <div className="mb-4">
@@ -75,7 +75,7 @@ const PersonalDetailsForm = ({
             placeholder="First Name"
             value={details.firstName}
             onChange={onDetailsChange}
-            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.firstName ? 'border-red-500' : ''}`}
+            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.firstName ? 'border-red-500' : ''} first-last-input`}
             autoComplete="given-name"
           />
           {errors.firstName && <div className="text-red-600 text-sm mt-1">{errors.firstName}</div>}
@@ -92,7 +92,7 @@ const PersonalDetailsForm = ({
             onFocus={() => {
               firstNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }}
-            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.lastName ? 'border-red-500' : ''}`}
+            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.lastName ? 'border-red-500' : ''} first-last-input`}
             autoComplete="family-name"
           />
           {errors.lastName && <div className="text-red-600 text-sm mt-1">{errors.lastName}</div>}
