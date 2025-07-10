@@ -341,7 +341,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 1 */}
           {step === 1 && (
             <div className="button_section">
-              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] text-[#0a0a0a] tracking-[-0.03em] max-[575px]:tracking-[-0.01em] ">
+              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] text-[#0a0a0a] tracking-[-0.03em] max-[575px]:tracking-[-0.03em] ">
                 Have you been notified by Arnold Clark that your data may have been
                 breached?
               </h2>
