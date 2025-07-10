@@ -166,12 +166,12 @@ const PersonalDetailsForm = ({
       
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 flex justify-end">
         <button
           type="button"
           onClick={isFormValid() ? onNext : undefined}
           disabled={!isFormValid()}
-          className={` next-btn pa max-[575px]:w-full w-1/3 max-[575px]:px-[30px] max-[575px]:py-20px] px-[50px] py-[25px] mt-[10px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779]  transition-opacity ${!isFormValid() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+          className={`pa max-[575px]:w-full w-auto max-[575px]:px-[30px] max-[575px]:py-20px] px-[50px] py-[25px] mt-[10px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779]  transition-opacity ${!isFormValid() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
            {(errors.firstName ||errors.lastName)&& <div className="text-600 text-[17px] mt-1">First and last name must be at least 2 characters long!</div>}
           {!errors.firstName &&!errors.lastName && <p>Next</p>}
