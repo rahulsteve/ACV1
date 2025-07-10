@@ -47,7 +47,7 @@ const PersonalDetailsForm = ({
   };
 
   return (
-    <div className="mt-[20px] min-[575px]:pt-[20px] personal-Details eligibility">
+    <div className="pt-[1rem] min-[575px]:pt-[20px] personal-Details eligibility">
       <h1 ref={headerRef} className="
        max-[575px]:text-[28px] text-[45px]
        leading-[0.9] tracking-[-0.03em] 
