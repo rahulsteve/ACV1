@@ -347,7 +347,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               </h2>
 
               <div className="flex gap-[16px] button_row">
-                <div className={highlightClass+"button_cal w-1/2"}>
+                <div className={highlightClass+" button_cal w-1/2"}>
                   <input
                     className="hidden"
                     type="radio"
@@ -363,7 +363,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     className=' font-[700]' 
                   >Yes</label>
                 </div>
-                <div className={highlightClass+"button_cal w-1/2"}>
+                <div className={highlightClass+" button_cal w-1/2"}>
                   <input
                     className="hidden"
                     type="radio"
