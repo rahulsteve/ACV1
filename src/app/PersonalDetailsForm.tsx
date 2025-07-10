@@ -63,12 +63,12 @@ const PersonalDetailsForm = ({
       ">Please tell us who is claiming</p>
 
       <div className="mb-4">
-        <h3 className="text-[23px] font-[700] mb-2">Title</h3>
+        <h3 className="text-[23px] font-[700] mb-2 min-[575px]:my-[20px]">Title</h3>
         <select
           name="title"
           value={details.title}
           onChange={onDetailsChange}
-          className="w-1/2 border rounded px-3 py-2 mt-[.35em]"
+          className="w-[40%] border rounded px-3 py-2 mt-[.35em] max-[575px]:w-[50%]"
           required
         >
           <option value="">------</option>
