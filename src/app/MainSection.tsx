@@ -1069,7 +1069,7 @@ console.log(err)    }
                 </div>
               </div>
               {/* FORM OF AUTHORITY SECTION */}
-              <h3 className="text-[22px] font-bold mt-8 mb-2 text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1">FORM OF AUTHORITY</h3>
+              <h4 className="leading-[1.3] font-bold min-[575px]:text-[18px] text-[1rem] text-[#00b779] border-b-4 border-[#00b779] inline-block my-[30px]">FORM OF AUTHORITY</h4>
               <div className="scrollableBox mb-8 mt-4">
                 <h4 className="text-[20px] font-semibold mb-2 text-gray-700">Instructions to act</h4>
                 <p className="mb-2">I, <b>{details.firstName} {details.lastName}</b>, instruct KP Law Ltd to act on my behalf in relation to my claim for damages. I can confirm that I have not instructed any other firm of Solicitors to act on my behalf in relation to this incident and I will not do so.</p>
@@ -1110,7 +1110,7 @@ console.log(err)    }
                 <p>If you have any queries, please contact us</p>
               </div>
               {/* CONSENT TO CFA/FOA/TERMS HEADER */}
-              <h2 className="text-[24px] font-bold uppercase text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1 mb-4 mt-8">CONSENT TO CFA/FOA/TERMS:</h2>
+              <h4 className="leading-[1.3] font-bold min-[575px]:text-[18px] text-[1rem] text-[#00b779] border-b-4 border-[#00b779] inline-block my-[30px]">CONSENT TO CFA/FOA/TERMS:</h4>
               <div className="font-bold text-[16px] mb-2">By signing your agreement(s) with KP Law Limited, you are confirming that you are happy to engage us in accordance with our terms and conditions.</div>
               <div className="font-bold text-[16px] mb-2">You also accept and agree to the above assessment of the risk on your case and the success fee that is then calculated from it.</div>
               <div className="flex items-center gap-6 mt-4 mb-10">
@@ -1226,7 +1226,7 @@ console.log(err)    }
               <a href="https://www.kpl-databreach.co.uk/terms-conditions-old/" target="_blank" className="text-blue-700 underline mb-4 inline-block">TERMS AND CONDITIONS</a>
               <br />
               {/* KP LAW 3RD PARTY OPTIN HEADER */}
-              <h2 className="text-[24px] font-bold uppercase text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1 mb-4 mt-12">KP LAW 3RD PARTY OPTIN</h2>
+              <h4 className="leading-[1.3] font-bold min-[575px]:text-[18px] text-[1rem] text-[#00b779] border-b-4 border-[#00b779] inline-block my-[30px]">KP LAW 3RD PARTY OPTIN</h4>
               <div className="font-bold text-[15px] mb-2 mt-2">
                 From time to time KP Law Limited become aware of legal claims and other services being provided by different law firms or other similar types of businesses that may be relevant to you. Please tick the box below if you would like more information about these.
               </div>
