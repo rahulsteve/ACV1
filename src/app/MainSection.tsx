@@ -347,7 +347,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               </h2>
 
               <div className="flex gap-[16px] button_row">
-                <div className={highlightClass+" button_cal w-1/2"}>
+                <div className={highlightClass+" button_cal w-1/2"} 
+                 onClick={() => { handleAnswer('q1', 'Yes'); setQ1Highlight(false); }}>
                   <input
                     className="hidden"
                     type="radio"
@@ -355,7 +356,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     name="have_you_been_notified"
                     value="Yes"
                     autoComplete="off"
-                    onClick={() => { handleAnswer('q1', 'No'); setQ1Highlight(false); }}
+                   
                     required
                   />
                   <label
@@ -363,7 +364,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     className=' font-[700]' 
                   >Yes</label>
                 </div>
-                <div className={highlightClass+" button_cal w-1/2"}>
+                <div className={highlightClass+" button_cal w-1/2"} 
+                 onClick={() => { handleAnswer('q1', 'No'); setQ1Highlight(false); }}>
                   <input
                     className="hidden"
                     type="radio"
@@ -371,7 +373,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     name="have_you_been_notified"
                     value="No"
                     autoComplete="off"
-                    onClick={() => { handleAnswer('q1', 'No'); setQ1Highlight(false); }}
                     required
                   />
                   <label
