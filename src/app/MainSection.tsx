@@ -346,7 +346,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 breached?
               </h2>
 
-              <div className="flex gap-[15px] button_row">
+              <div className="flex gap-[16px] button_row">
                 <div className="button_cal w-1/2">
                   <input
                     className="hidden"

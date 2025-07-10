@@ -70,6 +70,7 @@ body {
 .button_cal label{
  margin-bottom: .25rem;
  line-height: 23px;
+ display: block;
 }
 
 .button_cal:hover {
