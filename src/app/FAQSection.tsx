@@ -130,7 +130,7 @@ const FAQSection = () => {
     <div className="frequently_section">
       <div className="container_inner">
         <div className="frequently_inner">
-          <h2>Frequently asked questions</h2>
+          <h2 className="max-[575px]:text-[21px] text-[35px]">Frequently asked questions</h2>
           <div className="faq-container">
             {faqs.map((faq, idx: number) => (
               <div

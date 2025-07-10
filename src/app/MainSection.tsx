@@ -328,21 +328,20 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
       <div className="w-full banner_section ">
         <div className="mx-auto pt-[1px] max-w-[700px] max-[480px]:px-[15px]  max-[1199px]:px-[30px] container_inner">
           {step === 1 && (
-            <h1 className="h-full pt-[35px] text-[45px] leading-[1.1] tracking-[-0.03em] md:tracking-[-0.01em] text-[#0a0a0a] pt-[35px] max-[480px]:pt-[30px] max-[480px]:text-[28px] max-[575px]:text-[35px] font-bold text-left">
-              Join The <span className="bg-[#fff41f] pt-[2px]">Arnold Clark </span>
-              Data<br />
-              <span className="relative inline-block z-[1]">Breach Claim</span>
+            <h1 className="h-full pt-[35px] text-[45px] leading-[1.1] tracking-[-0.03em] max-[575px]:tracking-[-0.01em] text-[#0a0a0a] pt-[35px] max-[480px]:pt-[30px] max-[480px]:text-[28px] max-[575px]:text-[35px] font-bold text-left">
+              Join The <span className="bg-[#fff41f] pt-[2px] m-[2px]">Arnold Clark </span>
+              Data Breach Claim
             </h1>
           )}
           {step === 1 && (
-            <p className="mt-[16px] mb-[16px] text-left max-[575px]:text-[15px]">
+            <p className="mt-[16px] mb-[16px] text-left max-[575px]:text-[15px] tracking-[0]">
               Join <strong><u>10,000+</u></strong> signed claimants who could be eligible for compensation following the Arnold Clark data breach. Use our free online tool to check your eligibility.
             </p>)}
 
           {/* Step 1 */}
           {step === 1 && (
             <div className="button_section">
-              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] text-[#0a0a0a] [word-spacing:-0.03em] tracking-[-0.03em]">
+              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] text-[#0a0a0a] tracking-[-0.03em] max-[575px]:tracking-[-0.01em] ">
                 Have you been notified by Arnold Clark that your data may have been
                 breached?
               </h2>
@@ -361,7 +360,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   />
                   <label
                     htmlFor="radio1"
-                    className={highlightClass}
+                    className={highlightClass }
                   >Yes</label>
                 </div>
                 <div className="button_cal w-1/2">
@@ -387,13 +386,12 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   type="button"
                   className="pa w-full
                              px-[50px] py-[25px] mt-[10px]
-                             text-white text-[20px] font-bold
+                             max-[575px]:py-[20px]
+                             text-white max-[575px]:text-[18px] text-[20px] font-[700]
                              border-2 border-[#008f5f]
                              rounded-[5px] cursor-pointer
+                             tracking-[-0.02em]
                              bg-[#00b779]
-                             max-[1199px]:bg-[right_30%_center]
-                             max-[767px]:bg-[right_30%_center]
-                             max-[698px]:bg-[right_25%_center]
                              max-[575px]:bg-none"
                   onClick={() => {
                     setQ1Highlight(true);
@@ -409,7 +407,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 2 */}
           {step === 2 && (
             <div className="button_section min-[575px]:mt-[20px] max-[575px]:pt-[1rem] min-[575px]:pt-[20px]">
-              <h2 className="leading-[1.3] text-[24px] font-[600] mt-0 mb-[20px]  px-[10px] min-[575px]:tracking-[-0.04em] max-[575px]:tracking-[-0.03em]">
+              <h2 className="leading-[1.3] text-[24px] font-[600] mt-0 mb-[20px] px-[10px] min-[575px]:tracking-[-0.04em] max-[575px]:tracking-[-0.03em] min-[575px]:transition-transform min-[575px]:origin-left min-[575px]:scale-[1.02]">
                 Have you purchased, sold, rented, hired, or leased a vehicle, or had any servicing or repairs carried out by Arnold Clark, or been an employee of Arnold Clark between 2012 and 2022?              </h2>
               <div className="flex flex-col gap-[15px] button_row m-[.5rem]">
                 <div className="button_cal w-full">
@@ -543,7 +541,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 6 (Q4) */}
           {step === 6 && (
             <div className="button_section max-[575px]:py-[1em] px-[10px] min-[575px]:mt-[20px] min-[575px]:pt-[20px]">
-              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
+              <h2 className="leading-[1.3] tracking-[-0.03em] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Have you suffered distress and/or anxiety upon learning that your sensitive and confidential information may have been stolen?
               </h2>
               <div className="flex flex-col gap-[15px] button_row">
@@ -831,7 +829,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                       }
                     }
                   }}
-                  className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
+                  className={`w-full border email-div rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
                   autoComplete="email"
                 />
                 {emailError && (

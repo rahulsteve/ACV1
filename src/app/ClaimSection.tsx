@@ -2,7 +2,7 @@ import React from "react";
  
 const ClaimSection = () => (
   <section className="w-full bg-[#fff200] pb-[30px]">
-    <div className="max-w-[700px] mx-auto max-[1199px]:px-[30px]">
+    <div className="max-w-[700px] mx-auto max-[1199px]:px-[30px] max-[575px]:px-[15px]">
       <h2
         className="text-[35px] max-[575px]:text-[25px] leading-[1.1] pt-[20px] pb-[10px] font-bold font-inter"
       >

@@ -23,7 +23,6 @@ Main {
   }
 }
 
-@charset "UTF-8";
 html {
   line-height: 1.15;
   -webkit-text-size-adjust: 100%
@@ -4686,8 +4685,7 @@ input[type=tel].form-control {
 .autocomplete-items div:hover {
   background-color: #e9e9e9
 }
-</style>
-<style>
+
 .btn.back-btn {
   background-color: rgba(0, 183, 121, 1);
   font-size: 18px;
@@ -4753,10 +4751,4 @@ body {
 .leadshook-logo-container {
   text-align: center;
   color: default;
-}
-
-@media screen and (max-width: 800px) {
-}
-
-@media screen and (max-width: 600px) {
 }
