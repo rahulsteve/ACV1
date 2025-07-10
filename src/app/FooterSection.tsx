@@ -3,7 +3,7 @@ import React from "react";
 const FooterSection = () => (
     <div id="footer-editor-preview" className="w-full mt-[50px] md:mt-[50px]  bg-[#f7f7f7]" >
     <div className="w-full pt-[40px] pb-[40px]  max-[767px]:mt-0">
-      <div className="max-w-[700px] mx-auto px-4 max-[1199px]:px-[30px]">
+      <div className="max-w-[700px] mx-auto max-[575px]:px-4 ">
         <div>
           <div className="mb-4">
             <img

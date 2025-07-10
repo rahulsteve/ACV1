@@ -19,11 +19,11 @@ interface PersonalDetailsFormProps {
   onNext: () => void;
 }
 
-const PersonalDetailsForm = ({ 
-  details, 
-  errors, 
-  onDetailsChange, 
-  onNext 
+const PersonalDetailsForm = ({
+  details,
+  errors,
+  onDetailsChange,
+  onNext
 }: PersonalDetailsFormProps) => {
   const headerRef = useRef<HTMLHeadingElement>(null);
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -37,20 +37,31 @@ const PersonalDetailsForm = ({
 
   // Check if form is valid
   const isFormValid = () => {
-    return details.title && 
-           details.firstName.trim().length >= 3 && 
-           details.lastName.trim().length >= 3 && 
-           details.day && 
-           details.month && 
-           details.year &&
-           Object.values(errors).every(error => !error);
+    return details.title &&
+      details.firstName.trim().length >= 3 &&
+      details.lastName.trim().length >= 3 &&
+      details.day &&
+      details.month &&
+      details.year &&
+      Object.values(errors).every(error => !error);
   };
 
   return (
-    <div className="mt-8 personal-Details eligibility">
-      <h1 ref={headerRef} className="text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-2">Your personal details</h1>
-      <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Please tell us who is claiming</p>
-      
+    <div className="mt-[20px] min-[575px]:pt-[20px] personal-Details eligibility">
+      <h1 ref={headerRef} className="
+       max-[575px]:text-[28px] text-[45px]
+       leading-[0.9] tracking-[-0.03em] 
+       text-[#0a0a0a] 
+       min-[575px]:pt-[35px] 
+       font-bold 
+       text-left 
+       ">Your personal details</h1>
+      <p className="
+      my-[15px] 
+      text-[16px] leading-[1.5rem] 
+      max-[575px]:text-[15px]
+      ">Please tell us who is claiming</p>
+
       <div className="mb-4">
         <h3 className="text-[23px] font-[700] mb-2">Title</h3>
         <select
@@ -64,7 +75,7 @@ const PersonalDetailsForm = ({
           {TITLES.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
       </div>
-      
+
       <div className="mb-4 flex flex-col">
         <div className="form-group mb-4">
           <input
@@ -98,9 +109,9 @@ const PersonalDetailsForm = ({
           {errors.lastName && <div className="text-red-600 text-sm mt-1">{errors.lastName}</div>}
         </div>
       </div>
-      
+
       <div className="mb-4">
-      <h3 className="text-[23px] font-[700] mb-2">Date of birth</h3>
+        <h3 className="text-[23px] font-[700] mb-2">Date of birth</h3>
         <div className="flex flex-row gap-2">
           <select
             name="day"
@@ -154,7 +165,7 @@ const PersonalDetailsForm = ({
         </div>
         {errors.dob && <div className="text-red-500 text-sm mt-1">{errors.dob}</div>}
       </div>
-      
+
       <div className="mt-6">
         <button
           type="button"
@@ -165,12 +176,12 @@ const PersonalDetailsForm = ({
           Next
         </button>
       </div>
-      
+
       <div className="mt-4 text-left text-[16px]">
         <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
           <svg width="24" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="11" cy="11" r="10" stroke="#00b779" strokeWidth="2" fill="#00b779"/>
-            <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="11" cy="11" r="10" stroke="#00b779" strokeWidth="2" fill="#00b779" />
+            <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
         <strong>  Join 10,000+ signed claimants.</strong>

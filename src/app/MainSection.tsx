@@ -87,8 +87,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const addressHeaderRef = React.useRef<HTMLHeadingElement>(null);
   const documentsHeaderRef = React.useRef<HTMLHeadingElement>(null);
 
-  const [numberCheckError, setNumberCheckError] = React.useState<string>(''); 
-  const [numberSuccess, setNumberSuccess ]  = React.useState<string>('');  
+  const [numberCheckError, setNumberCheckError] = React.useState<string>('');
+  const [numberSuccess, setNumberSuccess] = React.useState<string>('');
   const [mobileValidating, setMobileValidating] = React.useState<boolean>(false);
   const [emailError, setEmailError] = React.useState<string>('');
   const [emailSuccess, setEmailSuccess] = React.useState<string>('');
@@ -96,84 +96,84 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   // Postcode autocomplete states
   const [postcodeSuggestions, setPostcodeSuggestions] = React.useState<PostcodeSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = React.useState(false);
-  const [isLoadingPostcodes, setIsLoadingPostcodes] = React.useState(false); 
+  const [isLoadingPostcodes, setIsLoadingPostcodes] = React.useState(false);
 
-const validatePhoneNumber = async (phone: string) => {
-  const res = await fetch('/api/validate', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ lookup: phone }),   // << lookup param expected by your route
-  });
+  const validatePhoneNumber = async (phone: string) => {
+    const res = await fetch('/api/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lookup: phone }),   // << lookup param expected by your route
+    });
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to validate');
-  /** Adjust this condition to match DataSoap's actual response shape */
-  if (!data.valid) throw new Error('Number is not a valid UK mobile');
-  return data;
-};
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to validate');
+    /** Adjust this condition to match DataSoap's actual response shape */
+    if (!data.valid) throw new Error('Number is not a valid UK mobile');
+    return data;
+  };
 
-// Email validation function
-const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
+  // Email validation function
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
-// Postcode autocomplete function
-const searchPostcodes = async (query: string,PathFilter:string="") => {
-  if (query.length < 3) {
-    setPostcodeSuggestions([]);
-    setShowSuggestions(false);
-    return;
-  }
-
-  setIsLoadingPostcodes(true);
-  try {
-    const response = await fetch(`/api/postcode-autocomplete?q=${encodeURIComponent(query)}&PF=${encodeURIComponent(PathFilter)}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch postcode suggestions');
+  // Postcode autocomplete function
+  const searchPostcodes = async (query: string, PathFilter: string = "") => {
+    if (query.length < 3) {
+      setPostcodeSuggestions([]);
+      setShowSuggestions(false);
+      return;
     }
-    const data = await response.json();
-    setPostcodeSuggestions(data);
-    setShowSuggestions(data.length > 0);
-  } catch (error) {
-    console.error('Error fetching postcode suggestions:', error);
-    setPostcodeSuggestions([]);
-    setShowSuggestions(false);
-  } finally {
-    setIsLoadingPostcodes(false);
-  }
-};
 
-// Retrieve address function (moved above handlePostcodeSelect)
-const retrieveAddress = async (id: string) => {
-  try {
-    const response = await fetch(`/api/postcode-retrieve?id=${encodeURIComponent(id)}&query=${encodeURIComponent(postcode)}`);
-    if (!response.ok) {
-      throw new Error('Failed to retrieve address');
+    setIsLoadingPostcodes(true);
+    try {
+      const response = await fetch(`/api/postcode-autocomplete?q=${encodeURIComponent(query)}&PF=${encodeURIComponent(PathFilter)}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch postcode suggestions');
+      }
+      const data = await response.json();
+      setPostcodeSuggestions(data);
+      setShowSuggestions(data.length > 0);
+    } catch (error) {
+      console.error('Error fetching postcode suggestions:', error);
+      setPostcodeSuggestions([]);
+      setShowSuggestions(false);
+    } finally {
+      setIsLoadingPostcodes(false);
     }
-    const data = await response.json();
-    if (Array.isArray(data) && data.length > 0) {
-      setAddress(data[0])
-      setAddressRetrieved(true); // Enable the button
-      setTimeout(() => {
-        nextButtonRef.current?.focus();
-      }, 0);
-    }
-  } catch (error) {
-    console.error('Error retrieving address:', error);
-  }
-};
+  };
 
-// Handle postcode selection
-const handlePostcodeSelect = (address: PostcodeSuggestion) => {
-  debugger
-  // setPostcode(address.summaryline);
-  if((address?.count??0)>1){
-    searchPostcodes(postcode, address.id); 
-  }else{
-    retrieveAddress(address.id)
-  }
-};
+  // Retrieve address function (moved above handlePostcodeSelect)
+  const retrieveAddress = async (id: string) => {
+    try {
+      const response = await fetch(`/api/postcode-retrieve?id=${encodeURIComponent(id)}&query=${encodeURIComponent(postcode)}`);
+      if (!response.ok) {
+        throw new Error('Failed to retrieve address');
+      }
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        setAddress(data[0])
+        setAddressRetrieved(true); // Enable the button
+        setTimeout(() => {
+          nextButtonRef.current?.focus();
+        }, 0);
+      }
+    } catch (error) {
+      console.error('Error retrieving address:', error);
+    }
+  };
+
+  // Handle postcode selection
+  const handlePostcodeSelect = (address: PostcodeSuggestion) => {
+    debugger
+    // setPostcode(address.summaryline);
+    if ((address?.count ?? 0) > 1) {
+      searchPostcodes(postcode, address.id);
+    } else {
+      retrieveAddress(address.id)
+    }
+  };
 
   // Handle responsive canvas sizing
   React.useEffect(() => {
@@ -309,13 +309,13 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
   if (exited) {
     return (
       <section className="not-eligible">
-        <div className="mx-auto max-w-[700px] container_inner text-center  mt-6">
+        <div className="mx-auto max-w-[700px] container_inner text-center pt-[16px]">
           <br />
           <br />
           <p>
             <img height={78} width={78} src="https://static.leadshook.io/upload/cavis-limited/close%20(2)-1742908286780.png" alt="" className="mx-auto mb-4" />
           </p>
-          <h2 className="text-[35px] font-bold leading-[1.2] tracking-[-0.7px] pt-[10px] mb-4">Sorry! Based on the answers provided 
+          <h2 className="text-[35px] font-bold leading-[1.2] tracking-[-0.7px] pt-[10px] mb-4">Sorry! Based on the answers provided
             you do not qualify for this claim.
           </h2>
         </div>
@@ -326,22 +326,23 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
   return (
     <section>
       <div className="w-full banner_section ">
-        <div className="mx-auto max-w-[700px] max-[480px]:px-[15px] px-[10px] max-[1199px]:px-[30px] container_inner">
+        <div className="mx-auto pt-[1px] max-w-[700px] max-[480px]:px-[15px]  max-[1199px]:px-[30px] container_inner">
           {step === 1 && (
-            <h1 className="pt-12 text-[43px] leading-[0.9] tracking-[-0.03em] md:tracking-[-0.01em] text-[#0a0a0a] pt-[35px] max-[480px]:pt-[30px] max-[480px]:text-[28px] max-[575px]:text-[35px] font-bold text-left">
-              Join The <span className="bg-[#fff41f]">Arnold Clark</span> Data<br />
+            <h1 className="h-full pt-[35px] text-[45px] leading-[1.1] tracking-[-0.03em] md:tracking-[-0.01em] text-[#0a0a0a] pt-[35px] max-[480px]:pt-[30px] max-[480px]:text-[28px] max-[575px]:text-[35px] font-bold text-left">
+              Join The <span className="bg-[#fff41f] pt-[2px]">Arnold Clark </span>
+              Data<br />
               <span className="relative inline-block z-[1]">Breach Claim</span>
             </h1>
           )}
           {step === 1 && (
-            <p className="mt-4 mb-4 text-left max-[575px]:text-[15px] leading-[16px]">
+            <p className="mt-[16px] mb-[16px] text-left max-[575px]:text-[15px]">
               Join <strong><u>10,000+</u></strong> signed claimants who could be eligible for compensation following the Arnold Clark data breach. Use our free online tool to check your eligibility.
             </p>)}
 
           {/* Step 1 */}
           {step === 1 && (
-            <div className="button_section mt-6">
-              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] text-[#0a0a0a]">
+            <div className="button_section">
+              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] text-[#0a0a0a] [word-spacing:-0.03em] tracking-[-0.03em]">
                 Have you been notified by Arnold Clark that your data may have been
                 breached?
               </h2>
@@ -385,7 +386,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 <button
                   type="button"
                   className="pa w-full
-                             px-[50px] py-[21.5px] mt-[10px]
+                             px-[50px] py-[25px] mt-[10px]
                              text-white text-[20px] font-bold
                              border-2 border-[#008f5f]
                              rounded-[5px] cursor-pointer
@@ -407,11 +408,10 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
 
           {/* Step 2 */}
           {step === 2 && (
-            <div className="button_section mt-6">
-              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
-                Have you purchased, sold, rented, hired, or<br /> had any servicing or repairs carried out by Arnold Clark, or<br /> been an employee of Arnold Clark between 2012 and 2022?
-              </h2>
-              <div className="flex flex-col gap-[15px] button_row">
+            <div className="button_section min-[575px]:mt-[20px] max-[575px]:pt-[1rem] min-[575px]:pt-[20px]">
+              <h2 className="leading-[1.3] text-[24px] font-[600] mt-0 mb-[20px]  px-[10px] min-[575px]:tracking-[-0.04em] max-[575px]:tracking-[-0.03em]">
+                Have you purchased, sold, rented, hired, or leased a vehicle, or had any servicing or repairs carried out by Arnold Clark, or been an employee of Arnold Clark between 2012 and 2022?              </h2>
+              <div className="flex flex-col gap-[15px] button_row m-[.5rem]">
                 <div className="button_cal w-full">
                   <input
                     className="hidden"
@@ -444,7 +444,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
                 onClick={() => setStep(1)}
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back
               </button>
             </div>
@@ -489,7 +489,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
                 onClick={() => setStep(2)}
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back
               </button>
             </div>
@@ -497,7 +497,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
 
           {/* Step 5 (Q3) */}
           {step === 5 && (
-            <div className="button_section mt-6">
+            <div className="button_section max-[575px]:py-[1em] px-[10px] min-[575px]:mt-[20px] min-[575px]:pt-[20px]">
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Did you live in Scotland when the purchase was made or when you were employed by Arnold Clark?
               </h2>
@@ -534,7 +534,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
                 onClick={() => setStep(4)}
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back
               </button>
             </div>
@@ -542,7 +542,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
 
           {/* Step 6 (Q4) */}
           {step === 6 && (
-            <div className="button_section mt-6">
+            <div className="button_section max-[575px]:py-[1em] px-[10px] min-[575px]:mt-[20px] min-[575px]:pt-[20px]">
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Have you suffered distress and/or anxiety upon learning that your sensitive and confidential information may have been stolen?
               </h2>
@@ -579,7 +579,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
                 onClick={() => setStep(5)}
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back
               </button>
             </div>
@@ -587,7 +587,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
 
           {/* Step 7: Personal Details */}
           {step === 7 && (
-            <div>
+            <div className="max-[575px]:pt-[1rem] min-[575px]:pt-[20px]">
               <PersonalDetailsForm
                 details={details}
                 errors={errors}
@@ -599,15 +599,15 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
                 onClick={() => setStep(6)}
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back
               </button>
             </div>
           )}
           {/* Step 8: Address */}
           {step === 8 && (
-            <div className="mt-8">
-              <h1 ref={addressHeaderRef} className="text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-4">Your current address</h1>
+            <div className="min-[575px]:mt-8 max-[575px]:pt-[1rem] ">
+              <h1 ref={addressHeaderRef} className="max-[575px]:text-[28px] text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-4">Your current address</h1>
               <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your postcode below and tap &apos;Next&apos;</p>
               <div className="relative">
                 <input
@@ -632,48 +632,48 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                   autoComplete="off"
                 />
                 {/* Desktop search button */}
-   
-                  <button
-                    type="button"
-                    className="absolute right-0
+
+                <button
+                  type="button"
+                  className="absolute right-0
                      top-1/2
-                     transform -translate-y-1/2 bg-[#000] font-bold text-[20px] h-full rounded max-[575px]:text-[15px] text-white px-20 py-4  flex items-center justify-center"
-                    onClick={async () => {
-                      await searchPostcodes(postcode);
-                      // After search, show suggestions if any
-                      if (postcodeSuggestions.length > 0) setShowSuggestions(true);
-                    }}
-                    tabIndex={0}
-                    aria-label="Search Postcode"
-                  >
-                 Search
-                  </button>
-            
+                     transform -translate-y-1/2 bg-[#000] font-bold min-[575px]:text-[20px] text-[16px] h-full rounded max-[575px]:text-[15px] text-white max-[575px]:px-5 min-[575px]:px-10 py-4  flex items-center justify-center"
+                  onClick={async () => {
+                    await searchPostcodes(postcode);
+                    // After search, show suggestions if any
+                    if (postcodeSuggestions.length > 0) setShowSuggestions(true);
+                  }}
+                  tabIndex={0}
+                  aria-label="Search Postcode"
+                >
+                  Search
+                </button>
+
                 {isLoadingPostcodes && (
                   <div className="absolute left-0 right-0 bg-white border border-t-0 rounded-b shadow z-10 px-4 py-2 text-gray-500 text-sm">Loading...</div>
                 )}
-                </div>
-                {/* Show select dropdown if suggestions exist */}
-                {showSuggestions && postcodeSuggestions.length > 0 && (
-                  <select
-                    className="w-full border rounded px-3 py-3 mt-2 text-[17px] bg-white shadow z-10"
-                    value={address?.summaryline}
-                    onChange={e => {
-                      const idx = e.target.value;
-                      if (idx !== "") {
-                        handlePostcodeSelect(postcodeSuggestions[Number(idx)]);
-                      }
-                    }}
-                  >
-                    <option className={'disabled'} value="">{address?.summaryline??"Select your address..."}</option>
-                    {postcodeSuggestions.map((suggestion, idx) => (
-                      <option key={suggestion.id || idx} value={idx}>
-                        {suggestion.summaryline || suggestion.postcode} {suggestion.locationsummary ? `(${suggestion.locationsummary})` : ''}
-                      </option>
-                    ))}
-                  </select>
-                )}
-            
+              </div>
+              {/* Show select dropdown if suggestions exist */}
+              {showSuggestions && postcodeSuggestions.length > 0 && (
+                <select
+                  className="w-full border rounded px-3 py-3 mt-2 text-[17px] bg-white shadow z-10"
+                  value={address?.summaryline}
+                  onChange={e => {
+                    const idx = e.target.value;
+                    if (idx !== "") {
+                      handlePostcodeSelect(postcodeSuggestions[Number(idx)]);
+                    }
+                  }}
+                >
+                  <option className={'disabled'} value="">{address?.summaryline ?? "Select your address..."}</option>
+                  {postcodeSuggestions.map((suggestion, idx) => (
+                    <option key={suggestion.id || idx} value={idx}>
+                      {suggestion.summaryline || suggestion.postcode} {suggestion.locationsummary ? `(${suggestion.locationsummary})` : ''}
+                    </option>
+                  ))}
+                </select>
+              )}
+
               <button
                 ref={nextButtonRef}
                 type="button"
@@ -688,187 +688,191 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
                 onClick={() => setStep(7)}
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back
               </button>
             </div>
           )}
-         {step === 9 && (
-  <div className="mt-8 contact-info">
-    <h1 ref={contactHeaderRef} className="text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-2">Your contact information</h1>
+          {step === 9 && (
+            <div className=" min-[575px]:pt-[20px]">
+              <div className="min-[575px]:mt-[20px] min-[575px]:pt-[20px]  contact-info">
+                <h1 ref={contactHeaderRef} className="min-[575px]:text-[45px] text-[28px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-2">Your contact information</h1>
 
-    {/* --‑‑ Mobile -------------------------------------------------- */}
-    <h3 ref={mobileRef} className="text-[23px] font-[700] mb-2 mt-6 max-[575px]:mt-2">Mobile number</h3>
-    <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your current mobile number</p>
+                {/* --‑‑ Mobile -------------------------------------------------- */}
+                <h3 ref={mobileRef} className="text-[23px] mb-[10px] mt-[20px] max-[575px]: mt-[20px]">
+              <strong>Mobile number</strong>    
+                  </h3>
+                <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your current mobile number</p>
 
-    <div className={`flex items-center w-full border rounded mobile-div px-3 py-4 text-[20px] mb-2 bg-white
+                <div className={`flex items-center w-full border rounded mobile-div px-3 py-4 text-[20px] mb-2 bg-white
                      ${numberCheckError ? 'border-red-500' : ''}`}>
-      <span className="mr-2">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg"
-          alt="UK"
-          style={{ width: 28, height: 20 }}
-        />
-      </span>
+                  <span className="mr-2">
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg"
+                      alt="UK"
+                      style={{ width: 28, height: 20 }}
+                    />
+                  </span>
 
-      <input
-        
-        type="tel"
-        placeholder="Mobile number"
-        value={contact.mobile}
-        onChange={(e) => {
-          setContact({ ...contact, mobile: e.target.value });
-          setNumberCheckError(''); 
-          setNumberSuccess('');
-        }}
-        onFocus={() => {
-          mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }}
-        onKeyDown={async (e) => {
-          if (e.key === 'Enter') {
-            const phone = contact.mobile.trim();
-            if (!phone) return;
-            try {
-              setMobileValidating(true);
-              await validatePhoneNumber(phone);
-              setNumberSuccess('Valid Number');
-              setTimeout(() => {
-                emailRef.current?.focus();
-              }, 0);
-            } catch (err) {
-              setNumberCheckError(err instanceof Error ? err.message : 'An unknown error occurred');
-              setTimeout(() => {
-                mobileRef.current?.focus();
-              }, 0);
-            } finally {
-              setMobileValidating(false);
-            }
-          }
-        }}
-        onBlur={async (e) => {
-          const phone = e.target.value.trim();
-          if (!phone) return;
-          try {
-            setMobileValidating(true);
-            await validatePhoneNumber(phone);
-            setNumberSuccess('Valid Number');
-            // Move focus to email if valid
-            setTimeout(() => {
-              emailRef.current?.focus();
-            }, 0);
-          } catch (err: unknown) {
-            if (err instanceof Error) {
-              setNumberCheckError(err.message);
-            } else {
-              setNumberCheckError('An unknown error occurred');
-            }
-          } finally {
-            setMobileValidating(false);
-          }
-        }}
-        className="flex-1 outline-none border-none bg-transparent text-[17px] max-[575px]:text-[14px] mobile-input-bg"
-        style={{ minWidth: 0 }}
-        autoComplete="tel"
-      />
-    </div>
+                  <input
 
-    {mobileValidating && (
-      <div className="text-gray-500 text-sm mb-2">Validating…</div>
-    )}
-    {numberCheckError && (
-      <div className="text-red-600 text-sm mb-2">{numberCheckError}</div>
-    )}
-    {numberSuccess  && (
-      <div className="text-green-600 text-sm mb-2">{numberSuccess}</div>
-    )}
+                    type="tel"
+                    placeholder="Mobile number"
+                    value={contact.mobile}
+                    onChange={(e) => {
+                      setContact({ ...contact, mobile: e.target.value });
+                      setNumberCheckError('');
+                      setNumberSuccess('');
+                    }}
+                    onFocus={() => {
+                      mobileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    onKeyDown={async (e) => {
+                      if (e.key === 'Enter') {
+                        const phone = contact.mobile.trim();
+                        if (!phone) return;
+                        try {
+                          setMobileValidating(true);
+                          await validatePhoneNumber(phone);
+                          setNumberSuccess('Valid Number');
+                          setTimeout(() => {
+                            emailRef.current?.focus();
+                          }, 0);
+                        } catch (err) {
+                          setNumberCheckError(err instanceof Error ? err.message : 'An unknown error occurred');
+                          setTimeout(() => {
+                            mobileRef.current?.focus();
+                          }, 0);
+                        } finally {
+                          setMobileValidating(false);
+                        }
+                      }
+                    }}
+                    onBlur={async (e) => {
+                      const phone = e.target.value.trim();
+                      if (!phone) return;
+                      try {
+                        setMobileValidating(true);
+                        await validatePhoneNumber(phone);
+                        setNumberSuccess('Valid Number');
+                        // Move focus to email if valid
+                        setTimeout(() => {
+                          emailRef.current?.focus();
+                        }, 0);
+                      } catch (err: unknown) {
+                        if (err instanceof Error) {
+                          setNumberCheckError(err.message);
+                        } else {
+                          setNumberCheckError('An unknown error occurred');
+                        }
+                      } finally {
+                        setMobileValidating(false);
+                      }
+                    }}
+                    className="flex-1 outline-none border-none bg-transparent text-[17px] max-[575px]:text-[14px] mobile-input-bg"
+                    style={{ minWidth: 0 }}
+                    autoComplete="tel"
+                  />
+                </div>
 
-    {/* --‑‑ Email --------------------------------------------------- */}
-    <h3 className="text-[23px] font-[700] mb-2 mt-6">Email address</h3>
-    <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your current email address</p>
-    <input
-      ref={emailRef}
-      type="email"
-      placeholder="Email address"
-      value={contact.email}
-      onChange={(e) => {
-        setContact({ ...contact, email: e.target.value });
-        setEmailError('');
-        setEmailSuccess('');
-      }}
-      onFocus={() => {
-        emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }}
-      onBlur={(e) => {
-        const email = e.target.value.trim();
-        if (!email) return;
-        if (validateEmail(email)) {
-          setEmailSuccess('Valid email address');
-          setEmailError('');
-        } else {
-          setEmailError('Please enter a valid email address');
-          setEmailSuccess('');
-        }
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          const email = contact.email.trim();
-          if (!validateEmail(email)) {
-            setEmailError('Please enter a valid email address');
-            setEmailSuccess('');
-            setTimeout(() => {
-              emailRef.current?.focus();
-            }, 0);
-          } else if (contact.mobile.trim() && email) {
-            setEmailSuccess('Valid email address');
-            setEmailError('');
-            setTimeout(() => {
-              const nextBtn = document.querySelector('.next-btn') as HTMLElement | null;
-              nextBtn?.focus();
-            }, 0);
-          }
-        }
-      }}
-      className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
-      autoComplete="email"
-    />
-    {emailError && (
-      <div className="text-red-600 text-sm mb-2">{emailError}</div>
-    )}
-    {emailSuccess && (
-      <div className="text-green-600 text-sm mb-2">{emailSuccess}</div>
-    )}
-          
-              <button
-                type="button"
-                className={`next-btn pa max-[575px]:w-full ms-auto w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
-                onClick={(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? () => setStep(10) : undefined}
-                disabled={!(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim()))}
-              >
-                Next
-              </button>
-              <div className="mt-4 text-left text-[16px]">
-                <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="11" cy="11" r="10" stroke="#00b779" strokeWidth="2" fill="#00b779" />
-                    <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-                <strong>Join 10,000+ signed claimants.</strong>
+                {mobileValidating && (
+                  <div className="text-gray-500 text-sm mb-2">Validating…</div>
+                )}
+                {numberCheckError && (
+                  <div className="text-red-600 text-sm mb-2">{numberCheckError}</div>
+                )}
+                {numberSuccess && (
+                  <div className="text-green-600 text-sm mb-2">{numberSuccess}</div>
+                )}
+
+                {/* --‑‑ Email --------------------------------------------------- */}
+                <h3 className="text-[23px] font-[700] mb-2 mt-6">Email address</h3>
+                <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your current email address</p>
+                <input
+                  ref={emailRef}
+                  type="email"
+                  placeholder="Email address"
+                  value={contact.email}
+                  onChange={(e) => {
+                    setContact({ ...contact, email: e.target.value });
+                    setEmailError('');
+                    setEmailSuccess('');
+                  }}
+                  onFocus={() => {
+                    emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
+                  onBlur={(e) => {
+                    const email = e.target.value.trim();
+                    if (!email) return;
+                    if (validateEmail(email)) {
+                      setEmailSuccess('Valid email address');
+                      setEmailError('');
+                    } else {
+                      setEmailError('Please enter a valid email address');
+                      setEmailSuccess('');
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const email = contact.email.trim();
+                      if (!validateEmail(email)) {
+                        setEmailError('Please enter a valid email address');
+                        setEmailSuccess('');
+                        setTimeout(() => {
+                          emailRef.current?.focus();
+                        }, 0);
+                      } else if (contact.mobile.trim() && email) {
+                        setEmailSuccess('Valid email address');
+                        setEmailError('');
+                        setTimeout(() => {
+                          const nextBtn = document.querySelector('.next-btn') as HTMLElement | null;
+                          nextBtn?.focus();
+                        }, 0);
+                      }
+                    }
+                  }}
+                  className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] mb-2 ${emailError ? 'border-red-500' : emailSuccess ? 'border-green-500' : ''}`}
+                  autoComplete="email"
+                />
+                {emailError && (
+                  <div className="text-red-600 text-sm mb-2">{emailError}</div>
+                )}
+                {emailSuccess && (
+                  <div className="text-green-600 text-sm mb-2">{emailSuccess}</div>
+                )}
+
+                <button
+                  type="button"
+                  className={`next-btn pa max-[575px]:w-full ms-auto w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] max-[575px]:bg-none transition-opacity ${(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                  onClick={(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim())) ? () => setStep(10) : undefined}
+                  disabled={!(contact.mobile.trim() && contact.email.trim() && validateEmail(contact.email.trim()))}
+                >
+                  Next
+                </button>
+                <div className="mt-4 text-left text-[16px]">
+                  <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="11" cy="11" r="10" stroke="#00b779" strokeWidth="2" fill="#00b779" />
+                      <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <strong>Join 10,000+ signed claimants.</strong>
+                </div>
+                <button
+                  type="button"
+                  className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
+                  onClick={() => setStep(8)}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  Back
+                </button>
               </div>
-              <button
-                type="button"
-                className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(8)}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2"><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Back
-              </button>
             </div>
           )}
           {/* Step 10: Your Documents */}
           {step === 10 && (
-            <div className="mt-8 max-w-3xl mx-auto">
-              <h1 ref={documentsHeaderRef} className="text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-4">Your Documents</h1>
+            <div className="max-[575px]:mt-[20px] max-w-3xl mx-auto">
+              <h1 ref={documentsHeaderRef} className="max-[575px]:text-[21px] text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] min-[575px]:pt-[35px] font-bold text-left mb-4">Your Documents</h1>
               <p className="mb-4">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
               <p className="mb-4 font-bold">
                 Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.
@@ -1039,8 +1043,8 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <span
                       className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${agreementAccepted === "yes"
-                          ? "bg-[#00b779] border-[#00b779]"
-                          : "bg-white border-[#00b779]"
+                        ? "bg-[#00b779] border-[#00b779]"
+                        : "bg-white border-[#00b779]"
                         } cursor-pointer`}
                       onClick={() => {
                         setAgreementAccepted("yes");
@@ -1063,8 +1067,8 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <span
                       className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${agreementAccepted === "no"
-                          ? "bg-[#00b779] border-[#00b779]"
-                          : "bg-white border-[#00b779]"
+                        ? "bg-[#00b779] border-[#00b779]"
+                        : "bg-white border-[#00b779]"
                         } cursor-pointer`}
                       onClick={() => {
                         setAgreementAccepted("no");
@@ -1160,8 +1164,8 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <span
                     className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${marketingConsent === "yes"
-                        ? "bg-[#00b779] border-[#00b779]"
-                        : "bg-white border-[#00b779]"
+                      ? "bg-[#00b779] border-[#00b779]"
+                      : "bg-white border-[#00b779]"
                       } cursor-pointer`}
                     onClick={() => setMarketingConsent("yes")}
                     tabIndex={0}
@@ -1181,8 +1185,8 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <span
                     className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${marketingConsent === "no"
-                        ? "bg-[#00b779] border-[#00b779]"
-                        : "bg-white border-[#00b779]"
+                      ? "bg-[#00b779] border-[#00b779]"
+                      : "bg-white border-[#00b779]"
                       } cursor-pointer`}
                     onClick={() => setMarketingConsent("no")}
                     tabIndex={0}
@@ -1239,7 +1243,7 @@ const handlePostcodeSelect = (address: PostcodeSuggestion) => {
               <h2 className="text-[35px] font-bold mb-S">Thank You! We Are Reviewing Your Details.</h2>
               <p className="mb-4 mt-4 text-[16px]">One of our claim experts will be in touch shortly to discuss your potential claim and how much you could be owed.</p>
               <h2 className="text-[35px] font-bold mb-2">Have You Joined The PCP Claim?</h2>
-              <p className="mb-2 mt-4 text-[16px]">If you&apos;ve had a car on finance since 2007, you could be eligible to 
+              <p className="mb-2 mt-4 text-[16px]">If you&apos;ve had a car on finance since 2007, you could be eligible to
                 claim £1,000s in compensation. <a href="https://www.pcpadvisors.co.uk/" className="text-blue-700 underline">Click here to get started.</a></p>
               <p className="mb-4 mt-4 text-[16px]">You will be directed to the website of The PCP Advisors, a trading style of The Claims Guys Legal. You are able to claim directly yourself for free to your lender, and then the Financial Ombudsman.</p>
             </div>
