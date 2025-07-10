@@ -54,7 +54,7 @@ body {
   z-index: -1;
 }
 
-.button_cal label {
+.button_cal {
   width: 100%;
   padding: 16px 20px;
   font-size: 20px;
@@ -67,8 +67,12 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
 }
+.button_cal label{
+ margin-bottom: .25rem;
+ line-height: 23px;
+}
 
-.button_cal label:hover {
+.button_cal:hover {
   background-color: #008f5f;
   color: #fff;
 }
