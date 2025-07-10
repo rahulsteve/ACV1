@@ -318,7 +318,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     return Math.floor(100000000 + Math.random() * 900000000).toString();
   }
 
-  const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL;
 
   // Add this function inside MainSection component, before return
   const handleSubmit = async () => {
@@ -372,8 +371,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
       });
       setStep(11);
     } catch (err) {
-      alert('Failed to submit. Please try again.');
-    }
+console.log(err)    }
   };
 
   if (exited) {
