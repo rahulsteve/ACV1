@@ -68,7 +68,6 @@ body {
   transition: all 0.3s ease;
 }
 .button_cal label{
- margin-bottom: .25rem;
  line-height: 23px;
  display: block;
 }
@@ -102,6 +101,10 @@ body {
 }
 
 @media only screen and (max-width: 575px) {
+  .button_cal label{
+    margin-bottom: .25rem;
+
+   }
   h2 :not(.not-eligible) {
     font-size: 25px !important;
   }
