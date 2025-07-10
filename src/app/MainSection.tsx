@@ -360,7 +360,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   />
                   <label
                     htmlFor="radio1"
-                    className={highlightClass }
+                    className={highlightClass + ' font-[700]' }
                   >Yes</label>
                 </div>
                 <div className="button_cal w-1/2">
@@ -376,7 +376,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   />
                   <label
                     htmlFor="radio2"
-                    className={highlightClass}
+                    className={highlightClass + ' font-[700]'}
                   >No</label>
                 </div>
               </div>
