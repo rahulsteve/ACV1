@@ -312,6 +312,70 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     }
   }, [step]);
 
+  // Utility to generate a 9-digit unique number
+  function generateLeadId() {
+    // Generate a random 9-digit number as a string
+    return Math.floor(100000000 + Math.random() * 900000000).toString();
+  }
+
+  const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL;
+
+  // Add this function inside MainSection component, before return
+  const handleSubmit = async () => {
+    const leadId = generateLeadId();
+    const now = new Date();
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const timestamp = now.toISOString();
+    const timestamp_date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    const timestamp_time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    // Try to get IP address (optional, fallback to empty string)
+    let ip_address = '';
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipRes.json();
+      ip_address = ipData.ip || '';
+    } catch {}
+
+    const payload = {
+      campaign: 'arnoldclark',
+      leadid: `${leadId}_Arnold`,
+      templateid: 'arnorldclarke1.html',
+      title: details.title,
+      phone: contact.mobile,
+      email: contact.email,
+      firstname: details.firstName,
+      lastname: details.lastName,
+      dob: `${details.day}/${details.month}/${details.year}`,
+      address1: address?.addressline1 || '',
+      address2: address?.addressline2 || '',
+      town: address?.posttown || '',
+      postcode: postcode,
+      keptacopy: answers.q2a,
+      usedinscotland: answers.q2,
+      liveinscotland: answers.q3,
+      usedarnoldclark: answers.q2,
+      notificationreceived: answers.q1,
+      datetime: timestamp,
+      ipaddress: ip_address,
+      url: 'www.google.com',
+      consent: agreementAccepted,
+      signature: signature, // already data:image/png;base64
+      date: timestamp_date,
+      time: timestamp_time
+    };
+
+    try {
+      await fetch("/api/submit-claim"!, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      setStep(11);
+    } catch (err) {
+      alert('Failed to submit. Please try again.');
+    }
+  };
+
   if (exited) {
     return (
       <section className="not-eligible">
@@ -1227,20 +1291,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 <button
                   type="button"
                   className={`bg-[#00b779] hover:bg-[#009e6d] text-white text-[20px] font-bold px-[50px] py-[25px] rounded shadow min-w-[180px] transition-all w-full ${agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") ? '' : 'opacity-50 cursor-not-allowed'}`}
-                  onClick={agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") ? () => {
-                    // Log all answers
-                    console.log({
-                      answers,
-                      details,
-                      postcode,
-                      address,
-                      contact,
-                      agreementAccepted,
-                      marketingConsent,
-                      signature
-                    });
-                    setStep(11);
-                  } : undefined}
+                  onClick={agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no") ? handleSubmit : undefined}
                   disabled={!(agreementAccepted === "yes" && signature.trim() && (marketingConsent === "yes" || marketingConsent === "no"))}
                 >
                   Submit
