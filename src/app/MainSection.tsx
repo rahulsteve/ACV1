@@ -417,7 +417,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <h2 ref={scrollToTopRef} className="leading-[1.3] text-[24px] font-[600] mt-0 mb-[20px] px-[10px] min-[575px]:tracking-[-0.04em] max-[575px]:tracking-[-0.03em] min-[575px]:transition-transform min-[575px]:origin-left min-[575px]:scale-[1.02]">
                 Have you purchased, sold, rented, hired, or leased a vehicle, or had any servicing or repairs carried out by Arnold Clark, or been an employee of Arnold Clark between 2012 and 2022?              </h2>
               <div className="flex flex-col gap-[15px] button_row m-[.5rem]">
-                <div className="button_cal w-full">
+                <div className="button_cal w-full" onClick={() => handleAnswer('q2', 'Yes')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -425,12 +425,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     name="have_you_purchased_vehicle"
                     value="Yes"
                     autoComplete="off"
-                    onClick={() => handleAnswer('q2', 'Yes')}
                     required
                   />
                   <label htmlFor="radio3">Yes</label>
                 </div>
-                <div className="button_cal w-full">
+                <div className="button_cal w-full" onClick={() => handleAnswer('q2', 'No')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -438,7 +437,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     name="have_you_purchased_vehicle"
                     value="No"
                     autoComplete="off"
-                    onClick={() => handleAnswer('q2', 'No')}
                     required
                   />
                   <label htmlFor="radio4">No</label>
@@ -462,7 +460,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 Have you kept a copy of the email or notification?
               </h2>
               <div className="flex flex-col gap-[15px] button_row">
-                <div className="button_cal w-full">
+                <div className="button_cal w-full" onClick={() => handleAnswer('q2a', 'Yes')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -470,12 +468,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     name="kept_copy_notification"
                     value="Yes"
                     autoComplete="off"
-                    onClick={() => handleAnswer('q2a', 'Yes')}
                     required
                   />
                   <label htmlFor="radio5">Yes</label>
                 </div>
-                <div className="button_cal w-full">
+                <div className="button_cal w-full" onClick={() => handleAnswer('q2a', 'Yes')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -507,7 +504,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 Did you live in Scotland when the purchase was made or when you were employed by Arnold Clark?
               </h2>
               <div className="flex flex-col gap-[15px] button_row">
-                <div className="button_cal w-full">
+                <div className="button_cal w-full" onClick={() => handleAnswer('q3', 'Yes')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -515,12 +512,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     name="lived_in_scotland"
                     value="Yes"
                     autoComplete="off"
-                    onClick={() => handleAnswer('q3', 'Yes')}
                     required
                   />
                   <label htmlFor="radio7">Yes</label>
                 </div>
-                <div className="button_cal w-full">
+                <div className="button_cal w-full" onClick={() => handleAnswer('q3', 'No')} >
                   <input
                     className="hidden"
                     type="radio"
@@ -528,7 +524,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     name="lived_in_scotland"
                     value="No"
                     autoComplete="off"
-                    onClick={() => handleAnswer('q3', 'No')}
                     required
                   />
                   <label htmlFor="radio8">No</label>
@@ -552,7 +547,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 Have you suffered distress and/or anxiety upon learning that your sensitive and confidential information may have been stolen?
               </h2>
               <div className="flex flex-col gap-[15px] button_row">
-                <div className="button_cal w-full">
+                <div className="button_cal w-full" onClick={() => handleAnswer('q4', 'Yes')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -560,12 +555,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     name="suffered_distress"
                     value="Yes"
                     autoComplete="off"
-                    onClick={() => handleAnswer('q4', 'Yes')}
                     required
                   />
                   <label htmlFor="radio9">Yes</label>
                 </div>
-                <div className="button_cal w-full">
+                <div className="button_cal w-full" onClick={() => handleAnswer('q4', 'No')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -573,7 +567,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     name="suffered_distress"
                     value="No"
                     autoComplete="off"
-                    onClick={() => handleAnswer('q4', 'No')}
                     required
                   />
                   <label htmlFor="radio10">No</label>
