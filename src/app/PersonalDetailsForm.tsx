@@ -38,8 +38,8 @@ const PersonalDetailsForm = ({
   // Check if form is valid
   const isFormValid = () => {
     return details.title &&
-      details.firstName.trim().length >= 3 &&
-      details.lastName.trim().length >= 3 &&
+      details.firstName.trim().length >= 2 &&
+      details.lastName.trim().length >= 2 &&
       details.day &&
       details.month &&
       details.year &&
@@ -53,7 +53,7 @@ const PersonalDetailsForm = ({
        leading-[0.9] tracking-[-0.03em] 
        text-[#0a0a0a] 
        min-[575px]:pt-[35px] 
-       font-bold 
+       font-[700] 
        text-left 
        ">Your personal details</h1>
       <p className="
@@ -68,6 +68,7 @@ const PersonalDetailsForm = ({
           name="title"
           value={details.title}
           onChange={onDetailsChange}
+          onBlur={() => onDetailsChange}
           className="w-[40%] border rounded px-3 py-2 mt-[.35em] max-[575px]:w-[50%]"
           required
         >
@@ -84,12 +85,11 @@ const PersonalDetailsForm = ({
             id="firstName"
             name="firstName"
             placeholder="First Name"
-            value={details.firstName}
-            onChange={onDetailsChange}
+            onBlur={onDetailsChange}
             className={`w-full border rounded px-3 py-4 mb-[.25rem] text-[17px] max-[575px]:text-[14px] ${errors.firstName ? 'border-red-500' : ''} first-last-input`}
             autoComplete="given-name"
           />
-          {errors.firstName && <div className="text-red-600 text-sm mt-1">{errors.firstName}</div>}
+         
         </div>
         <div className="form-group mb-4">
           <input
@@ -98,15 +98,14 @@ const PersonalDetailsForm = ({
             id="lastName"
             name="lastName"
             placeholder="Last Name"
-            value={details.lastName}
-            onChange={onDetailsChange}
+            onBlur={onDetailsChange}
             onFocus={() => {
               firstNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }}
             className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.lastName ? 'border-red-500' : ''} first-last-input`}
             autoComplete="family-name"
           />
-          {errors.lastName && <div className="text-red-600 text-sm mt-1">{errors.lastName}</div>}
+        
         </div>
       </div>
 
@@ -163,7 +162,8 @@ const PersonalDetailsForm = ({
             ))}
           </select>
         </div>
-        {errors.dob && <div className="text-red-500 text-sm mt-1">{errors.dob}</div>}
+        {errors.dob &&details.year &&details.month&&details.day && <div className="text-red-600  text-[17px] mt-1">{errors.dob}</div>} 
+      
       </div>
 
       <div className="mt-6">
@@ -173,7 +173,8 @@ const PersonalDetailsForm = ({
           disabled={!isFormValid()}
           className={` next-btn pa max-[575px]:w-full w-1/3 max-[575px]:px-[30px] max-[575px]:py-20px] px-[50px] py-[25px] mt-[10px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779]  transition-opacity ${!isFormValid() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
-          Next
+           {(errors.firstName ||errors.lastName)&& <div className="text-600 text-[17px] mt-1">First and last name must be at least 2 characters long!</div>}
+          {!errors.firstName &&!errors.lastName && <p>Next</p>}
         </button>
       </div>
 

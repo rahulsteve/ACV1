@@ -85,6 +85,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const emailRef = React.useRef<HTMLInputElement>(null);
   // Refs for other step headers
   const addressHeaderRef = React.useRef<HTMLHeadingElement>(null);
+  const scrollToTopRef = React.useRef<HTMLHeadingElement>(null);
   const documentsHeaderRef = React.useRef<HTMLHeadingElement>(null);
 
   const [numberCheckError, setNumberCheckError] = React.useState<string>('');
@@ -244,10 +245,10 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     // Re-validate on every change
     const newErrors = { ...errors };
     if (e.target.name === 'firstName') {
-      newErrors.firstName = newDetails.firstName.trim().length < 3 ? 'First name must be more than 2 characters.' : '';
+      newErrors.firstName = newDetails.firstName.trim().length < 2 ? 'First name must be more than 2 characters long!' : '';
     }
     if (e.target.name === 'lastName') {
-      newErrors.lastName = newDetails.lastName.trim().length < 3 ? 'Last name must be more than 2 characters.' : '';
+      newErrors.lastName = newDetails.lastName.trim().length < 2 ? 'Last name must be more than 2 characters long!' : '';
     }
     if (['day', 'month', 'year'].includes(e.target.name)) {
       newErrors.dob = !isOver18(newDetails.day, newDetails.month, newDetails.year) ? 'You must be over 18 years old.' : '';
@@ -258,12 +259,12 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const validateDetails = () => {
     let valid = true;
     const newErrors = { firstName: '', lastName: '', dob: '' };
-    if (details.firstName.trim().length < 3) {
-      newErrors.firstName = 'First name must be more than 2 characters.';
+    if (details.firstName.trim().length < 2) {
+      newErrors.firstName = 'First and last name must be at least 2 characters long!';
       valid = false;
     }
-    if (details.lastName.trim().length < 3) {
-      newErrors.lastName = 'Last name must be more than 2 characters.';
+    if (details.lastName.trim().length < 2) {
+      newErrors.lastName = 'First and last name must be at least 2 characters long!';
       valid = false;
     }
     if (!isOver18(details.day, details.month, details.year)) {
@@ -282,6 +283,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
   // Step content
   React.useEffect(() => {
+    if (step === 2||step===4) {
+      setTimeout(() => {
+        scrollToTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
     if (step === 9) {
       setTimeout(() => {
         contactHeaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -408,7 +414,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 2 */}
           {step === 2 && (
             <div className="button_section min-[575px]:mt-[20px] max-[575px]:pt-[1rem] min-[575px]:pt-[20px]">
-              <h2 className="leading-[1.3] text-[24px] font-[600] mt-0 mb-[20px] px-[10px] min-[575px]:tracking-[-0.04em] max-[575px]:tracking-[-0.03em] min-[575px]:transition-transform min-[575px]:origin-left min-[575px]:scale-[1.02]">
+              <h2 ref={scrollToTopRef} className="leading-[1.3] text-[24px] font-[600] mt-0 mb-[20px] px-[10px] min-[575px]:tracking-[-0.04em] max-[575px]:tracking-[-0.03em] min-[575px]:transition-transform min-[575px]:origin-left min-[575px]:scale-[1.02]">
                 Have you purchased, sold, rented, hired, or leased a vehicle, or had any servicing or repairs carried out by Arnold Clark, or been an employee of Arnold Clark between 2012 and 2022?              </h2>
               <div className="flex flex-col gap-[15px] button_row m-[.5rem]">
                 <div className="button_cal w-full">
@@ -452,7 +458,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 4 (Q2A) */}
           {step === 4 && (
             <div className="button_section mt-6">
-              <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
+              <h2 ref={scrollToTopRef} className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
                 Have you kept a copy of the email or notification?
               </h2>
               <div className="flex flex-col gap-[15px] button_row">
@@ -606,7 +612,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 8: Address */}
           {step === 8 && (
             <div className="min-[575px]:mt-8 max-[575px]:pt-[1rem] ">
-              <h1 ref={addressHeaderRef} className="max-[575px]:text-[28px] text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-4">Your current address</h1>
+              <h1 ref={addressHeaderRef} className="max-[575px]:text-[28px] text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-[700] text-left mb-4">Your current address</h1>
               <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your postcode below and tap &apos;Next&apos;</p>
               <div className="relative">
                 <input
@@ -695,7 +701,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {step === 9 && (
             <div className=" min-[575px]:pt-[20px]">
               <div className="min-[575px]:mt-[20px] min-[575px]:pt-[20px]  contact-info">
-                <h1 ref={contactHeaderRef} className="min-[575px]:text-[45px] text-[28px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-bold text-left mb-2">Your contact information</h1>
+                <h1 ref={contactHeaderRef} className="min-[575px]:text-[45px] text-[28px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] pt-[35px] font-[700] text-left mb-2">Your contact information</h1>
 
                 {/* --‑‑ Mobile -------------------------------------------------- */}
                 <h3 ref={mobileRef} className="text-[23px] mb-[10px] mt-[20px] max-[575px]: mt-[20px]">
@@ -848,7 +854,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 >
                   Next
                 </button>
-                <div className="mt-4 text-left text-[16px]">
+                <div className="mt-4 text-right text-[16px]">
                   <span className="inline-block align-middle mr-1" style={{ verticalAlign: 'middle' }}>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <circle cx="11" cy="11" r="10" stroke="#00b779" strokeWidth="2" fill="#00b779" />
@@ -871,10 +877,12 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {/* Step 10: Your Documents */}
           {step === 10 && (
             <div className="max-[575px]:mt-[20px] max-w-3xl mx-auto">
-              <h1 ref={documentsHeaderRef} className="max-[575px]:text-[21px] text-[45px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] min-[575px]:pt-[35px] font-bold text-left mb-4">Your Documents</h1>
-              <p className="mb-4">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
-              <p className="mb-4 font-bold">
+              <h1 ref={documentsHeaderRef} className="max-[575px]:text-[21px] text-[35px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] min-[575px]:pt-[35px] font-bold text-left mb-4">Your Documents</h1>
+              <p className="mb-4 max-[575px]:text-[15px] text-[16px] ">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
+              <p className="mb-4 max-[575px]:text-[15px] text-[16px] tracking-[0]" >
+                <b>
                 Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.
+                </b>
               </p>
               <p className="mb-4">
                 In order for them to process your claim please read the below agreement carefully and sign below.<br />
@@ -884,113 +892,124 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               </p>
               <a href="#" className="text-blue-600 mb-6 inline-block">Guidance notes for this document are highlighted and in blue</a>
 
-              <h3 className="text-[22px] font-bold mt-8 mb-2 text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1">CONDITIONAL FEE AGREEMENT</h3>
+              <h4 className="leading-[1.3] font-bold min-[575px]:text-[18px] text-[1rem] text-[#00b779] border-b-4 border-[#00b779] inline-block my-[30px]">CONDITIONAL FEE AGREEMENT</h4>
 
               <div className="scrollableBox mb-8 mt-4">
-                <h4 className="text-[22px] font-semibold mb-2 text-gray-700">The Agreement</h4>
-                <p className="mb-2">This agreement is governed by the law of England and Wales.</p>
+                <h4 className="min-[575px]:text-[22px] text-[1.125rem] font-semibold mt-[20px] text-gray-700">The Agreement</h4>
+                <p className="my-[14px]">This agreement is governed by the law of England and Wales.</p>
                 <p className="mb-2">This agreement is a legal contract between you <b>({details.firstName} {details.lastName})</b> and your Solicitor(s). Before agreeing to the terms of this contract, you must read the whole contract carefully.</p>
                 <p className="mb-2">The Agreement must be read in conjunction with your Solicitor&apos;s Client Care Letter, their Terms and Conditions, and the Notice of Right to Cancel. If you agree to be bound by the terms of this Agreement, you should sign where indicated at the end of this document. By signing, you also acknowledge receipt of the Notice of Right to Cancel and the Cancellation Notice.</p>
                 <p className="mb-2">The agreement is designed to avoid future disputes and, as such, the parties have agreed in advance on what will happen if the claim does not conclude in a &apos;Win&apos;.</p>
-                <h5 className="font-bold mt-4 mb-2">THE SCOPE OF THIS AGREEMENT IS AS FOLLOWS</h5>
+                <h3 className="font-[600] text-[1.5rem] mt-4 mb-2">THE SCOPE OF THIS AGREEMENT IS AS FOLLOWS</h3>
                 <div className="mb-2">
-                  <b>1. What is covered by this Agreement?</b>
-                  <ul className="list-disc pl-6">
-                    <li>1.1 Your claim for damages for Distress and Loss (including General Damages for Pain, Suffering, and Loss of Amenity, and Damages for Pecuniary Loss) suffered due to, but not exclusively, the misuse of private information by the defendant.</li>
-                    <li>1.2 All work already undertaken on your behalf, including the work required in setting up this agreement.</li>
-                    <li>1.3 Any application for pre-action or non-party disclosure.</li>
-                    <li>1.4 Any appeal you make against an interim order or an assessment of costs.</li>
-                    <li>1.5 ADR (including mediation) relating to the claim.</li>
-                    <li>1.6 Any appeal by the opponent.</li>
-                    <li>1.7 Any proceedings you take to enforce a court judgment, order, or agreement.</li>
-                    <li>1.8 Negotiations about and/or a court assessment of the costs of this claim.</li>
+                  <h3 className="font-[600] text-[1.5rem]">1. What is covered by this Agreement?</h3>
+                  <ul className="list-none">
+                    <li><b>1.1</b> Your claim for damages for Distress and Loss (including General Damages for Pain, Suffering, and Loss of Amenity, and Damages for Pecuniary Loss) suffered due to, but not exclusively, the misuse of private information by the defendant.</li>
+                    <li><b>1.2</b> All work already undertaken on your behalf, including the work required in setting up this agreement.</li>
+                    <li><b>1.3</b> Any application for pre-action or non-party disclosure.</li>
+                    <li><b>1.4</b> Any appeal you make against an interim order or an assessment of costs.</li>
+                    <li><b>1.5</b> ADR (including mediation) relating to the claim.</li>
+                    <li><b>1.6</b> Any appeal by the opponent.</li>
+                    <li><b>1.7</b> Any proceedings you take to enforce a court judgment, order, or agreement.</li>
+                    <li><b>1.8</b> Negotiations about and/or a court assessment of the costs of this claim.</li>
                   </ul>
                 </div>
                 <div className="mb-2">
-                  <b>2. What is not covered by this Agreement (unless otherwise agreed)?</b>
-                  <ul className="list-disc pl-6">
-                    <li>2.1 Any appeal you make against the final judgment or order.</li>
-                    <li>2.2 Any Part 20 Counterclaim made against you, or a Counterclaim or Defence by way of set-off which still exists after your claim has either been &apos;Won&apos;, &apos;Lost&apos;, or otherwise concluded.</li>
-                    <li>2.3 Any appeal against an interim order made by your opponent.</li>
+                  <h3>2. What is not covered by this Agreement (unless otherwise agreed)?</h3>
+                  <ul className="list-none">
+                    <li><b>2.1</b> Any appeal you make against the final judgment or order.</li>
+                    <li><b>2.2</b> Any Part 20 Counterclaim made against you, or a Counterclaim or Defence by way of set-off which still exists after your claim has either been &apos;Won&apos;, &apos;Lost&apos;, or otherwise concluded.</li>
+                    <li><b>2.3</b> Any appeal against an interim order made by your opponent.</li>
                   </ul>
                 </div>
                 <div className="mb-2">
-                  <b>3. Paying Us If You &apos;Win&apos;</b>
-                  <ul className="list-disc pl-6">
-                    <li>3.1 If your claim is successful, you are liable to pay all our basic charges, our expenses and disbursements, and a success fee, along with the premium for any After The Event (ATE) insurance you take out.</li>
-                    <li>3.2 If your claim is valued above the Small Claims Limit (£1,500 for damages for Pain, Suffering, and Loss of Amenity or £10,000 for other losses), you may be entitled to seek recovery of part or all of our basic charges and expenses from the opponent. The ATE Insurance premium may also be recoverable from the opponent, with any unrecovered amount being paid by you. you subject to clause 8.5 below.</li>
+                  <h3>3. Paying Us If You &apos;Win&apos;</h3>
+                  <ul className="list-none">
+                    <li><b>3.1</b> If your claim is successful, you are liable to pay all our basic charges, our expenses and disbursements, and a success fee, along with the premium for any After The Event (ATE) insurance you take out.</li>
+                    <li><b>3.2</b> If your claim is valued above the Small Claims Limit (£1,500 for damages for Pain, Suffering, and Loss of Amenity or £10,000 for other losses), you may be entitled to seek recovery of part or all of our basic charges and expenses from the opponent. The ATE Insurance premium may also be recoverable from the opponent, with any unrecovered amount being paid by you. you subject to clause 8.5 below.</li>
                   </ul>
-                  <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 3<br />We understand that this wording can be confusing and that you might be worried about how much you will have to pay if you win.<br />Legally, we must word our CFA in a specific way, but if your claim is successful, the only thing you will pay is our success fee. We will recover all the other costs, charges and expenses (including insurance premiums) that you are liable for from the Defendant or the insurance provider.<br />Any success fee deducted from your compensation will be capped at 25% and we guarantee that you will receive no less than 75% of any compensation awarded to you as long as you abide by our T&Cs.*</div>
+                  <p><em>Guidance Note: Section 3</em></p>
+                  <p><em>We understand that this wording can be confusing and that you might be worried about how much you will have to pay if you win.</em></p>
+                  <p><em>Legally, we must word our CFA in a specific way, but if your claim is successful, the only thing you will pay is our success fee. We will recover all the other costs, charges and expenses (including insurance premiums) that you are liable for from the Defendant or the insurance provider.</em></p>
+                  <p><em>Any success fee deducted from your compensation will be capped at 25% and we guarantee that you will receive no less than 75% of any compensation awarded to you as long as you abide by our T&Cs.*</em></p>
                 </div>
                 <div className="mb-2">
-                  <b>4. Disbursements and Expenses</b>
-                  <ul className="list-disc pl-6">
-                    <li>4.1 If you receive interim damages before the end of your claim, we may require you to pay our disbursements and expenses to date at that point and an amount for future expenses and disbursements;</li>
-                    <li>4.2 If your claim is successful but you are ordered to pay the other side&apos;s charges following an Interlocutory Hearing, then such charges will usually only be up to the amount of damages awarded to you. Such charges may be covered by your ATE insurance policy subject to the terms of the policy and your compliance with such terms;</li>
-                    <li>4.3 If, prior to a final Judgment, you are awarded any costs, either by way of a Court Order or Agreement, then we are entitled to payment of those costs together with any success fee on those charges if your claim is successful.</li>
+                  <h3>4. Disbursements and Expenses</h3>
+                  <ul className="list-none">
+                    <li><b>4.1</b> If you receive interim damages before the end of your claim, we may require you to pay our disbursements and expenses to date at that point and an amount for future expenses and disbursements;</li>
+                    <li><b>4.2</b> If your claim is successful but you are ordered to pay the other side&apos;s charges following an Interlocutory Hearing, then such charges will usually only be up to the amount of damages awarded to you. Such charges may be covered by your ATE insurance policy subject to the terms of the policy and your compliance with such terms;</li>
+                    <li><b>4.3</b> If, prior to a final Judgment, you are awarded any costs, either by way of a Court Order or Agreement, then we are entitled to payment of those costs together with any success fee on those charges if your claim is successful.</li>
                   </ul>
                 </div>
                 <div className="mb-2">
-                  <b>5. What Do I Pay If I Lose?</b>
-                  <ul className="list-disc pl-6">
-                    <li>5.1 If you lose you do not have to pay our basic charges provided that you have complied with our Terms and Conditions. However, you may be required to pay our disbursements and expenses, although these may be covered by any ATE insurance policy you have purchased, subject to compliance with the Terms and Conditions of that policy;</li>
-                    <li>5.2 If you lose your claim, you may be responsible for some, or all, of the Opponent&apos;s costs. If your claim includes a claim for General Damages for Pain, Suffering and Loss of Amenity, then you may benefit from Qualified One-Way Costs Shifting. In such circumstances, the Court will not usually enforce an Order for Costs against you unless:
-                      <ul className="list-disc pl-6">
-                        <li>5.2.1 The claim is fundamentally dishonest; or</li>
-                        <li>5.2.2 The proceedings have been struck out; or</li>
-                        <li>5.2.3 The claim includes a claim for the financial benefit of another party.</li>
+                  <h3>5. What Do I Pay If I Lose?</h3>
+                  <ul className="list-none">
+                    <li><b>5.1</b> If you lose you do not have to pay our basic charges provided that you have complied with our Terms and Conditions. However, you may be required to pay our disbursements and expenses, although these may be covered by any ATE insurance policy you have purchased, subject to compliance with the Terms and Conditions of that policy;</li>
+                    <li><b>5.2</b> If you lose your claim, you may be responsible for some, or all, of the Opponent&apos;s costs. If your claim includes a claim for General Damages for Pain, Suffering and Loss of Amenity, then you may benefit from Qualified One-Way Costs Shifting. In such circumstances, the Court will not usually enforce an Order for Costs against you unless:
+                      <ul className="list-none">
+                        <li><b>5.2.1</b> The claim is fundamentally dishonest; or</li>
+                        <li><b>5.2.2</b> The proceedings have been struck out; or</li>
+                        <li><b>5.2.3</b> The claim includes a claim for the financial benefit of another party.</li>
                       </ul>
                     </li>
                   </ul>
-                  <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 5<br />We know this can be confusing as you are signing up to no-win, no-fee.<br />However, we take out insurance to protect you from these costs, and, as long as you agree to this insurance and abide by our T&Cs* you won&apos;t have to pay a penny.</div>
+                  <p><em>Guidance Note: Section 5</em></p>
+                  <p><em>We know this can be confusing as you are signing up to no-win, no-fee.</em></p>
+                  <p><em>However, we take out insurance to protect you from these costs, and, as long as you agree to this insurance and abide by our T&Cs* you won&apos;t have to pay a penny.</em></p>
                 </div>
                 <div className="mb-2">
-                  <b>6. Basic Charges</b>
-                  <ul className="list-disc pl-6">
-                    <li>6.1 These are for work undertaken on your claim from your initial instructions until this Agreement ends. These charges are subject to an annual review;</li>
-                    <li>6.2 We calculate these charges based on each hour engaged on your case. Routine letters and telephone calls are charged as units of 1/10 of an hour. Any other type of letters and telephone calls will be charged on a time engaged basis. The hourly rate that we will charge is £400 per hour depending on the actual work being undertaken and the grade of fee earner undertaking the work. This section should be read alongside our Terms and Conditions and the section entitled &apos;Your Legal Costs and Disbursement&apos;s.</li>
-                    <li>6.3 The hourly rate set out in 6.2 assumes that the work being undertaken relates to negotiations and/or proceedings in the County Court that is commensurate with the type of work, in terms of value and complexity akin to that jurisdiction. Occasionally it may be necessary to commence proceedings in the High Court in relation to declaration proceedings or proceedings for Injunctive relief. In these circumstances, and to reflect the increase complexity of these types of proceedings our hourly rate will be charged at £550 per hour.</li>
+                  <h3>6. Basic Charges</h3>
+                  <ul className="list-none">
+                    <li><b>6.1</b> These are for work undertaken on your claim from your initial instructions until this Agreement ends. These charges are subject to an annual review;</li>
+                    <li><b>6.2</b> We calculate these charges based on each hour engaged on your case. Routine letters and telephone calls are charged as units of 1/10 of an hour. Any other type of letters and telephone calls will be charged on a time engaged basis. The hourly rate that we will charge is £400 per hour depending on the actual work being undertaken and the grade of fee earner undertaking the work. This section should be read alongside our Terms and Conditions and the section entitled &apos;Your Legal Costs and Disbursement&apos;s.</li>
+                    <li><b>6.3</b> The hourly rate set out in 6.2 assumes that the work being undertaken relates to negotiations and/or proceedings in the County Court that is commensurate with the type of work, in terms of value and complexity akin to that jurisdiction. Occasionally it may be necessary to commence proceedings in the High Court in relation to declaration proceedings or proceedings for Injunctive relief. In these circumstances, and to reflect the increase complexity of these types of proceedings our hourly rate will be charged at £550 per hour.</li>
                   </ul>
                 </div>
                 <div className="mb-2">
-                  <b>Right to Cancel/Ending This Agreement</b>
-                  <ul className="list-disc pl-6">
-                    <li>7.1 If you have entered into this Agreement in the physical presence of our employees, servant and/or agent, away from our business premises (i.e. in your home), or the Contract was agreed on our business premises immediately after you were personally and individually addressed away from our business premises, in the presence of one of our employees, servants and/or agents, then you have a right to cancel this Agreement within 14 days;</li>
-                    <li>7.2 If you cancel within the 14-day time limit, you will pay nothing. However, if you end the Agreement before you &apos;Win&apos; or &apos;Lose&apos;, you pay our basic charges and disbursements and expenses. If your case ultimately succeeds, you also pay a success fee. We reserve the right to end this Agreement at any time if either you have failed to comply with the terms of this Agreement, you reject our advice on any potential settlement or the prospects of success of a &apos;Win&apos; are reduced to below 50%.</li>
+                  <h3>Right to Cancel/Ending This Agreement</h3>
+                  <ul className="list-none">
+                    <li><b>7.1</b> If you have entered into this Agreement in the physical presence of our employees, servant and/or agent, away from our business premises (i.e. in your home), or the Contract was agreed on our business premises immediately after you were personally and individually addressed away from our business premises, in the presence of one of our employees, servants and/or agents, then you have a right to cancel this Agreement within 14 days;</li>
+                    <li><b>7.2</b> If you cancel within the 14-day time limit, you will pay nothing. However, if you end the Agreement before you &apos;Win&apos; or &apos;Lose&apos;, you pay our basic charges and disbursements and expenses. If your case ultimately succeeds, you also pay a success fee. We reserve the right to end this Agreement at any time if either you have failed to comply with the terms of this Agreement, you reject our advice on any potential settlement or the prospects of success of a &apos;Win&apos; are reduced to below 50%.</li>
                   </ul>
-                  <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 7<br />From the day you sign, you have the right to cancel this agreement within 14 days. If you cancel within the 14-day time limit, you will pay nothing.<br />However, if you cancel the agreement after this period, you may have to pay our basic charges, disbursements, and expenses. Furthermore, if you eventually win your case, we may also be entitled to a success fee.<br />If we decide to end our agreement because there is a limited chance of success, you won&apos;t have to pay us anything provided you have adhered to our T&Cs.*</div>
+                  <p><em>Guidance Note: Section 7</em></p>
+                  <p><em>From the day you sign, you have the right to cancel this agreement within 14 days. If you cancel within the 14-day time limit, you will pay nothing.</em></p>
+                  <p><em>However, if you cancel the agreement after this period, you may have to pay our basic charges, disbursements, and expenses. Furthermore, if you eventually win your case, we may also be entitled to a success fee.</em></p>
+                  <p><em>If we decide to end our agreement because there is a limited chance of success, you won&apos;t have to pay us anything provided you have adhered to our T&Cs.*</em></p>
                 </div>
                 <div className="mb-2">
-                  <b>8. The Success Fee</b>
-                  <ul className="list-disc pl-6">
-                    <li>8.1 The success fee is set at 75% of our basic charges, or 100%, if the claim concludes less than 45 days before Trial, including following a Judgment.</li>
-                    <li>8.2 The success fee percentage reflects the following: -
-                      <ul className="list-disc pl-6">
-                        <li>8.2.1 Our assessment of the risks of your case;</li>
-                        <li>8.2.2 The fact that if you lose, we will not earn anything;</li>
-                        <li>8.2.3 Any other appropriate factors;</li>
-                        <li>8.2.4 Our arrangements with you about paying expenses and disbursements;</li>
-                        <li>8.2.5 The risks of recovering damages from your opponent, which is less than their Part 36 Offer which you have rejected, on our advice;</li>
-                        <li>8.2.6 Unless it is expressly stated in writing, no part of the success fee relates to postponement of payment of fees and expenses.</li>
-                        <li>8.2.7 Additional case specific risks which are set out in any risk assessment.</li>
+                  <h3>8. The Success Fee</h3>
+                  <ul className="list-none">
+                    <li><b>8.1</b> The success fee is set at 75% of our basic charges, or 100%, if the claim concludes less than 45 days before Trial, including following a Judgment.</li>
+                    <li><b>8.2</b> The success fee percentage reflects the following: -
+                      <ul className="list-none">
+                        <li><b>8.2.1</b> Our assessment of the risks of your case;</li>
+                        <li><b>8.2.2</b> The fact that if you lose, we will not earn anything;</li>
+                        <li><b>8.2.3</b> Any other appropriate factors;</li>
+                        <li><b>8.2.4</b> Our arrangements with you about paying expenses and disbursements;</li>
+                        <li><b>8.2.5</b> The risks of recovering damages from your opponent, which is less than their Part 36 Offer which you have rejected, on our advice;</li>
+                        <li><b>8.2.6</b> Unless it is expressly stated in writing, no part of the success fee relates to postponement of payment of fees and expenses.</li>
+                        <li><b>8.2.7</b> Additional case specific risks which are set out in any risk assessment.</li>
                       </ul>
                     </li>
-                    <li>8.3 The success fee cannot be more than 100% of the basic charges in total.</li>
-                    <li>8.4 As your claim may include a claim for Pain, Suffering and Loss of Amenity, for psychological or psychiatric injury, there is a maximum limit, in percentage terms, on the level of success fee which we can recover from you.</li>
-                    <li>8.5 That maximum limit is 25% of the total amount of any claim for General Damages for Pain, Suffering, Loss of Amenity and Damages for Pecuniary loss. Claims for future Pecuniary Loss are unaffected.</li>
-                    <li>8.6 The maximum limit in percentage terms that is applicable is net of any sums recoverable by the Compensation Recovery Unit of the Department of Work and Pensions. The maximum limit (25%) is inclusive of any VAT charges at the prevailing rate.</li>
-                    <li>8.7 The maximum limit, in percentage terms, only applies to a success fee for proceedings at first instance. The maximum limit would not apply, for example, to any Appeal by your opponent.</li>
-                    <li>8.8 In the event of a dispute regarding the calculation of the success fee, the parties agree for the dispute to be determined by an independent barrister of at least 10 years call, to be appointed by agreement between us. In default of agreement, the barrister be appointed by the President of the Law Society of England and Wales, such barrister to act as expert, not arbitrator and his/her decision shall be binding. The barrister&apos;s fees are to be met by the losing party to the dispute.</li>
+                    <li><b>8.3</b> The success fee cannot be more than 100% of the basic charges in total.</li>
+                    <li><b>8.4</b> As your claim may include a claim for Pain, Suffering and Loss of Amenity, for psychological or psychiatric injury, there is a maximum limit, in percentage terms, on the level of success fee which we can recover from you.</li>
+                    <li><b>8.5</b> That maximum limit is 25% of the total amount of any claim for General Damages for Pain, Suffering, Loss of Amenity and Damages for Pecuniary loss. Claims for future Pecuniary Loss are unaffected.</li>
+                    <li><b>8.6</b> The maximum limit in percentage terms that is applicable is net of any sums recoverable by the Compensation Recovery Unit of the Department of Work and Pensions. The maximum limit (25%) is inclusive of any VAT charges at the prevailing rate.</li>
+                    <li><b>8.7</b> The maximum limit, in percentage terms, only applies to a success fee for proceedings at first instance. The maximum limit would not apply, for example, to any Appeal by your opponent.</li>
+                    <li><b>8.8</b> In the event of a dispute regarding the calculation of the success fee, the parties agree for the dispute to be determined by an independent barrister of at least 10 years call, to be appointed by agreement between us. In default of agreement, the barrister be appointed by the President of the Law Society of England and Wales, such barrister to act as expert, not arbitrator and his/her decision shall be binding. The barrister&apos;s fees are to be met by the losing party to the dispute.</li>
                   </ul>
-                  <div className="text-blue-600 text-sm mt-2 mb-2">Guidance Note: Section 8<br />We calculate our success fee by taking the costs we have incurred and multiplying them by either 75% (if the case concludes before litigation) or 100% after litigation.<br />If we win, you will be liable for our success fee (if we cannot recover this from the other side). However, we guarantee that you will never have to pay more than 25% of any compensation you receive.<br />We will waive any amount that takes your success fee payment above this 25%. So, you will always receive 75% of any compensation awarded as long as you abide by our T&Cs.*</div>
+                  <p><em>Guidance Note: Section 8</em></p>
+                  <p><em>We calculate our success fee by taking the costs we have incurred and multiplying them by either 75% (if the case concludes before litigation) or 100% after litigation.</em></p>
+                  <p><em>If we win, you will be liable for our success fee (if we cannot recover this from the other side). However, we guarantee that you will never have to pay more than 25% of any compensation you receive.</em></p>
+                  <p><em>We will waive any amount that takes your success fee payment above this 25%. So, you will always receive 75% of any compensation awarded as long as you abide by our T&Cs.*</em></p>
                 </div>
                 <div className="mb-2">
-                  <b>9. Additional Information and Terms</b>
-                  <ul className="list-disc pl-6">
-                    <li>9.1 We add VAT at the prevailing rate that applies to the work when it has been carried out. VAT is added to the total of the basic charges and the success fee (however, the maximum success fee of 25% is inclusive of VAT). Our VAT registration number is 329824182 The parties acknowledge and agree that this Agreement is not a contentious Business Agreement within the meaning of the Solicitors Act 1974;</li>
-                    <li>9.2 It may be that your opponent makes a Part 36 offer, or other formal offer to settle your claim, which you reject on our advice, and your claim for damages goes ahead to Trial where you recover damages that are less than that Offer. If this happens, we will not claim our basic charges and success fee for any work done after the expiry of the Part 36 Offer. However, in these circumstances, you may be ordered to pay your opponent&apos;s costs from the expiry of the Part 36 Offer. If your claim includes a claim for General Damages for Pain Suffering and Loss of Amenity, then any payment to your Opponent in costs, will be limited to the amount of damages and interest awarded to you, under the Qualified One-Way Costs Shifting Provisions;</li>
-                    <li>9.3 The description of the Claim, as set out above and within the definitions, is for recognition purposes and does not in any way limit the ambit of this Agreement; the ambit of the retainer shall be taken to include all issues that the parties understood to be the subject of the Claim. The ambit may change from time to time, as the Claim progresses. For example, if an opponent is incorrectly described or if there are additional opponents added, after this Agreement was first made, the ambit of the Agreement will not be in any way limited by the fact that the description of the Claim as set out above, may not be wholly accurate and complete;</li>
-                    <li>9.4 You have the right to apply to the Court for an assessment of our costs, including the success fee.</li>
+                  <h3>9. Additional Information and Terms</h3>
+                  <ul className="list-none">
+                    <li><b>9.1</b> We add VAT at the prevailing rate that applies to the work when it has been carried out. VAT is added to the total of the basic charges and the success fee (however, the maximum success fee of 25% is inclusive of VAT). Our VAT registration number is 329824182 The parties acknowledge and agree that this Agreement is not a contentious Business Agreement within the meaning of the Solicitors Act 1974;</li>
+                    <li><b>9.2</b> It may be that your opponent makes a Part 36 offer, or other formal offer to settle your claim, which you reject on our advice, and your claim for damages goes ahead to Trial where you recover damages that are less than that Offer. If this happens, we will not claim our basic charges and success fee for any work done after the expiry of the Part 36 Offer. However, in these circumstances, you may be ordered to pay your opponent&apos;s costs from the expiry of the Part 36 Offer. If your claim includes a claim for General Damages for Pain Suffering and Loss of Amenity, then any payment to your Opponent in costs, will be limited to the amount of damages and interest awarded to you, under the Qualified One-Way Costs Shifting Provisions;</li>
+                    <li><b>9.3</b> The description of the Claim, as set out above and within the definitions, is for recognition purposes and does not in any way limit the ambit of this Agreement; the ambit of the retainer shall be taken to include all issues that the parties understood to be the subject of the Claim. The ambit may change from time to time, as the Claim progresses. For example, if an opponent is incorrectly described or if there are additional opponents added, after this Agreement was first made, the ambit of the Agreement will not be in any way limited by the fact that the description of the Claim as set out above, may not be wholly accurate and complete;</li>
+                    <li><b>9.4</b> You have the right to apply to the Court for an assessment of our costs, including the success fee.</li>
                   </ul>
                 </div>
               </div>
@@ -1016,7 +1035,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 <p className="mb-2">When a data breach claim gets to Court, any information and evidence must be accessible and provided on request to be scrutinised. This means that claimants must keep all documentation and information that relates to their data breach claim in case it is needed.</p>
                 <p className="mb-2">For this reason, as the action progresses, we may ask you to send us copies of any such relevant documentation so that we can securely hold this on your behalf in case it is required.</p>
                 <h5 className="font-bold mt-4 mb-2">What documents might we need?</h5>
-                <ul className="list-disc pl-6 mb-2">
+                <ul className="list-none mb-2">
                   <li>Evidence that you made a purchase with the Defendant or used the Defendant&apos;s services during the data breach period. This could be in a confirmation email, or accessible by logging into your online account (if you have one). You might even be able to trace this on a bank statement</li>
                   <li>Evidence that you were a customer/client of the Defendant&apos;s during the data breach period (e.g. where you didn&apos;t make a purchase, but your details were kept on file)</li>
                   <li>Evidence that your details have been affected (e.g. correspondence from the Defendant confirming that your data was breached)</li>
@@ -1035,65 +1054,65 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 <p className="mb-2">Where you are unable to send relevant documents to us, please ensure that you preserve them and do not dispose of the originals. This is important as, if you are requested to produce documents, but cannot as they have been disposed of, this could negatively impact your claim.</p>
                 <p>If you have any queries, please contact us</p>
               </div>
-              <div className="mt-6 mb-8">
-                <div className="font-bold text-[16px] mb-2">By signing your agreement(s) with KP Law Limited, you are confirming that you are happy to engage us in accordance with our terms and conditions.</div>
-                <div className="font-bold text-[16px] mb-2">You also accept and agree to the above assessment of the risk on your case and the success fee that is then calculated from it.</div>
-                <div className="flex items-center gap-6 mt-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <span
-                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${agreementAccepted === "yes"
-                        ? "bg-[#00b779] border-[#00b779]"
-                        : "bg-white border-[#00b779]"
-                        } cursor-pointer`}
-                      onClick={() => {
-                        setAgreementAccepted("yes");
-                        setAgreementError("");
-                      }}
-                      tabIndex={0}
-                      role="checkbox"
-                      aria-checked={agreementAccepted === "yes"}
-                      style={{ marginRight: "6px" }}
-                    >
-                      {agreementAccepted === "yes" && (
-                        <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect width="18" height="18" fill="none" />
-                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      )}
-                    </span>
-                    <span className="text-[18px]">Yes</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <span
-                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${agreementAccepted === "no"
-                        ? "bg-[#00b779] border-[#00b779]"
-                        : "bg-white border-[#00b779]"
-                        } cursor-pointer`}
-                      onClick={() => {
-                        setAgreementAccepted("no");
-                        setAgreementError("Sorry, we can not process your claim without the signed documents.");
-                      }}
-                      tabIndex={0}
-                      role="checkbox"
-                      aria-checked={agreementAccepted === "no"}
-                      style={{ marginRight: "6px" }}
-                    >
-                      {agreementAccepted === "no" && (
-                        <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect width="18" height="18" fill="none" />
-                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      )}
-                    </span>
-                    <span className="text-[18px]">No</span>
-                  </label>
-                </div>
-                {agreementError && (
-                  <div className="border border-red-500 bg-white text-red-600 p-2 mb-2 text-[16px] rounded">
-                    {agreementError}
-                  </div>
-                )}
+              {/* CONSENT TO CFA/FOA/TERMS HEADER */}
+              <h2 className="text-[24px] font-bold uppercase text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1 mb-4 mt-8">CONSENT TO CFA/FOA/TERMS:</h2>
+              <div className="font-bold text-[16px] mb-2">By signing your agreement(s) with KP Law Limited, you are confirming that you are happy to engage us in accordance with our terms and conditions.</div>
+              <div className="font-bold text-[16px] mb-2">You also accept and agree to the above assessment of the risk on your case and the success fee that is then calculated from it.</div>
+              <div className="flex items-center gap-6 mt-4 mb-10">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <span
+                    className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${agreementAccepted === "yes"
+                      ? "bg-[#00b779] border-[#00b779]"
+                      : "bg-white border-[#00b779]"
+                      } cursor-pointer`}
+                    onClick={() => {
+                      setAgreementAccepted("yes");
+                      setAgreementError("");
+                    }}
+                    tabIndex={0}
+                    role="checkbox"
+                    aria-checked={agreementAccepted === "yes"}
+                    style={{ marginRight: "6px" }}
+                  >
+                    {agreementAccepted === "yes" && (
+                      <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="18" height="18" fill="none" />
+                        <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </span>
+                  <span className="text-[18px] font-normal">Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <span
+                    className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${agreementAccepted === "no"
+                      ? "bg-[#00b779] border-[#00b779]"
+                      : "bg-white border-[#00b779]"
+                      } cursor-pointer`}
+                    onClick={() => {
+                      setAgreementAccepted("no");
+                      setAgreementError("Sorry, we can not process your claim without the signed documents.");
+                    }}
+                    tabIndex={0}
+                    role="checkbox"
+                    aria-checked={agreementAccepted === "no"}
+                    style={{ marginRight: "6px" }}
+                  >
+                    {agreementAccepted === "no" && (
+                      <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="18" height="18" fill="none" />
+                        <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </span>
+                  <span className="text-[18px] font-normal">No</span>
+                </label>
               </div>
+              {agreementError && (
+                <div className="border border-red-500 bg-white text-red-600 p-2 mb-2 text-[16px] rounded">
+                  {agreementError}
+                </div>
+              )}
               {/* SIGNATURE & CONSENT SECTION */}
               <h3 className="text-[22px] font-bold mt-8 mb-2 text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1">PLEASE SIGN HERE*</h3>
               <div className="mb-4">
@@ -1150,7 +1169,10 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 </div>
               )}
               <a href="https://www.kpl-databreach.co.uk/terms-conditions-old/" target="_blank" className="text-blue-700 underline mb-4 inline-block">TERMS AND CONDITIONS</a>
-              <div className="font-bold text-[15px] mb-2 mt-6">
+              <br />
+              {/* KP LAW 3RD PARTY OPTIN HEADER */}
+              <h2 className="text-[24px] font-bold uppercase text-[#00b779] border-b-4 border-[#00b779] inline-block pb-1 mb-4 mt-12">KP LAW 3RD PARTY OPTIN</h2>
+              <div className="font-bold text-[15px] mb-2 mt-2">
                 From time to time KP Law Limited become aware of legal claims and other services being provided by different law firms or other similar types of businesses that may be relevant to you. Please tick the box below if you would like more information about these.
               </div>
               <div className="font-bold text-[15px] mb-2 mt-2">
@@ -1159,7 +1181,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <div className="font-bold text-[15px]">
                 For more information on what we do with your data and your rights in relation to your data, please see our <a href="https://www.kpl-databreach.co.uk/privacy-policy/" className="text-blue-700 underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
               </div>
-              <div className="flex items-center gap-6 mt-2 mb-8">
+              <div className="flex items-center gap-6 mt-4 mb-8">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <span
                     className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${marketingConsent === "yes"

@@ -168,7 +168,12 @@ body {
   .scrollableBox{
     padding: 20px 15px !important;
   }
-
+  .scrollableBox h3 {
+    font-size: 1.125rem !important;
+    line-height: 1.15;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
   div input[type="text"],
   div input[type="email"],
   div select ,
@@ -253,10 +258,26 @@ body {
   scrollbar-color: #008f5f #f0f0f0;
   line-height: 1.7;
 }
-
+.scrollableBox p, .scrollableBox li {
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 1em 0;
+}
+.scrollableBox h3 {
+  color: #464646;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+.scrollableBox li {
+margin: 14px 0px ;
+}
 .node-panel p {
   margin-top: 15px;
   line-height: 1.5rem;
+}
+.scrollableBox p em {
+  color: #002eb7;
+  
 }
 
 .q1-highlight {
