@@ -20,13 +20,26 @@ export async function GET(req: NextRequest) {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
+        
+        // Handle rate limiting specifically
+        if (response.status === 429) {
+            return NextResponse.json({ 
+                error: "Too many requests. Please wait a moment and try again." 
+            }, { status: 429 });
+        }
+        
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Postcoder API error: ${response.status} ${response.statusText} - ${errorText}`);
+            console.error('Postcoder retrieve error:', response.status, response.statusText, errorText);
+            return NextResponse.json({ 
+                error: `Postcoder API error: ${response.status} ${response.statusText}` 
+            }, { status: response.status });
         }
+        
         const data = await response.json();
         return NextResponse.json(data);
     } catch (error) {
+        console.error('Postcode retrieve error:', error);
         const message = error instanceof Error ? error.message : "Unknown error";
         return NextResponse.json({ error: message }, { status: 500 });
     }

@@ -32,8 +32,6 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        console.log('API Key length:', apiKey?.length);
-        console.log('Query:', query.trim());
         const apiurl = `https://ws.postcoder.com/pcw/autocomplete/find?apikey=${apiKey}&Country=${country}&identifier=Autocomplete%20Address%20Finder&query=${encodeURIComponent(query.trim())}&postcode=${encodeURIComponent(query.trim())}`
         const response = await fetch(
             `${apiurl}`,
@@ -44,13 +42,20 @@ export async function GET(req: NextRequest) {
                 },
             }
         );
-        console.log('Response status:', response.status);
-        console.log('Response status text:', response.statusText);
+
+        // Handle rate limiting specifically
+        if (response.status === 429) {
+            return NextResponse.json({ 
+                error: "Too many requests. Please wait a moment and try again." 
+            }, { status: 429 });
+        }
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('API Error response:', errorText);
-            throw new Error(`Postcoder API error: ${response.status} ${response.statusText} - ${errorText}`);
+            console.error('Postcoder API error:', response.status, response.statusText, errorText);
+            return NextResponse.json({ 
+                error: `Postcoder API error: ${response.status} ${response.statusText}` 
+            }, { status: response.status });
         }
 
         const data = await response.json();

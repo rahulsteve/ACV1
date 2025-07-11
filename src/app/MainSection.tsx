@@ -50,6 +50,17 @@ interface PostcodeSuggestion {
   value?: string;
 }
 
+// Helper functions for date formatting
+function formatDateDDMMYYYY(date: Date) {
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+}
+
+function formatTimeHHMMSS(date: Date) {
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
 const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => {
   const [answers, setAnswers] = React.useState({
     q1: '', q2: '', q2a: '', q3: '', q4: ''
@@ -57,6 +68,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const [details, setDetails] = React.useState(initialDetails);
   const [errors, setErrors] = React.useState({ firstName: '', lastName: '', dob: '' });
   const [postcode, setPostcode] = React.useState("");
+  const [PostCodeId, setPostCodeId] = React.useState("");
   const [address, setAddress] = React.useState<PostcodeSuggestion | null>(null);
   const [contact, setContact] = React.useState({ mobile: '', email: '' });
   const [agreementAccepted, setAgreementAccepted] = React.useState("");
@@ -96,8 +108,18 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
   // Postcode autocomplete states
   const [postcodeSuggestions, setPostcodeSuggestions] = React.useState<PostcodeSuggestion[]>([]);
-  const [showSuggestions, setShowSuggestions] = React.useState(false);
+  const [ showSuggestions,setShowSuggestions] = React.useState(false);
   const [isLoadingPostcodes, setIsLoadingPostcodes] = React.useState(false);
+  const [postcodeError , setPostcodeError] = React.useState<string>('');
+  const [rateLimitRetry, setRateLimitRetry] = React.useState<number>(0);
+  const [errorCountdown, setErrorCountdown] = React.useState<number>(0);
+  
+  // Cache for postcode suggestions to avoid repeated API calls
+  const postcodeCache = React.useRef<Map<string, PostcodeSuggestion[]>>(new Map());
+  const lastSearchQuery = React.useRef<string>('');
+  const searchTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const errorClearTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const countdownIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const validatePhoneNumber = async (phone: string) => {
     const res = await fetch('/api/validate', {
@@ -119,63 +141,168 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     return emailRegex.test(email);
   };
 
-  // Postcode autocomplete function
+  // Function to set error with auto-clear and countdown
+  const setPostcodeErrorWithTimeout = (error: string, timeoutMs: number = 30000) => {
+    setPostcodeError(error);
+    setErrorCountdown(Math.ceil(timeoutMs / 1000));
+    console.log(postcodeError)
+    // Clear previous timeout and interval
+    if (errorClearTimeoutRef.current) {
+      clearTimeout(errorClearTimeoutRef.current);
+    }
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+    }
+    
+    // Start countdown interval
+    countdownIntervalRef.current = setInterval(() => {
+      setErrorCountdown(prev => {
+        if (prev <= 1) {
+          // Clear interval when countdown reaches 0
+          if (countdownIntervalRef.current) {
+            clearInterval(countdownIntervalRef.current);
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    // Set new timeout to clear error
+    errorClearTimeoutRef.current = setTimeout(() => {
+      setPostcodeError('');
+      setErrorCountdown(0);
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+      }
+    }, timeoutMs);
+  };
+
+  // Optimized postcode autocomplete function with debouncing and caching
   const searchPostcodes = async (query: string, PathFilter: string = "") => {
     if (query.length < 3) {
       setPostcodeSuggestions([]);
       setShowSuggestions(false);
+      setPostcodeError('');
+      console.log(showSuggestions)
       return;
     }
 
-    setIsLoadingPostcodes(true);
-    try {
-      const response = await fetch(`/api/postcode-autocomplete?q=${encodeURIComponent(query)}&PF=${encodeURIComponent(PathFilter)}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch postcode suggestions');
-      }
-      const data = await response.json();
-      setPostcodeSuggestions(data);
-      setShowSuggestions(data.length > 0);
-    } catch (error) {
-      console.error('Error fetching postcode suggestions:', error);
-      setPostcodeSuggestions([]);
-      setShowSuggestions(false);
-    } finally {
-      setIsLoadingPostcodes(false);
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
     }
+
+    // Create cache key
+    const cacheKey = `${query.trim()}_${PathFilter}`;
+    
+    // Check cache first
+    if (postcodeCache.current.has(cacheKey)) {
+      const cachedResults = postcodeCache.current.get(cacheKey);
+      setPostcodeSuggestions(cachedResults || []);
+      setShowSuggestions((cachedResults || []).length > 0);
+      setPostcodeError('');
+      return;
+    }
+
+    // Debounce the API call
+    searchTimeoutRef.current = setTimeout(async () => {
+      // Don't search if query has changed
+      if (query.trim() !== lastSearchQuery.current) {
+        return;
+      }
+
+      setIsLoadingPostcodes(true);
+      setPostcodeError('');
+      
+      try {
+        const response = await fetch(`/api/postcode-autocomplete?q=${encodeURIComponent(query)}&PF=${encodeURIComponent(PathFilter)}`);
+        
+        if (response.status === 429) {
+          // Rate limit hit - implement exponential backoff
+          const retryDelay = Math.min(1000 * Math.pow(2, rateLimitRetry), 10000);
+          setPostcodeErrorWithTimeout(`Too many requests. Please wait ${Math.ceil(retryDelay / 1000)} seconds and try again.`, 30000);
+          setRateLimitRetry(prev => prev + 1);
+          
+          // Auto-retry after delay
+          setTimeout(() => {
+            if (query.trim() === lastSearchQuery.current) {
+              searchPostcodes(query, PathFilter);
+            }
+          }, retryDelay);
+          return;
+        }
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        // Cache the results
+        postcodeCache.current.set(cacheKey, data);
+        
+        setPostcodeSuggestions(data);
+        setShowSuggestions(data.length > 0);
+        setRateLimitRetry(0); // Reset retry counter on success
+        
+             } catch (error) {
+         console.error('Error fetching postcode suggestions:', error);
+         setPostcodeErrorWithTimeout(error instanceof Error ? error.message : 'Failed to fetch postcode suggestions', 30000);
+         setPostcodeSuggestions([]);
+         setShowSuggestions(false);
+       } finally {
+        setIsLoadingPostcodes(false);
+      }
+    }, 500); // 500ms debounce delay
+
+    lastSearchQuery.current = query.trim();
   };
 
-  // Retrieve address function (moved above handlePostcodeSelect)
+  // Retrieve address function with better error handling
   const retrieveAddress = async (id: string) => {
     try {
       const response = await fetch(`/api/postcode-retrieve?id=${encodeURIComponent(id)}&query=${encodeURIComponent(postcode)}`);
+      
+      // if (response.status === 429) {
+      //   setPostcodeErrorWithTimeout('Too many requests. Please wait a moment and try again.', 30000);
+      //   return;
+      // }
+      
       if (!response.ok) {
-        throw new Error('Failed to retrieve address');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
+      
       const data = await response.json();
       if (Array.isArray(data) && data.length > 0) {
-        setAddress(data[0])
-        setAddressRetrieved(true); // Enable the button
+        setAddress(data[0]);
+        setPostcodeError('');
         setTimeout(() => {
           nextButtonRef.current?.focus();
         }, 0);
       }
     } catch (error) {
       console.error('Error retrieving address:', error);
+      setPostcodeErrorWithTimeout(error instanceof Error ? error.message : 'Failed to retrieve address', 30000);
     }
   };
 
-  // Handle postcode selection
+    // Handle postcode selection
   const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     debugger
-    // setPostcode(address.summaryline);
     if ((address?.count ?? 0) > 1) {
       searchPostcodes(postcode, address.id);
     } else {
-      retrieveAddress(address.id)
+      setPostCodeId(address.id);
+      //retrieveAddress(address.id);
+      console.log(PostCodeId==="")
     }
   };
-
+  const isPostCodeIdValid = () => {
+    return PostCodeId !==""
+  };
   // Handle responsive canvas sizing
   React.useEffect(() => {
     const updateCanvasSize = () => {
@@ -208,6 +335,21 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     return () => {
       window.removeEventListener('resize', handleResize);
       clearTimeout(timeoutId);
+    };
+  }, []);
+
+  // Cleanup timeouts on unmount
+  React.useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      if (errorClearTimeoutRef.current) {
+        clearTimeout(errorClearTimeoutRef.current);
+      }
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+      }
     };
   }, []);
 
@@ -283,7 +425,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
   // Step content
   React.useEffect(() => {
-    if (step === 2||step===4) {
+    if (step === 2 || step === 4) {
       setTimeout(() => {
         scrollToTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
@@ -318,22 +460,21 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     return Math.floor(100000000 + Math.random() * 900000000).toString();
   }
 
-
   // Add this function inside MainSection component, before return
   const handleSubmit = async () => {
     const leadId = generateLeadId();
     const now = new Date();
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    const timestamp = now.toISOString();
-    const timestamp_date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-    const timestamp_time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    // Use new formatting helpers
+    const timestamp_date = formatDateDDMMYYYY(now); // dd/mm/yyyy
+    const timestamp_time = formatTimeHHMMSS(now);   // hh:mm:ss
+    const timestamp = `${timestamp_date} ${timestamp_time}`; // dd/mm/yyyy hh:mm:ss
     // Try to get IP address (optional, fallback to empty string)
     let ip_address = '';
     try {
       const ipRes = await fetch('https://api.ipify.org?format=json');
       const ipData = await ipRes.json();
       ip_address = ipData.ip || '';
-    } catch {}
+    } catch { }
 
     const payload = {
       campaign: 'arnoldclark',
@@ -354,13 +495,13 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
       liveinscotland: answers.q3,
       usedarnoldclark: answers.q2,
       notificationreceived: answers.q1,
-      datetime: timestamp,
+      datetime: timestamp,      // dd/mm/yyyy hh:mm:ss
       ipaddress: ip_address,
       url: 'www.google.com',
       consent: agreementAccepted,
       signature: signature, // already data:image/png;base64
-      date: timestamp_date,
-      time: timestamp_time
+      date: timestamp_date,     // dd/mm/yyyy
+      time: timestamp_time      // hh:mm:ss
     };
 
     try {
@@ -371,7 +512,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
       });
       setStep(11);
     } catch (err) {
-console.log(err)    }
+      console.log(err)
+    }
   };
 
   if (exited) {
@@ -415,8 +557,8 @@ console.log(err)    }
               </h2>
 
               <div className="flex gap-[16px] button_row">
-                <div className={highlightClass+" button_cal w-1/2"} 
-                 onClick={() => { handleAnswer('q1', 'Yes'); setQ1Highlight(false); }}>
+                <div className={highlightClass + " button_cal w-1/2"}
+                  onClick={() => { handleAnswer('q1', 'Yes'); setQ1Highlight(false); }}>
                   <input
                     className="hidden"
                     type="radio"
@@ -424,16 +566,16 @@ console.log(err)    }
                     name="have_you_been_notified"
                     value="Yes"
                     autoComplete="off"
-                   
+
                     required
                   />
                   <label
                     htmlFor="radio1"
-                    className=' font-[700]' 
+                    className=' font-[700]'
                   >Yes</label>
                 </div>
-                <div className={highlightClass+" button_cal w-1/2"} 
-                 onClick={() => { handleAnswer('q1', 'No'); setQ1Highlight(false); }}>
+                <div className={highlightClass + " button_cal w-1/2"}
+                  onClick={() => { handleAnswer('q1', 'No'); setQ1Highlight(false); }}>
                   <input
                     className="hidden"
                     type="radio"
@@ -675,17 +817,30 @@ console.log(err)    }
                   placeholder="Postcode"
                   value={postcode}
                   onChange={e => {
-                    setPostcode(e.target.value);
+                    const newValue = e.target.value;
+                    setPostcode(newValue);
                     setAddress(null);
-                    setAddressRetrieved(false); // Disable the button until a new address is retrieved
-                    setShowSuggestions(false); // Always hide suggestions on change
-                  }}
-                  onFocus={() => {
-                    if (postcode.length >= 3 && postcodeSuggestions.length > 0) setShowSuggestions(true);
+                    setAddressRetrieved(false);
+                    setShowSuggestions(false);
+                    setPostcodeError('');
+                    setErrorCountdown(0);
+                    // Clear any existing error timeout and interval
+                    if (errorClearTimeoutRef.current) {
+                      clearTimeout(errorClearTimeoutRef.current);
+                    }
+                    if (countdownIntervalRef.current) {
+                      clearInterval(countdownIntervalRef.current);
+                    }
+                    
+                    // Clear suggestions when input changes
+                    setPostcodeSuggestions([]);
                   }}
                   onKeyDown={e => {
                     if (e.key === 'Enter') {
-                      searchPostcodes(postcode);
+                      e.preventDefault();
+                      if (postcode.length >= 3) {
+                        searchPostcodes(postcode);
+                      }
                     }
                   }}
                   className="w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] pr-20"
@@ -698,11 +853,12 @@ console.log(err)    }
                   className="absolute right-0
                      top-1/2
                      transform -translate-y-1/2 bg-[#000] font-bold min-[575px]:text-[20px] text-[16px] h-full rounded max-[575px]:text-[15px] text-white max-[575px]:px-5 min-[575px]:px-10 py-4  flex items-center justify-center"
-                  onClick={async () => {
-                    await searchPostcodes(postcode);
-                    // After search, show suggestions if any
-                    if (postcodeSuggestions.length > 0) setShowSuggestions(true);
+                  onClick={() => {
+                    if (postcode.length >= 3 && errorCountdown === 0) {
+                      searchPostcodes(postcode);
+                    }
                   }}
+                  disabled={postcode.length < 3 || isLoadingPostcodes || errorCountdown > 0}
                   tabIndex={0}
                   aria-label="Search Postcode"
                 >
@@ -714,16 +870,20 @@ console.log(err)    }
                 )}
               </div>
               {/* Show select dropdown if suggestions exist */}
-              {showSuggestions && postcodeSuggestions.length > 0 && (
+              {postcodeSuggestions.length > 0 && (
                 <select
-                  className="w-full border rounded px-3 py-3 mt-2 text-[17px] bg-white shadow z-10"
+                  className={`w-full border rounded px-3 py-3 mt-2 text-[17px] bg-white shadow z-10 ${errorCountdown > 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   value={address?.summaryline}
                   onChange={e => {
+                    if (errorCountdown > 0) return; // Disable during error countdown
                     const idx = e.target.value;
                     if (idx !== "") {
+                    setTimeout(() => {
                       handlePostcodeSelect(postcodeSuggestions[Number(idx)]);
+                    });  
                     }
                   }}
+                  disabled={errorCountdown > 0}
                 >
                   <option className={'disabled'} value="">{address?.summaryline ?? "Select your address..."}</option>
                   {postcodeSuggestions.map((suggestion, idx) => (
@@ -737,16 +897,19 @@ console.log(err)    }
               <button
                 ref={nextButtonRef}
                 type="button"
-                className={`next-btn pa max-[575px]:w-full w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] max-[575px]:bg-none transition-opacity ${addressRetrieved ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
-                onClick={addressRetrieved ? () => setStep(9) : undefined}
-                disabled={!addressRetrieved}
+                className={`next-btn pa max-[575px]:w-full w-1/3 px-[50px] py-[25px] mt-[20px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779] max-[575px]:bg-none transition-opacity ${PostCodeId ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                onClick={PostCodeId ? () => {
+                  retrieveAddress(PostCodeId);
+                  setStep(9);
+                } : undefined}
+                disabled={!isPostCodeIdValid()}
               >
                 Next
               </button>
               <button
                 type="button"
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(7)}
+                                 onClick={() => setStep(7)}
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" ><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back
@@ -760,8 +923,8 @@ console.log(err)    }
 
                 {/* --‑‑ Mobile -------------------------------------------------- */}
                 <h3 ref={mobileRef} className="text-[23px] mb-[10px] mt-[20px] max-[575px]: mt-[20px]">
-              <strong>Mobile number</strong>    
-                  </h3>
+                  <strong>Mobile number</strong>
+                </h3>
                 <p className="mb-4 text-[16px] leading-[1.5rem] max-[575px]:text-[15px]">Enter your current mobile number</p>
 
                 <div className={`flex items-center w-full border rounded mobile-div px-3 py-4 text-[20px] mb-2 bg-white
@@ -857,6 +1020,9 @@ console.log(err)    }
                     setContact({ ...contact, email: e.target.value });
                     setEmailError('');
                     setEmailSuccess('');
+                    if (validateEmail(e.target.value)) {
+                      setEmailSuccess('Valid email address');
+                    }
                   }}
                   onFocus={() => {
                     emailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -886,7 +1052,7 @@ console.log(err)    }
                         setEmailError('');
                         setTimeout(() => {
                           const nextBtn = document.querySelector('.next-btn') as HTMLElement | null;
-                          nextBtn?.focus();
+                          nextBtn?.click();
                         }, 0);
                       }
                     }
@@ -936,7 +1102,7 @@ console.log(err)    }
               <p className="mb-4 max-[575px]:text-[15px] text-[16px] ">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
               <p className="mb-4 max-[575px]:text-[15px] text-[16px] tracking-[0]" >
                 <b>
-                Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.
+                  Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.
                 </b>
               </p>
               <p className="mb-4">
