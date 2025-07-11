@@ -89,8 +89,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   // Ref for Next button in address step
   const nextButtonRef = React.useRef<HTMLButtonElement>(null);
   // State to track if address has been retrieved
-  const [addressRetrieved, setAddressRetrieved] = React.useState(false);
-  // Ref for contact info header
   const contactHeaderRef = React.useRef<HTMLHeadingElement>(null);
   // Refs for contact info fields
   const mobileRef = React.useRef<HTMLInputElement>(null);
@@ -108,12 +106,12 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
   // Postcode autocomplete states
   const [postcodeSuggestions, setPostcodeSuggestions] = React.useState<PostcodeSuggestion[]>([]);
-  const [ showSuggestions,setShowSuggestions] = React.useState(false);
+  const [showSuggestions, setShowSuggestions] = React.useState(false);
   const [isLoadingPostcodes, setIsLoadingPostcodes] = React.useState(false);
-  const [postcodeError , setPostcodeError] = React.useState<string>('');
+  const [postcodeError, setPostcodeError] = React.useState<string>('');
   const [rateLimitRetry, setRateLimitRetry] = React.useState<number>(0);
   const [errorCountdown, setErrorCountdown] = React.useState<number>(0);
-  
+
   // Cache for postcode suggestions to avoid repeated API calls
   const postcodeCache = React.useRef<Map<string, PostcodeSuggestion[]>>(new Map());
   const lastSearchQuery = React.useRef<string>('');
@@ -153,7 +151,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     if (countdownIntervalRef.current) {
       clearInterval(countdownIntervalRef.current);
     }
-    
+
     // Start countdown interval
     countdownIntervalRef.current = setInterval(() => {
       setErrorCountdown(prev => {
@@ -167,7 +165,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
         return prev - 1;
       });
     }, 1000);
-    
+
     // Set new timeout to clear error
     errorClearTimeoutRef.current = setTimeout(() => {
       setPostcodeError('');
@@ -195,7 +193,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
     // Create cache key
     const cacheKey = `${query.trim()}_${PathFilter}`;
-    
+
     // Check cache first
     if (postcodeCache.current.has(cacheKey)) {
       const cachedResults = postcodeCache.current.get(cacheKey);
@@ -214,16 +212,16 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
       setIsLoadingPostcodes(true);
       setPostcodeError('');
-      
+
       try {
         const response = await fetch(`/api/postcode-autocomplete?q=${encodeURIComponent(query)}&PF=${encodeURIComponent(PathFilter)}`);
-        
+
         if (response.status === 429) {
           // Rate limit hit - implement exponential backoff
           const retryDelay = Math.min(1000 * Math.pow(2, rateLimitRetry), 10000);
           setPostcodeErrorWithTimeout(`Too many requests. Please wait ${Math.ceil(retryDelay / 1000)} seconds and try again.`, 30000);
           setRateLimitRetry(prev => prev + 1);
-          
+
           // Auto-retry after delay
           setTimeout(() => {
             if (query.trim() === lastSearchQuery.current) {
@@ -232,27 +230,27 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           }, retryDelay);
           return;
         }
-        
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
-        
+
         // Cache the results
         postcodeCache.current.set(cacheKey, data);
-        
+
         setPostcodeSuggestions(data);
         setShowSuggestions(data.length > 0);
         setRateLimitRetry(0); // Reset retry counter on success
-        
-             } catch (error) {
-         console.error('Error fetching postcode suggestions:', error);
-         setPostcodeErrorWithTimeout(error instanceof Error ? error.message : 'Failed to fetch postcode suggestions', 30000);
-         setPostcodeSuggestions([]);
-         setShowSuggestions(false);
-       } finally {
+
+      } catch (error) {
+        console.error('Error fetching postcode suggestions:', error);
+        setPostcodeErrorWithTimeout(error instanceof Error ? error.message : 'Failed to fetch postcode suggestions', 30000);
+        setPostcodeSuggestions([]);
+        setShowSuggestions(false);
+      } finally {
         setIsLoadingPostcodes(false);
       }
     }, 500); // 500ms debounce delay
@@ -264,17 +262,17 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const retrieveAddress = async (id: string) => {
     try {
       const response = await fetch(`/api/postcode-retrieve?id=${encodeURIComponent(id)}&query=${encodeURIComponent(postcode)}`);
-      
+
       // if (response.status === 429) {
       //   setPostcodeErrorWithTimeout('Too many requests. Please wait a moment and try again.', 30000);
       //   return;
       // }
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       if (Array.isArray(data) && data.length > 0) {
         setAddress(data[0]);
@@ -289,7 +287,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     }
   };
 
-    // Handle postcode selection
+  // Handle postcode selection
   const handlePostcodeSelect = (address: PostcodeSuggestion) => {
     debugger
     if ((address?.count ?? 0) > 1) {
@@ -297,11 +295,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     } else {
       setPostCodeId(address.id);
       //retrieveAddress(address.id);
-      console.log(PostCodeId==="")
+      console.log(PostCodeId === "")
     }
   };
   const isPostCodeIdValid = () => {
-    return PostCodeId !==""
+    return PostCodeId !== ""
   };
   // Handle responsive canvas sizing
   React.useEffect(() => {
@@ -358,22 +356,29 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     debugger;
     let nextStep = step + 1;
     const newAnswers = { ...answers, [q]: value };
-
-    // Logic for navigation
-    if (q === 'q2') {
+    if (q == '1') {
       if (value === 'Yes') {
         console.log('q2', value);
         nextStep = 5; // Go to Q2A
       } else {
-        nextStep = 4;
+        setExited(true); return;
       }
     }
-    if (q === 'q2a' && value === 'No') {
-      setExited(true); return;
-    }
-    if (q === 'q3' && value === 'Yes') {
-      setExited(true); return;
-    }
+    // // Logic for navigation
+    // if (q === 'q2') {
+    //   if (value === 'Yes') {
+    //     console.log('q2', value);
+    //     nextStep = 5; // Go to Q2A
+    //   } else {
+    //     nextStep = 4;
+    //   }
+    // }
+    // if (q === 'q2a' && value === 'No') {
+    //   setExited(true); return;
+    // }
+    // if (q === 'q3' && value === 'Yes') {
+    //   setExited(true); return;
+    // }
     setAnswers(newAnswers);
     console.log('nextStep', nextStep);
     console.log('initialDetails', details);
@@ -539,21 +544,19 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
         <div className="mx-auto pt-[1px] max-w-[700px] max-[480px]:px-[15px]  max-[1199px]:px-[30px] container_inner">
           {step === 1 && (
             <h1 className="h-full pt-[35px] text-[45px] leading-[1.1] tracking-[-0.03em] max-[575px]:tracking-[-0.01em] text-[#0a0a0a] pt-[35px] max-[480px]:pt-[30px] max-[480px]:text-[28px] max-[575px]:text-[35px] font-bold text-left">
-              Join The <span className="bg-[#fff41f] pt-[2px] m-[2px]">Arnold Clark </span>
+              Join The <span className="bg-[#fff41f] pt-[2px] m-[2px]">M&S </span>
               Data Breach Claim
             </h1>
           )}
           {step === 1 && (
             <p className="mt-[16px] mb-[16px] text-left max-[575px]:text-[15px] tracking-[0]">
-              Join <strong><u>10,000+</u></strong> signed claimants who could be eligible for compensation following the Arnold Clark data breach. Use our free online tool to check your eligibility.
-            </p>)}
+              Millions of Marks and Spencer customers could be a victim of a serious data breach, which happened in April 2025. Use our free online tool to check if you could be eligible to claim compensation.            </p>)}
 
           {/* Step 1 */}
           {step === 1 && (
             <div className="button_section">
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] text-[#0a0a0a] tracking-[-0.03em] max-[575px]:tracking-[-0.03em] ">
-                Have you been notified by Arnold Clark that your data may have been
-                breached?
+                Did you receive a notification from M&S that your data had been impacted by this data breach?
               </h2>
 
               <div className="flex gap-[16px] button_row">
@@ -820,7 +823,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     const newValue = e.target.value;
                     setPostcode(newValue);
                     setAddress(null);
-                    setAddressRetrieved(false);
                     setShowSuggestions(false);
                     setPostcodeError('');
                     setErrorCountdown(0);
@@ -831,7 +833,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     if (countdownIntervalRef.current) {
                       clearInterval(countdownIntervalRef.current);
                     }
-                    
+
                     // Clear suggestions when input changes
                     setPostcodeSuggestions([]);
                   }}
@@ -878,9 +880,9 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     if (errorCountdown > 0) return; // Disable during error countdown
                     const idx = e.target.value;
                     if (idx !== "") {
-                    setTimeout(() => {
-                      handlePostcodeSelect(postcodeSuggestions[Number(idx)]);
-                    });  
+                      setTimeout(() => {
+                        handlePostcodeSelect(postcodeSuggestions[Number(idx)]);
+                      });
                     }
                   }}
                   disabled={errorCountdown > 0}
@@ -909,7 +911,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <button
                 type="button"
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                                 onClick={() => setStep(7)}
+                onClick={() => setStep(7)}
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" ><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back

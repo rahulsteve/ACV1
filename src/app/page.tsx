@@ -23,7 +23,6 @@ export default function Home() {
           <>
             <InfoBarSection />
             <ClaimSection />
-            <FAQSection />
             <FooterSection />
           </>
         ) : (
