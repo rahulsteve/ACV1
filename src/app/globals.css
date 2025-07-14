@@ -8,11 +8,14 @@
 Main {
   color: #000
 }
-html , Main {
+
+html,
+Main {
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
   letter-spacing: -0.01em;
 }
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -67,9 +70,20 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
 }
-.button_cal label{
- line-height: 23px;
- display: block;
+
+.button_cal.next {
+  width: 50%;
+}
+
+.button_cal.skip {
+  width: 50%;
+  background-color: #bebebe !important;
+  border: 2px solid #8f8f8f !important;
+}
+
+.button_cal label {
+  line-height: 23px;
+  display: block;
 }
 
 .button_cal:hover {
@@ -101,27 +115,31 @@ body {
 }
 
 @media only screen and (max-width: 575px) {
-  .button_cal label{
+  .button_cal label {
     margin-bottom: .25rem;
 
-   }
+  }
+
   h2 :not(.not-eligible) {
     font-size: 25px !important;
   }
+
   .not-eligible h2 {
-    font-size: 21px ;
-}
-.contact-info input{
-  font-size: 14px !important;
-}
-.frequently_inner {
-  h2 {
-    font-size: 21px !important;
-    font-weight: 700;
- 
+    font-size: 21px;
   }
 
-}
+  .contact-info input {
+    font-size: 14px !important;
+  }
+
+  .frequently_inner {
+    h2 {
+      font-size: 21px !important;
+      font-weight: 700;
+
+    }
+
+  }
 
 }
 
@@ -142,8 +160,8 @@ body {
 
   div input[type="text"],
   div input[type="email"],
-  div select ,
-  div.mobile-div{
+  div select,
+  div.mobile-div {
     color: #0a0a0a;
     height: 60px !important;
     box-shadow: none !important;
@@ -153,7 +171,8 @@ body {
     font-size: 17px !important;
   }
 }
-.next-btn{
+
+.next-btn {
   margin-left: 67%;
 }
 
@@ -162,21 +181,25 @@ body {
     padding: 14px 11px !important;
     font-size: 15px !important;
   }
-  .next-btn{
+
+  .next-btn {
     margin-left: 0;
   }
-  .scrollableBox{
+
+  .scrollableBox {
     padding: 20px 15px !important;
   }
+
   .scrollableBox h3 {
     font-size: 1.125rem !important;
     line-height: 1.15;
     margin-top: 20px;
     margin-bottom: 10px;
   }
+
   div input[type="text"],
   div input[type="email"],
-  div select ,
+  div select,
   div.mobile-div {
     color: #0a0a0a;
     height: 60px !important;
@@ -258,26 +281,32 @@ body {
   scrollbar-color: #008f5f #f0f0f0;
   line-height: 1.7;
 }
-.scrollableBox p, .scrollableBox li {
+
+.scrollableBox p,
+.scrollableBox li {
   font-size: 14px;
   line-height: 1.7;
   margin: 1em 0;
 }
+
 .scrollableBox h3 {
   color: #464646;
   font-weight: 600;
   font-size: 1.5rem;
 }
+
 .scrollableBox li {
-margin: 14px 0px ;
+  margin: 14px 0px;
 }
+
 .node-panel p {
   margin-top: 15px;
   line-height: 1.5rem;
 }
+
 .scrollableBox p em {
   color: #002eb7;
-  
+
 }
 
 .q1-highlight {
@@ -285,17 +314,18 @@ margin: 14px 0px ;
   border: 3px solid #ff0000 !important;
 }
 
-.personal-Details  h3 :first-child {
+.personal-Details h3 :first-child {
   font-weight: 700 !important;
   font-size: 23px !important;
-  margin:15px 0
+  margin: 15px 0
 }
-.location{
+
+.location {
   font-size: 0.9em;
   color: #999999;
 }
 
-.disabled{
+.disabled {
   background-color: #adadad;
 }
 
@@ -315,17 +345,21 @@ margin: 14px 0px ;
 }
 
 .mobile-input-bg {
-    background: url(https://quiz-live.s3.amazonaws.com/upload/cavis-limited/tel-1742974190456.png) 45px 50% / 16px no-repeat;
-    padding-left: 25px !important;
-    background-position: left 0px center;
+  background: url(https://quiz-live.s3.amazonaws.com/upload/cavis-limited/tel-1742974190456.png) 45px 50% / 16px no-repeat;
+  padding-left: 25px !important;
+  background-position: left 0px center;
 }
 
-.pa:hover, .next-btn:hover, .submit-btn:hover {
+.pa:hover,
+.next-btn:hover,
+.submit-btn:hover {
   background-color: #008f5f !important;
   color: #fff !important;
   transition: all 0.3s ease;
 }
-.email-div {    background: url(https://quiz-live.s3.amazonaws.com/upload/cavis-limited/email-1742974188487.png) no-repeat;
+
+.email-div {
+  background: url(https://quiz-live.s3.amazonaws.com/upload/cavis-limited/email-1742974188487.png) no-repeat;
   background-position: left 14px center;
   padding-left: 44px !important;
   background-size: 16px;

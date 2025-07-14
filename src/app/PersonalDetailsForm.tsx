@@ -185,7 +185,7 @@ const PersonalDetailsForm = ({
             <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
-        <strong>  Join 10,000+ signed claimants.</strong>
+        <strong>  Check your eligibility.</strong>
       </div>
     </div>
   );

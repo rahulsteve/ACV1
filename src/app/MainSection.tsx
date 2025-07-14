@@ -82,6 +82,9 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const [canvasHeight, setCanvasHeight] = React.useState(200);
   //const [numberCheckError] = React.useState('');
   const [q1Highlight, setQ1Highlight] = React.useState(false);
+  const [accountNumber, setAccountNumber] = React.useState("");
+  const [dbaOptin, setDbaOptin] = React.useState("");
+  const [lastStep, setLastStep] = React.useState(1);
 
   // Add highlight class for q1 buttons
   const highlightClass = q1Highlight ? 'q1-highlight' : '';
@@ -353,17 +356,47 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
 
   // Handlers for each step
   const handleAnswer = (q: string, value: string) => {
-    debugger;
+    setLastStep(step)
     let nextStep = step + 1;
     const newAnswers = { ...answers, [q]: value };
-    if (q == '1') {
+    if (q == 'q1') {
       if (value === 'Yes') {
-        console.log('q2', value);
+        console.log(value);
+        nextStep = 4;
+      } else {
+        setExited(true); return;
+      }
+    }
+    if (q == 'q2a') {
+      if (value === 'Yes') {
+        console.log(value);
         nextStep = 5; // Go to Q2A
       } else {
         setExited(true); return;
       }
     }
+    if (q == 'q3') {
+      if (value === 'Yes') {
+        console.log(value);
+        nextStep = 6; // Go to Q2A
+      }
+      if (value === 'Not Sure') {
+        console.log(value);
+        nextStep = 7; // Go to Q2A
+      }
+    }
+    if (q == 'q4') {
+      if (value === 'skip') {
+        console.log(value);
+        setAccountNumber("")
+        nextStep = 7; // Go to Q2A
+      }
+      if (value === 'next') {
+        console.log(value);
+        nextStep = 7; // Go to Q2A
+      }
+    }
+
     // // Logic for navigation
     // if (q === 'q2') {
     //   if (value === 'Yes') {
@@ -380,7 +413,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     //   setExited(true); return;
     // }
     setAnswers(newAnswers);
-    console.log('nextStep', nextStep);
     console.log('initialDetails', details);
     setStep(nextStep);
   };
@@ -619,7 +651,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           )}
 
           {/* Step 2 */}
-          {step === 2 && (
+          {/* {step === 2 && (
             <div className="button_section min-[575px]:mt-[20px] max-[575px]:pt-[1rem] min-[575px]:pt-[20px]">
               <h2 ref={scrollToTopRef} className="leading-[1.3] text-[24px] font-[600] mt-0 mb-[20px] px-[10px] min-[575px]:tracking-[-0.04em] max-[575px]:tracking-[-0.03em] min-[575px]:transition-transform min-[575px]:origin-left min-[575px]:scale-[1.02]">
                 Have you purchased, sold, rented, hired, or leased a vehicle, or had any servicing or repairs carried out by Arnold Clark, or been an employee of Arnold Clark between 2012 and 2022?              </h2>
@@ -658,13 +690,13 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 Back
               </button>
             </div>
-          )}
+          )} */}
 
           {/* Step 4 (Q2A) */}
           {step === 4 && (
             <div className="button_section mt-6">
               <h2 ref={scrollToTopRef} className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
-                Have you kept a copy of the email or notification?
+                Did you keep a copy of the notification? (We will need this to start your claim)
               </h2>
               <div className="flex flex-col gap-[15px] button_row">
                 <div className="button_cal w-full" onClick={() => handleAnswer('q2a', 'Yes')}>
@@ -679,7 +711,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   />
                   <label htmlFor="radio5">Yes</label>
                 </div>
-                <div className="button_cal w-full" onClick={() => handleAnswer('q2a', 'Yes')}>
+                <div className="button_cal w-full" onClick={() => handleAnswer('q2a', 'No')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -696,7 +728,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <button
                 type="button"
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(2)}
+                onClick={() => setStep(1)}
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" ><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back
@@ -708,8 +740,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {step === 5 && (
             <div className="button_section max-[575px]:py-[1em] px-[10px] min-[575px]:mt-[20px] min-[575px]:pt-[20px]">
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] ">
-                Did you live in Scotland when the purchase was made or when you were employed by Arnold Clark?
-              </h2>
+                Do you know your M&S account number or Sparks Membership number? (If not, you will need to provide this later to progress your claim)              </h2>
               <div className="flex flex-col gap-[15px] button_row">
                 <div className="button_cal w-full" onClick={() => handleAnswer('q3', 'Yes')}>
                   <input
@@ -723,7 +754,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   />
                   <label htmlFor="radio7">Yes</label>
                 </div>
-                <div className="button_cal w-full" onClick={() => handleAnswer('q3', 'No')} >
+                <div className="button_cal w-full" onClick={() => handleAnswer('q3', 'Not Sure')} >
                   <input
                     className="hidden"
                     type="radio"
@@ -733,7 +764,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     autoComplete="off"
                     required
                   />
-                  <label htmlFor="radio8">No</label>
+                  <label htmlFor="radio8">Not Sure</label>
                 </div>
               </div>
               <button
@@ -751,10 +782,23 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {step === 6 && (
             <div className="button_section max-[575px]:py-[1em] px-[10px] min-[575px]:mt-[20px] min-[575px]:pt-[20px]">
               <h2 className="leading-[1.3] tracking-[-0.03em] text-[24px] font-semibold mt-0 mb-[20px] ">
-                Have you suffered distress and/or anxiety upon learning that your sensitive and confidential information may have been stolen?
-              </h2>
-              <div className="flex flex-col gap-[15px] button_row">
-                <div className="button_cal w-full" onClick={() => handleAnswer('q4', 'Yes')}>
+                Please enter your M&S account number or Sparks Membership number (This must be a minimum of 16 digits)              </h2>
+              <input
+                type="text"
+                placeholder="M&S account number or Sparks Membership number"
+                value={accountNumber}
+                onChange={e => {
+                  const newValue = e.target.value;
+                  setAccountNumber(newValue);
+                }}
+
+
+                className="w-full border rounded px-3 py-4 text-[17px] my-[20px] max-[575px]:text-[14px] pr-20"
+                autoComplete="off"
+              />
+
+              <div className="flex flex-row gap-[15px] button_row">
+                <div className="button_cal skip w-full" onClick={() => handleAnswer('q4', 'skip')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -764,9 +808,9 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     autoComplete="off"
                     required
                   />
-                  <label htmlFor="radio9">Yes</label>
+                  <label htmlFor="radio9">Skip</label>
                 </div>
-                <div className="button_cal w-full" onClick={() => handleAnswer('q4', 'No')}>
+                <div className="button_cal next w-full" onClick={() => handleAnswer('q4', 'next')}>
                   <input
                     className="hidden"
                     type="radio"
@@ -776,7 +820,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                     autoComplete="off"
                     required
                   />
-                  <label htmlFor="radio10">No</label>
+                  <label htmlFor="radio10">Next</label>
                 </div>
               </div>
               <button
@@ -802,7 +846,9 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <button
                 type="button"
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
-                onClick={() => setStep(6)}
+                onClick={() =>{
+                setStep(lastStep)
+                  }}
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" ><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 Back
@@ -1084,7 +1130,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                       <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
-                  <strong>Join 10,000+ signed claimants.</strong>
+                  <strong>Check your eligibility.</strong>
                 </div>
                 <button
                   type="button"
@@ -1101,10 +1147,12 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {step === 10 && (
             <div className="max-[575px]:mt-[20px] max-w-3xl mx-auto">
               <h1 ref={documentsHeaderRef} className="max-[575px]:text-[21px] text-[35px] leading-[0.9] tracking-[-0.01em] text-[#0a0a0a] min-[575px]:pt-[35px] font-bold text-left mb-4">Your Documents</h1>
-              <p className="mb-4 max-[575px]:text-[15px] text-[16px] ">Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Arnold Clark claim.</p>
+              <p className="mb-4 max-[575px]:text-[15px] text-[16px] ">
+                Thank you for your enquiry. Based on the answers provided, you are able to join the KP Law Limited Marks and Spencer claim.
+              </p>
               <p className="mb-4 max-[575px]:text-[15px] text-[16px] tracking-[0]" >
                 <b>
-                  Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.
+                  Your potential claim will now be handled by KP Law Limited, who will act as your solicitors throughout this process. KP Law are specialists in data breach claims and will work on your behalf to seek to secure the compensation you may be entitled to. Their experienced legal team will guide your case from start to finish, ensuring that your rights are protected and your claim is pursued efficiently.
                 </b>
               </p>
               <p className="mb-4">
@@ -1453,6 +1501,58 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   {marketingError}
                 </div>
               )}
+
+              {/* DATA BREACH ADVISORS OPTIN SECTION */}
+              <div className="mt-10 mb-8">
+                <h4 className="leading-[1.3] font-bold min-[575px]:text-[18px] text-[1rem] text-[#00b779] border-b-4 border-[#00b779] inline-block my-[30px]">DATA BREACH ADVISORS OPTIN</h4>
+                <div className="font-bold text-[17px] mb-2">Stay Informed: From time to time, Data Breach Advisors would like to contact you with relevant claims that may be of interest.</div>
+                <div className="mb-2 text-[16px] font-bold">We may contact you by email, SMS, whatsapp, or post. You can withdraw your consent at any time by following the opt-out instructions in our communications or contacting us directly.</div>
+                <div className="mb-2 text-[16px] font-bold">I agree to receive marketing communications from Data Breach Advisors and via the above channels.</div>
+                <div className="flex items-center gap-8 mt-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <span
+                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${dbaOptin === "yes"
+                        ? "bg-[#00b779] border-[#00b779]"
+                        : "bg-white border-[#00b779]"
+                        } cursor-pointer`}
+                      onClick={() => setDbaOptin("yes")}
+                      tabIndex={0}
+                      role="checkbox"
+                      aria-checked={dbaOptin === "yes"}
+                      style={{ marginRight: "6px" }}
+                    >
+                      {dbaOptin === "yes" && (
+                        <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="18" height="18" fill="none" />
+                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </span>
+                    <span className="text-[18px] font-bold">Yes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <span
+                      className={`inline-flex items-center justify-center w-6 h-6 border-2 rounded transition-colors duration-150 ${dbaOptin === "no"
+                        ? "bg-[#00b779] border-[#00b779]"
+                        : "bg-white border-[#00b779]"
+                        } cursor-pointer`}
+                      onClick={() => setDbaOptin("no")}
+                      tabIndex={0}
+                      role="checkbox"
+                      aria-checked={dbaOptin === "no"}
+                      style={{ marginRight: "6px" }}
+                    >
+                      {dbaOptin === "no" && (
+                        <svg width="18" height="18" viewBox="0 0 18 18" className="text-white" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect width="18" height="18" fill="none" />
+                          <path d="M5 9.5L8 12.5L13 7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </span>
+                    <span className="text-[18px] font-bold">No</span>
+                  </label>
+                </div>
+              </div>
               <div className="flex justify-end mt-8">
                 <button
                   type="button"
@@ -1471,9 +1571,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <div className="bg-[#00b779] rounded-full w-14 h-14 flex items-center justify-center mb-6 mt-8">
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
               </div>
-              <h2 className="text-[35px] font-bold mb-S">Thank You! We Are Reviewing Your Details.</h2>
-              <p className="mb-4 mt-4 text-[16px]">One of our claim experts will be in touch shortly to discuss your potential claim and how much you could be owed.</p>
-              <h2 className="text-[35px] font-bold mb-2">Have You Joined The PCP Claim?</h2>
+              <h2 className="text-[35px] font-bold mb-S">We write to confirm receipt of your signed documentation</h2>
+              <p className="mb-4 mt-4 text-[16px]">Please be assured that we are continuing to investigate the matter on your behalf, alongside others affected, and we will provide you with a further update in due course as the case
+                progresses.</p>
+              <h2 className="text-[35px] font-bold mb-2">Have You Joined The PCP Claim?
+              </h2>
               <p className="mb-2 mt-4 text-[16px]">If you&apos;ve had a car on finance since 2007, you could be eligible to
                 claim £1,000s in compensation. <a href="https://www.pcpadvisors.co.uk/" className="text-blue-700 underline">Click here to get started.</a></p>
               <p className="mb-4 mt-4 text-[16px]">You will be directed to the website of The PCP Advisors, a trading style of The Claims Guys Legal. You are able to claim directly yourself for free to your lender, and then the Financial Ombudsman.</p>
