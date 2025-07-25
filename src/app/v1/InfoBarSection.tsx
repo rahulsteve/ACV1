@@ -1,4 +1,5 @@
 import React from "react";
+import Image from 'next/image';
  
 const InfoBarSection = () => (
   <section className="w-full
@@ -19,9 +20,9 @@ const InfoBarSection = () => (
                   max-[575px]:px-[10px]
                   max-[575px]:pt-[10px]
                   max-[575px]:pb-[20px]">
-            <img src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/checked-1742549138187.png" alt="" className="w-[20px] lg:max-w-full lg:h-auto" />
+            <Image src="/checked.png" alt="" className="w-[20px] lg:max-w-full lg:h-auto" width={20} height={20} />
             <div className="text-black text-[16px] max-[575px]:text-[15px] leading-[1.3] text-center font-normal mt-[5px]">
-            <strong>  Start your claim, takes just a few minutes!</strong>
+            <strong>  Quick & Easy</strong>
             </div>
           </div>
  
@@ -33,10 +34,10 @@ const InfoBarSection = () => (
                   max-[575px]:px-[10px]
                   max-[575px]:pt-[10px]
                   max-[575px]:pb-[20px]">
-            <img src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/checked-1742549138187.png" alt="" className="w-[20px] lg:max-w-full lg:h-auto" />
+            <Image src="/checked.png" alt="" className="w-[20px] lg:max-w-full lg:h-auto" width={20} height={20} />
             <div className="text-black text-[16px] max-[575px]:text-[15px] leading-[1.3] text-center font-normal mt-[5px]">
              <strong>
-             Quick and easy
+             Save 84% This Month
               </strong>
             </div>
           </div>
@@ -49,9 +50,9 @@ const InfoBarSection = () => (
                   max-[575px]:px-[10px]
                   max-[575px]:pt-[10px]
                   max-[575px]:pb-[20px]">
-            <img src="https://quiz-live.s3.amazonaws.com/upload/cavis-limited/checked-1742549138187.png" alt=""className="w-[20px] lg:max-w-full lg:h-auto" />
+            <Image src="/checked.png" alt=""className="w-[20px] lg:max-w-full lg:h-auto" width={20} height={20} />
             <div className="text-black text-[16px] max-[575px]:text-[15px] leading-[1.3] text-center font-normal mt-[5px]">
-          <strong>Millions may be eligible to claim</strong>
+          <strong>Trustpilot Rated &apos;Excellent&apos;</strong>
             </div>
           </div>
         </div>

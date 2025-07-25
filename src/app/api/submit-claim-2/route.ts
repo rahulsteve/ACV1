@@ -3,17 +3,29 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL;
+    const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_2;
 
     if (!WEBHOOK_URL) {
       return NextResponse.json({ error: 'Webhook URL not configured' }, { status: 500 });
+    }
+    console.log("submit-claim-2",body);
+    const X_API_KEY = process.env.X_API_KEY;
+
+    if (!WEBHOOK_URL) {
+      return NextResponse.json({ error: 'Webhook URL not configured' }, { status: 500 });
+    }
+    if (!X_API_KEY) {
+      return NextResponse.json({ error: 'X-API-KEY not configured' }, { status: 500 });
     }
     console.log("submit-claim-2",body);
     
     // Forward the payload to the external webhook
     const webhookRes = await fetch(WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-API-KEY': X_API_KEY
+      },
       body: JSON.stringify(body),
     });
 

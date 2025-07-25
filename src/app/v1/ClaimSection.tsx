@@ -12,11 +12,11 @@ const ClaimSection = () => (
         <p className="text-[16px] max-[575px]:text-[15px] mb-4">
           In April 2025, Marks and Spencer (M&S) were subject to a cyberattack which resulted in a number of customers personal data being compromised. The compromised information may have included phone numbers, addresses and dates of birth.        </p>
         <p className="text-[16px] max-[575px]:text-[15px] mb-4">
-          The Data Breach Advisors has partnered with KP Law Limited who, if you’re eligible, will take your case on, on a no-win, no-fee basis.
+          The Data Breach Advisors has partnered with KP Law Limited who, if you’re eligible, will take your case on, on a no-win, no-fee basis. 
         </p>
       </div>
     </div>
-  </section>
+  </section> 
 );
 
 

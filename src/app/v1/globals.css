@@ -77,8 +77,8 @@ body {
 
 .button_cal.skip {
   width: 50%;
-  background-color: #bebebe !important;
-  border: 2px solid #8f8f8f !important;
+  background: #00b779;
+  border: 2px solid #008f5f !important;
 }
 
 .button_cal label {
@@ -363,4 +363,29 @@ body {
   background-position: left 14px center;
   padding-left: 44px !important;
   background-size: 16px;
+}
+.footer_sec {
+  background-color: #fff;
+  text-align: center;
+  padding: 40px 0;
+  border-top: solid 4px #f3f4f6;
+}
+.footer_inr {
+  max-width: 900px;
+  text-align: center;
+  margin: 0 auto;
+}
+.footer_inr p {
+  margin: 10px 0;
+  font-size: 11px;
+  font-weight: 300;
+  color: #000;
+  line-height: 20px;
+}
+.footer_inr a {
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 20px;
+  font-weight: 600;
 }

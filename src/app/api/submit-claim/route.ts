@@ -3,11 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const WEBHOOK_URL = process.env.b;
+    const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL;
 
     if (!WEBHOOK_URL) {
       return NextResponse.json({ error: 'Webhook URL not configured' }, { status: 500 });
     }
+    console.log("submit-claim-2",body);
 
     // Forward the payload to the external webhook
     const webhookRes = await fetch(WEBHOOK_URL, {
