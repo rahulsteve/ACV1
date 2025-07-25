@@ -156,6 +156,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
   const handleNext = () => {
     if (validateDetails()) {
       setStep(11);
+      handleSubmit();
     }
   };
 
@@ -499,7 +500,6 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                 className="mt-4 flex items-center text-[#00b779] font-bold text-[18px] hover:underline cursor-pointer"
                 onClick={() => {
                   setStep(6);
-                  handleSubmit();
                 }}
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" ><path d="M12 15L7 10L12 5" stroke="#00b779" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
