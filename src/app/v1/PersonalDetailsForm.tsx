@@ -12,7 +12,7 @@ interface PersonalDetails {
 
 interface PersonalDetailsFormProps {
   details: PersonalDetails;
-  errors: { firstName: string; lastName: string };
+  errors: { firstName: string; lastName: string; mobileNumber: string; emailAddress: string };
   onDetailsChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onNext: () => void;
 }
@@ -27,6 +27,8 @@ const PersonalDetailsForm = ({
   const firstNameRef = useRef<HTMLInputElement>(null);
   const surnameRef = useRef<HTMLInputElement>(null);
   const postcodeRef = useRef<HTMLInputElement>(null);
+  const mobileNumberRef = useRef<HTMLInputElement>(null);
+  const emailAddressRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setTimeout(() => {
@@ -36,10 +38,13 @@ const PersonalDetailsForm = ({
 
   // Check if form is valid
   const isFormValid = () => {
+    const mobile = details.mobileNumber.trim();
+    const isMobileValid = /^07\d{9}$/.test(mobile);
+
     return details.firstName.trim().length >= 2 &&
       details.lastName.trim().length >= 2 &&
       details.postcode.trim().length >= 0 &&
-      details.mobileNumber.trim().length >= 0 &&
+      isMobileValid &&
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(details.emailAddress.trim()) &&
       Object.values(errors).every(error => !error);
   };
@@ -69,7 +74,7 @@ const PersonalDetailsForm = ({
             name="firstName"
             placeholder="First Name"
             onBlur={onDetailsChange}
-            className={`w-full border rounded px-3 py-4 mb-[.25rem] text-[17px] max-[575px]:text-[14px] ${errors.firstName ? 'border-red-500' : ''} first-last-input`}
+            className={`w-full border rounded px-3 py-4 mb-[.25rem] text-[17px] max-[575px]:text-[14px] ${errors.firstName ? 'border-red-500' : ''}`}
             autoComplete="given-name"
           />
          
@@ -85,7 +90,7 @@ const PersonalDetailsForm = ({
             onFocus={() => {
               firstNameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }}
-            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.lastName ? 'border-red-500' : ''} first-last-input`}
+            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.lastName ? 'border-red-500' : ''}`}
             autoComplete="family-name"
           />
         
@@ -105,25 +110,28 @@ const PersonalDetailsForm = ({
         </div>
         <div className="form-group mb-4">
           <input
-            ref={postcodeRef}
+            ref={mobileNumberRef}
             type="text"
             id="mobileNumber"
             name="mobileNumber"
             placeholder="Mobile Number"
             onBlur={onDetailsChange}
-            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px]`}
+            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.mobileNumber ? 'border-red-500' : ''}`}
+            maxLength={11}
+            autoComplete="tel"
           />
-        
+       
         </div>
         <div className="form-group mb-4">
           <input
-            ref={postcodeRef}
-            type="text"
+            ref={emailAddressRef}
+            type="email"
             id="emailAddress"
             name="emailAddress"
-            placeholder="Email address"
+            placeholder="Email Address"
             onBlur={onDetailsChange}
-            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px]`}
+            className={`w-full border rounded px-3 py-4 text-[17px] max-[575px]:text-[14px] ${errors.emailAddress ? 'border-red-500' : ''}`}
+            autoComplete="email"
           />
         
         </div>
@@ -138,8 +146,10 @@ const PersonalDetailsForm = ({
           disabled={!isFormValid()}
           className={`pa max-[575px]:w-full w-auto max-[575px]:px-[30px] max-[575px]:py-20px] px-[50px] py-[25px] mt-[10px] text-white text-[20px] font-bold border-2 border-[#008f5f] rounded-[5px] bg-[#00b779]  transition-opacity ${!isFormValid() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
+           {(errors.emailAddress)&& <div className="text-600 text-[17px] mt-1">Please enter a valid email address.</div>}
+           {(errors.mobileNumber)&& <div className="text-600 text-[17px] mt-1">Mobile number must be 11 digits and start with 07.</div>}
            {(errors.firstName ||errors.lastName)&& <div className="text-600 text-[17px] mt-1">First and last name must be at least 2 characters long!</div>}
-          {!errors.firstName &&!errors.lastName && <p>Get Discount</p>}
+          {!errors.firstName &&!errors.lastName &&!errors.mobileNumber &&!errors.emailAddress && <p>Get Discount</p>}
         </button>
       </div>
 
@@ -150,7 +160,7 @@ const PersonalDetailsForm = ({
             <path d="M7 11.5L10 15.5L16 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
-        <strong>  Check your eligibility.</strong>
+        <strong>  Trustpilot Rated Excellent.</strong>
       </div>
     </div>
   );

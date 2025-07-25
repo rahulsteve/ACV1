@@ -39,7 +39,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     q1: '', q2: '', q2a: '', q3: '', q4: ''
   });
   const [details, setDetails] = React.useState(initialDetails);
-  const [errors, setErrors] = React.useState({ firstName: '', lastName: '' });
+  const [errors, setErrors] = React.useState({ firstName: '', lastName: '', mobileNumber: '', emailAddress: '' });
   //const [numberCheckError] = React.useState('');
   const [q1Highlight, setQ1Highlight] = React.useState(false);
   const [lastStep, setLastStep] = React.useState(1);
@@ -135,18 +135,32 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
     if (e.target.name === 'lastName') {
       newErrors.lastName = newDetails.lastName.trim().length < 2 ? 'Last name must be more than 2 characters long!' : '';
     }
+    if (e.target.name === 'emailAddress') {
+      newErrors.emailAddress = !(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newDetails.emailAddress.trim())) ? 'Please enter a valid email address.' : '';
+    }
+    if (e.target.name === 'mobileNumber') {
+      newErrors.mobileNumber =  !/^07\d{9}$/.test(newDetails.mobileNumber.trim()) ? 'Mobile number must be 11 digits and start with 07.' : '';
+    }
     setErrors(newErrors);
   };
 
   const validateDetails = () => {
     let valid = true;
-    const newErrors = { firstName: '', lastName: '', dob: '' };
+    const newErrors = { firstName: '', lastName: '', mobileNumber: '', emailAddress: '' };
     if (details.firstName.trim().length < 2) {
       newErrors.firstName = 'First and last name must be at least 2 characters long!';
       valid = false;
     }
     if (details.lastName.trim().length < 2) {
       newErrors.lastName = 'First and last name must be at least 2 characters long!';
+      valid = false;
+    }
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(details.emailAddress.trim())) {
+      newErrors.emailAddress = 'Please enter a valid email address.';
+      valid = false;
+    }
+    if (/^07\d{9}$/.test(details.mobileNumber)) {
+      newErrors.mobileNumber = 'Mobile number must be 11 digits and start with 07.';
       valid = false;
     }
     setErrors(newErrors);
@@ -296,8 +310,8 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
         <div className="mx-auto pt-[1px] max-w-[700px] max-[480px]:px-[15px]  max-[1199px]:px-[30px] container_inner">
           {step === 1 && (
             <h1 className="h-full pt-[35px] text-[45px] leading-[1.1] tracking-[-0.03em] max-[575px]:tracking-[-0.01em] text-[#0a0a0a] pt-[35px] max-[480px]:pt-[30px] max-[480px]:text-[28px] max-[575px]:text-[35px] font-bold text-left">
-              Get A Professional Will Written For <span className="bg-[#00b779] text-white pt-[2px] m-[2px]"> £59.00 </span>
-              This Month
+              Get a Professional Will Written for just  <span className="bg-[#00b779] text-white pt-[2px] m-[2px]"> £59.00 </span>
+              this month - and save £100s on solicitor fees. Exclusive discount available for a limited time.
             </h1>
           )}
           {step === 1 && (
@@ -309,7 +323,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
           {step === 1 && (
             <div className="button_section">
               <h2 className="leading-[1.3] text-[24px] font-semibold mt-0 mb-[20px] text-[#0a0a0a] tracking-[-0.03em] max-[575px]:tracking-[-0.03em] ">
-                Who is the WILL for?
+              Who is the Will for?
               </h2>
 
               <div className="flex gap-[16px] button_row">
@@ -327,7 +341,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   />
                   <label
                     htmlFor="radio1"
-                    className=' font-[700]'
+                    className='text-center max-[575px]:mt-2 max-[575px]:text-[15px] font-[700]'
                   >Me</label>
                 </div>
                 <div className={highlightClass + " button_cal w-1/2"}
@@ -343,7 +357,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
                   />
                   <label
                     htmlFor="radio2"
-                    className=' font-[700]'
+                    className='max-[575px]:mt-2 max-[575px]:text-[15px] font-[700]'
                   >Me & My Partner</label>
                 </div>
               </div>

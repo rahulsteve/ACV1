@@ -119,6 +119,9 @@ body {
     margin-bottom: .25rem;
 
   }
+  .button_cal{
+    font-size: 15px;
+  }
 
   h2 :not(.not-eligible) {
     font-size: 25px !important;

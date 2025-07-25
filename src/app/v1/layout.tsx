@@ -13,8 +13,8 @@ const geistMono =  Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "M&S Data Breach Advisors",
-  description: "M&S Data Breach Advisors",
+  title: "Sovereign Planning - Wills",
+  description: "Sovereign Planning - Wills",
 };
 
 export default function RootLayout({
