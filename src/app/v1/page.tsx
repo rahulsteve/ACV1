@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import HeaderSection from "./HeaderSection";
 import MainSection from "./MainSection";
 import InfoBarSection from "./InfoBarSection";
-import ClaimSection from "./ClaimSection";
 import FooterSection from "./FooterSection";
 import Pixel from "./pixel";
 import Script from 'next/script';
