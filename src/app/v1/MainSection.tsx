@@ -155,11 +155,11 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
       newErrors.lastName = 'First and last name must be at least 2 characters long!';
       valid = false;
     }
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(details.emailAddress.trim())) {
+    if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/).test(details.emailAddress.trim())) {
       newErrors.emailAddress = 'Please enter a valid email address.';
       valid = false;
     }
-    if (/^07\d{9}$/.test(details.mobileNumber)) {
+    if (!(/^07\d{9}$/).test(details.mobileNumber)) {
       newErrors.mobileNumber = 'Mobile number must be 11 digits and start with 07.';
       valid = false;
     }
@@ -528,7 +528,7 @@ const MainSection = ({ step, setStep, exited, setExited }: MainSectionProps) => 
               <div className="bg-[#00b779] rounded-full w-14 h-14 flex items-center justify-center mb-6 mt-8">
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
               </div>
-              <h2 className="text-[35px] font-bold mb-S">Good news! You&apos;re eligible for a Discounted Will.</h2>
+              <h2 className="text-[35px] font-bold mb-S">Good news!<br /> You&apos;re eligible for a Discounted Will.</h2>
               <p className="mb-4 mt-4 text-[16px]">
                 One of our Will Writing experts will be in touch shortly to discuss your individual needs. This initial call is free and there is no-obligation. Please look out for their call.
               </p>

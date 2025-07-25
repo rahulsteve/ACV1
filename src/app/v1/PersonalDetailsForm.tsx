@@ -39,13 +39,13 @@ const PersonalDetailsForm = ({
   // Check if form is valid
   const isFormValid = () => {
     const mobile = details.mobileNumber.trim();
-    const isMobileValid = /^07\d{9}$/.test(mobile);
+    const isMobileValid = (/^07\d{9}$/).test(mobile);
 
     return details.firstName.trim().length >= 2 &&
       details.lastName.trim().length >= 2 &&
       details.postcode.trim().length >= 0 &&
-      isMobileValid &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(details.emailAddress.trim()) &&
+      details.mobileNumber.trim().length >= 0 && isMobileValid &&
+      details.emailAddress.trim().length >= 0 && (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(details.emailAddress.trim())) &&
       Object.values(errors).every(error => !error);
   };
 
